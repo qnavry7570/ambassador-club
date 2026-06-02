@@ -1,0 +1,294 @@
+'use client';
+import { useState, useEffect } from 'react';
+
+const T = {
+  gold:"#C9A961",goldLight:"#D4B87A",goldDark:"#A8883F",
+  goldMuted:"rgba(201,169,97,0.15)",goldBorder:"rgba(201,169,97,0.25)",
+  ivory:"#F5F1E8",ivoryDim:"#E8E3D8",
+  bg:"#0A0A0A",bgAlt:"#0F0F0F",bgCard:"#161616",
+  burgundy:"#5C1A1B",
+  muted:"#8A8578",dim:"#5A574E",ghost:"#3A3830",
+  border:"rgba(245,241,232,0.06)",borderMed:"rgba(245,241,232,0.12)",
+  serif:"'Cormorant Garamond',Georgia,serif",
+  sans:"'Lato',sans-serif",
+};
+
+/* ─── tiny helpers ─── */
+function GoldBtn({children, large, onClick}){
+  const[h,setH]=useState(false);
+  return <button onClick={onClick} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
+    style={{background:h?T.goldLight:T.gold,color:T.bg,border:"none",padding:large?"18px 48px":"14px 36px",fontSize:large?15:13,fontFamily:T.sans,fontWeight:700,letterSpacing:"0.12em",textTransform:"uppercase",cursor:"pointer",transition:"all 0.3s",transform:h?"translateY(-1px)":"none"}}>{children}</button>;
+}
+function GhostBtn({children, large}){
+  const[h,setH]=useState(false);
+  return <button onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
+    style={{background:"transparent",color:h?T.gold:T.ivory,border:`1px solid ${h?T.gold:"rgba(245,241,232,0.25)"}`,padding:large?"18px 48px":"14px 36px",fontSize:large?15:13,fontFamily:T.sans,fontWeight:400,letterSpacing:"0.12em",textTransform:"uppercase",cursor:"pointer",transition:"all 0.3s"}}>{children}</button>;
+}
+function Divider(){
+  return <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:12,width:200,margin:"0 auto"}}>
+    <div style={{flex:1,height:1,background:`linear-gradient(90deg,transparent,${T.gold})`}} />
+    <svg width="16" height="16" viewBox="0 0 18 18"><path d="M9 0L11.5 6.5L18 9L11.5 11.5L9 18L6.5 11.5L0 9L6.5 6.5Z" fill={T.gold} opacity={0.6}/></svg>
+    <div style={{flex:1,height:1,background:`linear-gradient(90deg,${T.gold},transparent)`}} />
+  </div>;
+}
+function PillarCard({title,desc,img,tag}){
+  const[h,setH]=useState(false);
+  return <div onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
+    style={{background:T.bgCard,border:`1px solid ${h?T.goldBorder:T.border}`,cursor:"pointer",transition:"all 0.4s",transform:h?"translateY(-4px)":"none",overflow:"hidden"}}>
+    <div style={{width:"100%",height:220,overflow:"hidden"}}>
+      <img src={img} alt={title} style={{width:"100%",height:"100%",objectFit:"cover",transition:"transform 0.6s",transform:h?"scale(1.05)":"scale(1)"}} loading="lazy" />
+    </div>
+    <div style={{padding:"24px 20px"}}>
+      <div style={{fontFamily:T.sans,fontSize:10,fontWeight:700,letterSpacing:"0.2em",color:T.gold,marginBottom:8}}>{tag}</div>
+      <h3 style={{fontFamily:T.serif,fontSize:22,fontWeight:400,color:T.ivory,marginBottom:8,lineHeight:1.3}}>{title}</h3>
+      <p style={{fontFamily:T.sans,fontSize:14,fontWeight:300,color:T.muted,lineHeight:1.7,margin:0}}>{desc}</p>
+    </div>
+  </div>;
+}
+function EventCard({title,date,location,tag,locked}){
+  const[h,setH]=useState(false);
+  return <div onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
+    style={{background:T.bgCard,border:`1px solid ${T.border}`,padding:32,position:"relative",transition:"all 0.3s",transform:h?"translateY(-2px)":"none",borderTop:`2px solid ${h?T.gold:"transparent"}`}}>
+    <div style={{fontFamily:T.sans,fontSize:10,fontWeight:700,letterSpacing:"0.15em",color:T.gold,textTransform:"uppercase",marginBottom:16}}>{tag}</div>
+    <div style={{fontFamily:T.serif,fontSize:22,fontWeight:400,color:T.ivory,marginBottom:16,lineHeight:1.3}}>{title}</div>
+    <div style={{fontFamily:T.sans,fontSize:13,color:T.muted,marginBottom:8}}>{date}</div>
+    <div style={{fontFamily:T.sans,fontSize:12,color:T.dim,fontStyle:"italic"}}>{location}</div>
+    {locked && <div style={{position:"absolute",top:20,right:20,fontSize:14,color:"rgba(201,169,97,0.4)"}}>🔒</div>}
+  </div>;
+}
+
+/* ─── NAVBAR ─── */
+function Navbar(){
+  const[scrolled,setScrolled]=useState(false);
+  useEffect(()=>{
+    const h=()=>setScrolled(window.scrollY>60);
+    window.addEventListener("scroll",h);
+    return ()=>window.removeEventListener("scroll",h);
+  },[]);
+  return <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"0 48px",height:72,display:"flex",alignItems:"center",justifyContent:"space-between",background:scrolled?"rgba(10,10,10,0.95)":"transparent",backdropFilter:scrolled?"blur(20px)":"none",borderBottom:scrolled?`1px solid rgba(201,169,97,0.1)`:"none",transition:"all 0.4s"}}>
+    <div style={{display:"flex",alignItems:"baseline",gap:12}}>
+      <span style={{fontFamily:T.sans,fontSize:13,fontWeight:700,letterSpacing:"0.25em",color:T.gold}}>AMBASSADOR CLUB</span>
+      <span style={{fontFamily:T.serif,fontSize:12,fontStyle:"italic",color:T.dim,letterSpacing:"0.1em"}}>Best of Poland</span>
+    </div>
+    <div style={{display:"flex",alignItems:"center",gap:32}}>
+      {["O Klubie","Filary","Wydarzenia","Członkostwo","Journal","Kontakt"].map((l,i)=>{
+        return <NavLinkItem key={i} label={l} />;
+      })}
+      <button style={{background:"transparent",border:`1px solid ${T.gold}`,color:T.gold,padding:"8px 20px",fontSize:11,fontFamily:T.sans,letterSpacing:"0.15em",textTransform:"uppercase",cursor:"pointer"}}>Members Area</button>
+    </div>
+  </nav>;
+}
+function NavLinkItem({label}){
+  const[h,setH]=useState(false);
+  return <a href="#" onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
+    style={{fontFamily:T.sans,fontSize:12,fontWeight:300,letterSpacing:"0.08em",color:T.ivory,textDecoration:"none",opacity:h?1:0.7,transition:"opacity 0.2s"}}>{label}</a>;
+}
+
+/* ─── HERO ─── */
+function Hero(){
+  return <section style={{position:"relative",minHeight:"100vh",display:"flex",alignItems:"center",overflow:"hidden"}}>
+    <img src="/images/hero-palace.webp" alt="Pałac Ambassador Club" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover",objectPosition:"center 30%"}} />
+    <div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(10,10,10,0.7) 0%,rgba(10,10,10,0.3) 40%,rgba(10,10,10,0.8) 100%)"}} />
+    <div style={{position:"relative",zIndex:2,padding:"0 80px",maxWidth:800}}>
+      <div style={{fontFamily:T.sans,fontSize:11,fontWeight:400,letterSpacing:"0.4em",color:T.gold,marginBottom:32}}>EST. 2024 · WARSAW</div>
+      <h1 style={{fontFamily:T.serif,fontSize:72,fontWeight:300,color:T.ivory,lineHeight:1.05,margin:0}}>{"Where Poland's"}<br/>Finest Meet</h1>
+      <div style={{margin:"32px 0",width:60,height:1,background:T.gold}} />
+      <p style={{fontFamily:T.sans,fontSize:17,fontWeight:300,color:T.ivoryDim,lineHeight:1.7,maxWidth:520}}>Ekskluzywny klub networkingowy łączący liderów biznesu, sportu, sztuki i filantropii w jedną społeczność najwybitniejszych.</p>
+      <div style={{display:"flex",gap:16,marginTop:48}}>
+        <GoldBtn large>Aplikuj o członkostwo</GoldBtn>
+        <GhostBtn large>Odkryj więcej</GhostBtn>
+      </div>
+    </div>
+    <div style={{position:"absolute",bottom:40,left:"50%",transform:"translateX(-50%)",display:"flex",flexDirection:"column",alignItems:"center",gap:8}}>
+      <div style={{width:1,height:48,background:`linear-gradient(180deg,transparent,${T.gold})`}} />
+      <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 4L6 8L10 4" stroke={T.gold} strokeWidth="1" fill="none"/></svg>
+    </div>
+  </section>;
+}
+
+/* ─── PILLARS ─── */
+function Pillars(){
+  return <section style={{background:T.bg,padding:"120px 48px"}}>
+    <div style={{textAlign:"center",marginBottom:16}}>
+      <div style={{fontFamily:T.sans,fontSize:11,letterSpacing:"0.3em",color:T.gold,textTransform:"uppercase",marginBottom:16}}>NASZE FILARY</div>
+      <h2 style={{fontFamily:T.serif,fontSize:42,fontWeight:300,color:T.ivory,lineHeight:1.15}}>Cztery wymiary doskonałości</h2>
+    </div>
+    <div style={{marginBottom:64}}><Divider /></div>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:24,maxWidth:1200,margin:"0 auto"}}>
+      <PillarCard title="Sport" tag="◆ SPORT" desc="Wyścigi konne, polo, golf, jachting, żużel — sport gentlemanów na najwyższym poziomie." img="/images/golf.webp" />
+      <PillarCard title="Sztuka i Kultura" tag="◆ KULTURA" desc="Mecenat, kolekcjonerstwo, wernisaże, opera — dostęp do świata, który docenia piękno." img="/images/gallery-event.webp" />
+      <PillarCard title="Filantropia" tag="◆ FILANTROPIA" desc="Wspólne inicjatywy charytatywne, aukcje i projekty zmieniające otoczenie na lepsze." img="/images/amber.webp" />
+      <PillarCard title="Best of Poland" tag="◆ BEST OF POLAND" desc="Polskie marki premium, rzemiosło, kuchnia i talenty — to, co w Polsce najlepsze." img="/images/krakow.webp" />
+    </div>
+  </section>;
+}
+
+/* ─── ABOUT ─── */
+function About(){
+  return <section style={{background:T.bgAlt,padding:"120px 48px"}}>
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:80,maxWidth:1200,margin:"0 auto",alignItems:"center"}}>
+      <div>
+        <div style={{fontFamily:T.sans,fontSize:11,letterSpacing:"0.3em",color:T.gold,textTransform:"uppercase",marginBottom:16}}>O AMBASSADOR CLUB</div>
+        <h2 style={{fontFamily:T.serif,fontSize:42,fontWeight:300,color:T.ivory,lineHeight:1.15}}>Tradycja spotyka przyszłość</h2>
+        <div style={{margin:"24px 0",width:60,height:1,background:T.gold}} />
+        <p style={{fontFamily:T.sans,fontSize:16,fontWeight:300,color:T.muted,lineHeight:1.8,marginBottom:20}}>Ambassador Club to inicjatywa zrodzona z przekonania, że prawdziwy sukces mierzy się nie tylko osiągnięciami, ale również tym, jak inspirujemy innych. Łączymy polskie dziedzictwo arystokratyczne z nowoczesnym podejściem do networkingu.</p>
+        <p style={{fontFamily:T.serif,fontSize:18,fontStyle:"italic",color:T.ivoryDim,lineHeight:1.7}}>Nasze wydarzenia odbywają się w najpiękniejszych pałacach i rezydencjach Polski — od Pałacu Zamoyskich po prywatne galerie — zawsze w kameralnym gronie, zawsze z klasą.</p>
+        <div style={{display:"flex",gap:48,marginTop:48}}>
+          {[{v:"150+",l:"Członków"},{v:"48",l:"Wydarzeń rocznie"},{v:"12",l:"Miast w Polsce"}].map((s,i)=>
+            <div key={i}>
+              <div style={{fontFamily:T.serif,fontSize:36,fontWeight:300,color:T.gold}}>{s.v}</div>
+              <div style={{fontFamily:T.sans,fontSize:11,letterSpacing:"0.15em",color:T.muted,textTransform:"uppercase"}}>{s.l}</div>
+            </div>
+          )}
+        </div>
+      </div>
+      <div style={{overflow:"hidden",borderLeft:`1px solid rgba(201,169,97,0.15)`}}>
+        <img src="/images/palace-interior.webp" alt="Wnętrze pałacowe — gala Ambassador Club" style={{width:"100%",height:500,objectFit:"cover"}} loading="lazy" />
+      </div>
+    </div>
+  </section>;
+}
+
+/* ─── GOLDEN DIVIDER BANNER ─── */
+function GoldenDividerBanner(){
+  return <section style={{background:T.bg,padding:"40px 0",textAlign:"center"}}>
+    <img src="/images/golden-divider.webp" alt="" style={{width:"100%",maxWidth:600,margin:"0 auto",opacity:0.7}} loading="lazy" />
+  </section>;
+}
+
+/* ─── EVENTS ─── */
+function Events(){
+  return <section style={{background:T.bg,padding:"120px 48px"}}>
+    <div style={{textAlign:"center",marginBottom:16}}>
+      <div style={{fontFamily:T.sans,fontSize:11,letterSpacing:"0.3em",color:T.gold,textTransform:"uppercase",marginBottom:16}}>WYDARZENIA</div>
+      <h2 style={{fontFamily:T.serif,fontSize:42,fontWeight:300,color:T.ivory}}>Nadchodzące spotkania</h2>
+      <p style={{fontFamily:T.sans,fontSize:16,fontWeight:300,color:T.muted,marginTop:12}}>Szczegóły dostępne wyłącznie dla członków</p>
+    </div>
+    <div style={{marginBottom:64}}><Divider /></div>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:32,maxWidth:1000,margin:"0 auto"}}>
+      <EventCard title="Wieczór Kolekcjonerski" date="15 marca 2026" location="Pałac Zamoyskich, Warszawa" tag="Sztuka" locked />
+      <EventCard title="Wielka Gala Charytatywna" date="28 marca 2026" location="Sala Balowa, Łazienki" tag="Filantropia" locked />
+      <EventCard title="Dzień Polo & Champagne" date="12 kwietnia 2026" location="Polo Club Wrocław" tag="Sport" locked />
+    </div>
+  </section>;
+}
+
+/* ─── MEMBERSHIP ─── */
+function Membership(){
+  return <section style={{background:T.bgAlt,padding:"120px 48px"}}>
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:80,maxWidth:1200,margin:"0 auto",alignItems:"center"}}>
+      <div style={{overflow:"hidden",borderRight:`1px solid rgba(201,169,97,0.15)`}}>
+        <img src="/images/fine-dining.webp" alt="Fine dining — Ambassador Club" style={{width:"100%",height:560,objectFit:"cover"}} loading="lazy" />
+      </div>
+      <div>
+        <div style={{fontFamily:T.sans,fontSize:11,letterSpacing:"0.3em",color:T.gold,textTransform:"uppercase",marginBottom:16}}>CZŁONKOSTWO</div>
+        <h2 style={{fontFamily:T.serif,fontSize:42,fontWeight:300,color:T.ivory,lineHeight:1.15}}>Zaproszenie do wyjątkowego grona</h2>
+        <div style={{margin:"24px 0",width:60,height:1,background:T.gold}} />
+        <p style={{fontFamily:T.sans,fontSize:16,fontWeight:300,color:T.muted,lineHeight:1.8,marginBottom:36}}>Członkostwo w Ambassador Club jest dostępne wyłącznie na zaproszenie obecnego członka lub po rozpatrzeniu aplikacji przez Radę Klubu.</p>
+        <div style={{display:"flex",flexDirection:"column",gap:16}}>
+          {["Dostęp do wszystkich wydarzeń w Polsce","Prywatna strefa członkowska online","Concierge premium — rezerwacje, dostępy VIP","Networking z 150+ liderami branż","Eleganckie zaproszenia i RSVP","Galeria prywatna z wydarzeń"].map((b,i)=>
+            <div key={i} style={{display:"flex",alignItems:"center",gap:16}}>
+              <div style={{width:6,height:6,background:T.gold,transform:"rotate(45deg)",flexShrink:0}} />
+              <span style={{fontFamily:T.sans,fontSize:14,fontWeight:300,color:T.ivoryDim}}>{b}</span>
+            </div>
+          )}
+        </div>
+        <div style={{marginTop:48}}><GoldBtn large>Złóż aplikację</GoldBtn></div>
+      </div>
+    </div>
+  </section>;
+}
+
+/* ─── PRIVATE ACCESS ─── */
+function PrivateAccess(){
+  const features = [
+    {icon:"◈",title:"Dashboard osobisty",desc:"Powitanie, skróty, powiadomienia"},
+    {icon:"◆",title:"Kalendarz & RSVP",desc:"Pełne szczegóły, potwierdzenia"},
+    {icon:"◇",title:"Galeria prywatna",desc:"Zdjęcia i wideo z wydarzeń"},
+    {icon:"✧",title:"Concierge VIP",desc:"Rezerwacje i dostępy premium"},
+  ];
+  return <section style={{background:T.bg,padding:"120px 48px",position:"relative",overflow:"hidden"}}>
+    <div style={{position:"absolute",inset:0,background:`radial-gradient(ellipse at 70% 50%,rgba(92,26,27,0.12) 0%,transparent 60%)`}} />
+    <div style={{position:"relative",zIndex:2,maxWidth:1200,margin:"0 auto",textAlign:"center"}}>
+      <div style={{fontFamily:T.sans,fontSize:11,letterSpacing:"0.3em",color:T.gold,textTransform:"uppercase",marginBottom:16}}>STREFA PRYWATNA</div>
+      <h2 style={{fontFamily:T.serif,fontSize:42,fontWeight:300,color:T.ivory}}>Twój świat za zamkniętymi drzwiami</h2>
+      <p style={{fontFamily:T.sans,fontSize:16,fontWeight:300,color:T.muted,marginTop:16,maxWidth:600,margin:"16px auto 0"}}>Dashboard, kalendarz wydarzeń, galeria, katalog członków, concierge — wszystko w jednym, eleganckim panelu.</p>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:24,marginTop:64}}>
+        {features.map((f,i)=><FeatureBox key={i} icon={f.icon} title={f.title} desc={f.desc} />)}
+      </div>
+      <div style={{marginTop:48}}><GhostBtn large>Zaloguj się</GhostBtn></div>
+    </div>
+  </section>;
+}
+function FeatureBox({icon,title,desc}){
+  const[h,setH]=useState(false);
+  return <div onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
+    style={{background:h?"rgba(22,22,22,0.9)":"rgba(22,22,22,0.6)",border:`1px solid ${h?T.goldBorder:T.goldMuted}`,padding:"32px 24px",textAlign:"center",transition:"all 0.3s"}}>
+    <div style={{width:48,height:48,margin:"0 auto 16px",border:`1px solid ${T.gold}`,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:T.serif,fontSize:20,color:T.gold,background:h?"rgba(201,169,97,0.08)":"transparent",transition:"all 0.3s"}}>{icon}</div>
+    <div style={{fontFamily:T.sans,fontSize:13,fontWeight:400,color:T.ivory,letterSpacing:"0.05em"}}>{title}</div>
+    <div style={{fontFamily:T.sans,fontSize:12,fontWeight:300,color:T.dim,marginTop:6}}>{desc}</div>
+  </div>;
+}
+
+/* ─── FINAL CTA ─── */
+function FinalCta(){
+  return <section style={{position:"relative",padding:"160px 48px",textAlign:"center",overflow:"hidden"}}>
+    <img src="/images/hero-krakow.webp" alt="" style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover"}} />
+    <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at center,rgba(10,10,10,0.65) 0%,rgba(10,10,10,0.9) 100%)"}} />
+    <div style={{position:"relative",zIndex:2}}>
+      <Divider />
+      <h2 style={{fontFamily:T.serif,fontSize:52,fontWeight:300,color:T.ivory,marginTop:48}}>Dołącz do grona najwybitniejszych</h2>
+      <div style={{fontFamily:T.serif,fontSize:18,fontStyle:"italic",color:T.muted,marginTop:16}}>Membership by invitation only</div>
+      <div style={{display:"flex",gap:20,justifyContent:"center",marginTop:48}}>
+        <GoldBtn large>Aplikuj o członkostwo</GoldBtn>
+        <GhostBtn large>Zapytaj prywatnie</GhostBtn>
+      </div>
+    </div>
+  </section>;
+}
+
+/* ─── FOOTER ─── */
+function Footer(){
+  return <footer style={{background:"#060606",padding:"80px 48px 40px"}}>
+    <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:64,maxWidth:1200,margin:"0 auto"}}>
+      <div>
+        <div style={{fontFamily:T.sans,fontSize:12,fontWeight:700,letterSpacing:"0.25em",color:T.gold,marginBottom:12}}>AMBASSADOR CLUB</div>
+        <div style={{fontFamily:T.serif,fontSize:15,fontStyle:"italic",color:T.dim,marginBottom:20}}>Where Poland's Finest Meet</div>
+        <div style={{fontFamily:T.sans,fontSize:11,color:T.dim,letterSpacing:"0.1em"}}>BEST OF POLAND</div>
+      </div>
+      <div>
+        <div style={{fontFamily:T.sans,fontSize:11,fontWeight:700,letterSpacing:"0.15em",color:T.ivory,textTransform:"uppercase",marginBottom:24}}>Klub</div>
+        {["O nas","Filary","Rada Honorowa","Journal"].map((l,i)=><a key={i} href="#" style={{display:"block",fontFamily:T.sans,fontSize:13,color:T.muted,textDecoration:"none",marginBottom:12,fontWeight:300}}>{l}</a>)}
+      </div>
+      <div>
+        <div style={{fontFamily:T.sans,fontSize:11,fontWeight:700,letterSpacing:"0.15em",color:T.ivory,textTransform:"uppercase",marginBottom:24}}>Członkostwo</div>
+        {["Korzyści","Proces aplikacyjny","FAQ","Kontakt"].map((l,i)=><a key={i} href="#" style={{display:"block",fontFamily:T.sans,fontSize:13,color:T.muted,textDecoration:"none",marginBottom:12,fontWeight:300}}>{l}</a>)}
+      </div>
+      <div>
+        <div style={{fontFamily:T.sans,fontSize:11,fontWeight:700,letterSpacing:"0.15em",color:T.ivory,textTransform:"uppercase",marginBottom:24}}>Kontakt</div>
+        <div style={{fontFamily:T.sans,fontSize:13,color:T.muted,fontWeight:300,lineHeight:2}}>ul. Foksal 3/5<br/>00-366 Warszawa<br/><span style={{color:T.gold}}>concierge@ambassadorclub.pl</span></div>
+      </div>
+    </div>
+    <div style={{marginTop:64,paddingTop:24,borderTop:`1px solid rgba(201,169,97,0.06)`,textAlign:"center"}}>
+      <span style={{fontFamily:T.sans,fontSize:11,color:T.ghost}}>© 2026 Ambassador Club · Best of Poland. Wszelkie prawa zastrzeżone.</span>
+    </div>
+  </footer>;
+}
+
+/* ─── MAIN PAGE ─── */
+export default function HomePage(){
+  return (
+    <main>
+      <Navbar />
+      <Hero />
+      <Pillars />
+      <About />
+      <GoldenDividerBanner />
+      <Events />
+      <Membership />
+      <PrivateAccess />
+      <FinalCta />
+      <Footer />
+    </main>
+  );
+}
