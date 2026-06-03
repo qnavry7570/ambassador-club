@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useBreakpoint } from '@/lib/useBreakpoint';
 
 export const T = {
   gold:"#C9A961",goldLight:"#D4B87A",goldDark:"#A8883F",
@@ -40,8 +41,11 @@ export function Eyebrow({children,center=true}){
 }
 
 export function Heading({children,size="lg",center=true}){
-  const s={hero:72,xl:52,lg:42,md:32,sm:24};
-  return <h2 style={{fontFamily:T.serif,fontSize:s[size],fontWeight:300,color:T.ivory,textAlign:center?"center":"left",lineHeight:1.15,margin:0,whiteSpace:"pre-line"}}>{children}</h2>;
+  const {isMobile} = useBreakpoint();
+  const desk={hero:72,xl:52,lg:42,md:32,sm:24};
+  const mob={hero:40,xl:34,lg:28,md:22,sm:18};
+  const s = isMobile ? mob : desk;
+  return <h2 style={{fontFamily:T.serif,fontSize:s[size],fontWeight:300,color:T.ivory,textAlign:center?"center":"left",lineHeight:1.2,margin:0,whiteSpace:"pre-line"}}>{children}</h2>;
 }
 
 export function Body({children,center=false,muted=false,italic=false,sz=16}){
@@ -91,7 +95,20 @@ export function FeatureBox({icon,title,desc}){
 }
 
 export function Section({children,bg,padding="120px 48px",id}){
-  return <section id={id} style={{background:bg||T.bg,padding,position:"relative",overflow:"hidden"}}>{children}</section>;
+  const {isMobile,isTablet} = useBreakpoint();
+  let p = padding;
+  if(isMobile){
+    const parts = padding.split(' ');
+    const sv = v => Math.round(Math.min(parseInt(v),140)*0.5)+'px';
+    if(parts.length===2) p=`${sv(parts[0])} 20px`;
+    else if(parts.length===3) p=`${sv(parts[0])} 20px ${sv(parts[2])}`;
+    else p='60px 20px';
+  } else if(isTablet){
+    const parts = padding.split(' ');
+    if(parts.length===2) p=`${parts[0]} 32px`;
+    else if(parts.length===3) p=`${parts[0]} 32px ${parts[2]}`;
+  }
+  return <section id={id} style={{background:bg||T.bg,padding:p,position:"relative",overflow:"hidden"}}>{children}</section>;
 }
 
 export function Container({children,maxWidth=1200}){
