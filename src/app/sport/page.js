@@ -9,6 +9,7 @@ export default function SportPage() {
     { name: "Jeździectwo", desc: "Skoki przez przeszkody, ujeżdżanie i wyścigi konne na najpiękniejszych torach Polski.", img: "/images/equestrian.webp" },
     { name: "Golf", desc: "Turnieje i rundy na prestiżowych polach golfowych — od Modrego Lasu po klub w Rajszewie.", img: "/images/golf-manor.webp" },
     { name: "Żeglarstwo", desc: "Regaty na Mazurach i Bałtyku. Żeglarstwo jako metafora wolności i precyzji.", img: "/images/regaty.webp" },
+    { name: "Żużel", desc: "Polska Liga Żużlowa na żywo z lóż VIP — adrenalina i tradycja w najczystszej postaci.", img: "/images/zuzel.webp" },
   ];
 
   return (
@@ -36,9 +37,9 @@ export default function SportPage() {
       <Section>
         <Container>
           <Eyebrow>DYSCYPLINY</Eyebrow>
-          <Heading size="md">Trzy filary sportu klubowego</Heading>
+          <Heading size="md">Cztery filary sportu klubowego</Heading>
           <div style={{ marginTop: 16, marginBottom: 56 }}><Divider /></div>
-          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3,1fr)", gap: isMobile ? 24 : 32 }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: isMobile ? 16 : 24 }}>
             {dyscypliny.map((d, i) => (
               <div key={i} style={{ background: T.bgCard, border: `1px solid ${T.border}`, overflow: "hidden" }}>
                 <div style={{ height: 220, overflow: "hidden" }}>
@@ -68,6 +69,27 @@ export default function SportPage() {
             </div>
             <div>
               <img src="/images/golf-manor.webp" alt="Golf przy dworku" style={{ width: "100%", height: isMobile ? 260 : 420, objectFit: "cover" }} loading="lazy" />
+            </div>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Żużel — split */}
+      <Section>
+        <Container>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 80, alignItems: "center" }}>
+            <div>
+              <img src="/images/zuzel.webp" alt="Żużel — loża VIP" style={{ width: "100%", height: isMobile ? 260 : 420, objectFit: "cover", objectPosition: "center 40%" }} loading="lazy" />
+            </div>
+            <div>
+              <Eyebrow center={false}>ŻUŻEL</Eyebrow>
+              <Heading center={false} size="md">Polska tradycja w najczystszej postaci</Heading>
+              <div style={{ margin: "20px 0" }}><GoldLine /></div>
+              <Body>Żużel to jeden z najbardziej polskich sportów świata — głośny, szybki i pełen pasji. Ambassador Club oferuje dostęp do lóż VIP na meczach Polskiej Ligi Żużlowej, gdzie adrenalina łączy się z elegancją.</Body>
+              <div style={{ marginTop: 16 }}>
+                <Body italic sz={17}>Polska dominuje światowy żużel od dekad — jesteśmy tego częścią.</Body>
+              </div>
+              <div style={{ marginTop: 32 }}><GoldBtn href="/membership">Zarezerwuj lożę VIP</GoldBtn></div>
             </div>
           </div>
         </Container>
