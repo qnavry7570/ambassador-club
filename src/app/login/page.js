@@ -71,9 +71,8 @@ export default function LoginPage() {
               <a href="/membership" style={{ fontFamily: T.sans, fontSize: 13, color: T.gold, textDecoration: "none" }}>Aplikuj o członkostwo →</a>
             </div>
           </div>
-          <div style={{ marginTop: 32, padding: "14px 16px", background: "rgba(201,169,97,0.06)", border: `1px solid rgba(201,169,97,0.15)`, display: "flex", alignItems: "flex-start", gap: 10 }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.gold, flexShrink: 0, marginTop: 4 }} />
-            <span style={{ fontFamily: T.sans, fontSize: 12, color: T.gold, fontWeight: 300 }}>Tryb demo — kliknij „Zaloguj się" aby zobaczyć panel</span>
+          <div style={{ marginTop: 32, paddingTop: 24, borderTop: `1px solid ${T.border}`, textAlign: "center" }}>
+            <span style={{ fontFamily: T.serif, fontSize: 13, fontStyle: "italic", color: T.dim }}>Dostęp wyłącznie dla członków Ambassador Club</span>
           </div>
         </div>
       </div>
@@ -145,9 +144,8 @@ export default function LoginPage() {
                 <a href="/membership" style={{ fontFamily: T.sans, fontSize: 12, color: T.gold, textDecoration: "none", letterSpacing: "0.04em" }}>Aplikuj o członkostwo →</a>
               </div>
             </div>
-            <div style={{ marginTop: 40, padding: "14px 20px", background: "rgba(201,169,97,0.06)", border: `1px solid rgba(201,169,97,0.15)`, display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: T.gold, flexShrink: 0 }} />
-              <span style={{ fontFamily: T.sans, fontSize: 12, color: T.gold, fontWeight: 300 }}>Tryb demo — kliknij „Zaloguj się" aby zobaczyć panel</span>
+            <div style={{ marginTop: 40, paddingTop: 28, borderTop: `1px solid ${T.border}`, textAlign: "center" }}>
+              <span style={{ fontFamily: T.serif, fontSize: 13, fontStyle: "italic", color: T.dim }}>Dostęp wyłącznie dla członków Ambassador Club</span>
             </div>
           </div>
         </div>
