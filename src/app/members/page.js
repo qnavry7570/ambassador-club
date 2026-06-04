@@ -119,19 +119,25 @@ function EventRow({ ev, isMobile }) {
   const [h, setH] = useState(false);
   return (
     <div onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-      style={{ padding: isMobile ? "16px" : "20px 24px", borderBottom: `1px solid ${T.border}`, borderLeft: `3px solid ${h ? T.gold : "transparent"}`, transition: "all 0.2s" }}>
-      <div style={{ display: "flex", alignItems: isMobile ? "flex-start" : "center", justifyContent: "space-between", flexDirection: isMobile ? "column" : "row", gap: isMobile ? 12 : 0 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ textAlign: "center", minWidth: 44 }}>
-            <div style={{ fontFamily: T.serif, fontSize: isMobile ? 20 : 24, fontWeight: 300, color: T.gold, lineHeight: 1 }}>{ev.day}</div>
-            <div style={{ fontFamily: T.sans, fontSize: 10, color: T.dim, textTransform: "uppercase" }}>{ev.month}</div>
+      style={{ padding: isMobile ? "12px 16px" : "16px 24px", borderBottom: `1px solid ${T.border}`, borderLeft: `3px solid ${h ? T.gold : "transparent"}`, transition: "all 0.2s" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: isMobile ? "wrap" : "nowrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, minWidth: 0 }}>
+          {/* Miniaturka */}
+          {ev.img && !isMobile && (
+            <div style={{ width: 52, height: 52, overflow: "hidden", flexShrink: 0, lineHeight: 0 }}>
+              <img src={ev.img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} loading="lazy" />
+            </div>
+          )}
+          <div style={{ textAlign: "center", minWidth: 40, flexShrink: 0 }}>
+            <div style={{ fontFamily: T.serif, fontSize: isMobile ? 20 : 22, fontWeight: 300, color: T.gold, lineHeight: 1 }}>{ev.day}</div>
+            <div style={{ fontFamily: T.sans, fontSize: 9, color: T.dim, textTransform: "uppercase" }}>{ev.month}</div>
           </div>
-          <div>
-            <div style={{ fontFamily: T.serif, fontSize: isMobile ? 16 : 18, color: T.ivory }}>{ev.title}</div>
-            <div style={{ fontFamily: T.sans, fontSize: 12, color: T.dim, marginTop: 2 }}>{ev.loc}</div>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontFamily: T.serif, fontSize: isMobile ? 15 : 17, color: T.ivory }}>{ev.title}</div>
+            <div style={{ fontFamily: T.sans, fontSize: 11, color: T.dim, marginTop: 2 }}>{ev.loc}</div>
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, paddingLeft: isMobile ? 60 : 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
           <Badge v={ev.tagColor}>{ev.tag}</Badge>
           <RsvpBtn init={ev.rsvp} />
         </div>
@@ -217,10 +223,19 @@ function DashboardView({ isMobile, onMenuClick }) {
     <>
       <TopBar title="Dashboard" subtitle="Witaj, Aleksandrze" isMobile={isMobile} onMenuClick={onMenuClick} />
       <div style={{ padding: isMobile ? "16px" : "32px" }}>
-        {/* Powitanie */}
-        <div style={{ background: "linear-gradient(135deg,rgba(201,169,97,0.06),rgba(92,26,27,0.06))", border: `1px solid ${T.goldBorder}`, padding: isMobile ? "20px" : "28px 36px", marginBottom: 24 }}>
-          <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 20 : 28, fontWeight: 300, color: T.ivory, margin: "0 0 8px" }}>Dzień dobry, Aleksandrze</h2>
-          <p style={{ fontFamily: T.sans, fontSize: 13, color: T.muted, fontWeight: 300, margin: 0 }}>Masz <span style={{ color: T.gold, fontWeight: 700 }}>3 nadchodzące wydarzenia</span> i <span style={{ color: T.gold, fontWeight: 700 }}>1 nowe powiadomienie</span>.</p>
+        {/* Baner powitalny — Warszawa */}
+        <div style={{ position: "relative", height: isMobile ? 140 : 200, overflow: "hidden", marginBottom: 24, lineHeight: 0, fontSize: 0 }}>
+          <img src="/images/warsaw-aerial.webp" alt="Warszawa" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 60%", display: "block" }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, rgba(8,8,8,0.85) 0%, rgba(8,8,8,0.4) 60%, rgba(8,8,8,0.65) 100%)" }} />
+          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", padding: isMobile ? "0 20px" : "0 36px" }}>
+            <div>
+              <div style={{ fontFamily: T.sans, fontSize: 10, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 8 }}>Strefa Członkowska</div>
+              <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 22 : 32, fontWeight: 300, color: T.ivory, margin: "0 0 6px" }}>Dzień dobry, Aleksandrze</h2>
+              <p style={{ fontFamily: T.sans, fontSize: isMobile ? 12 : 13, color: "rgba(245,241,232,0.65)", fontWeight: 300, margin: 0 }}>
+                Masz <span style={{ color: T.gold, fontWeight: 700 }}>3 nadchodzące wydarzenia</span> i <span style={{ color: T.gold, fontWeight: 700 }}>1 nowe powiadomienie</span>.
+              </p>
+            </div>
+          </div>
         </div>
         {/* Stats */}
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: isMobile ? 10 : 16, marginBottom: 24 }}>
@@ -267,10 +282,10 @@ function DashboardView({ isMobile, onMenuClick }) {
 /* ─── EVENTS VIEW ─── */
 function EventsView({ isMobile, onMenuClick }) {
   const events = [
-    { title: "Wieczór Kolekcjonerski", day: "15", month: "mar", loc: "Pałac Zamoyskich · 19:00 · Black tie", tag: "Sztuka", tagColor: "gold", rsvp: true },
-    { title: "Wielka Gala Charytatywna", day: "28", month: "mar", loc: "Łazienki · 18:30 · White tie", tag: "Filantropia", tagColor: "red", rsvp: false },
-    { title: "Dzień Polo & Champagne", day: "12", month: "kwi", loc: "Polo Club Wrocław · 11:00 · Smart casual", tag: "Sport", tagColor: "blue", rsvp: false },
-    { title: "Degustacja Win", day: "25", month: "kwi", loc: "Piwnice Biskupie · 20:00 · Business casual", tag: "Best of Poland", tagColor: "outline", rsvp: false },
+    { title: "Wieczór Kolekcjonerski", day: "15", month: "mar", loc: "Pałac Zamoyskich · 19:00 · Black tie", tag: "Sztuka", tagColor: "gold", rsvp: true, img: "/images/vernissage.webp" },
+    { title: "Wielka Gala Charytatywna", day: "28", month: "mar", loc: "Łazienki · 18:30 · White tie", tag: "Filantropia", tagColor: "red", rsvp: false, img: "/images/charity-gala.webp" },
+    { title: "Dzień Polo & Champagne", day: "12", month: "kwi", loc: "Polo Club Wrocław · 11:00 · Smart casual", tag: "Sport", tagColor: "blue", rsvp: false, img: "/images/equestrian.webp" },
+    { title: "Degustacja Win", day: "25", month: "kwi", loc: "Piwnice Biskupie · 20:00 · Business casual", tag: "Best of Poland", tagColor: "outline", rsvp: false, img: "/images/fine-dining.webp" },
   ];
   return (
     <>
@@ -454,8 +469,14 @@ export default function MembersArea() {
       )}
 
       {/* Main content */}
-      <main style={{ flex: 1, marginLeft: isMobile ? 0 : 240, minHeight: "100vh", paddingBottom: isMobile ? 72 : 0 }}>
-        <View isMobile={isMobile} onMenuClick={() => setDrawerOpen(true)} />
+      <main style={{ flex: 1, marginLeft: isMobile ? 0 : 240, minHeight: "100vh", paddingBottom: isMobile ? 72 : 0, position: "relative" }}>
+        {/* Tło — złoty wzór geometryczny */}
+        <div style={{ position: "fixed", inset: 0, marginLeft: isMobile ? 0 : 240, zIndex: 0, pointerEvents: "none" }}>
+          <img src="/images/members-pattern.webp" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.035, display: "block" }} />
+        </div>
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <View isMobile={isMobile} onMenuClick={() => setDrawerOpen(true)} />
+        </div>
       </main>
 
       {/* Mobile bottom nav */}

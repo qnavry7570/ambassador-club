@@ -38,7 +38,7 @@ export default function AboutPage() {
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 80, alignItems: "center" }}>
             {!isMobile && (
               <div style={{ overflow: "hidden", height: 500, lineHeight: 0, fontSize: 0 }}>
-                <img src="/images/networking.webp" alt="Networking Ambassador Club" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                <img src="/images/about-interior.webp" alt="Wnętrze Ambassador Club" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%", display: "block" }} />
               </div>
             )}
             <FadeIn dir={isMobile ? "up" : "right"}>
