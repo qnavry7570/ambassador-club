@@ -222,21 +222,19 @@ function DashboardView({ isMobile, onMenuClick }) {
   return (
     <>
       <TopBar title="Dashboard" isMobile={isMobile} onMenuClick={onMenuClick} />
-      {/* Baner powitalny — Warszawa, bez paddingu = flush pod TopBar */}
-      <div style={{ position: "relative", height: isMobile ? 140 : 200, overflow: "hidden", lineHeight: 0, fontSize: 0 }}>
-        <img src="/images/warsaw-aerial.webp" alt="Warszawa" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 60%", display: "block" }} />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, rgba(8,8,8,0.85) 0%, rgba(8,8,8,0.4) 60%, rgba(8,8,8,0.65) 100%)" }} />
-        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", padding: isMobile ? "0 20px" : "0 36px" }}>
-          <div>
-            <div style={{ fontFamily: T.sans, fontSize: 10, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 8 }}>Strefa Członkowska</div>
-            <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 22 : 32, fontWeight: 300, color: T.ivory, margin: "0 0 6px" }}>Dzień dobry, Aleksandrze</h2>
-            <p style={{ fontFamily: T.sans, fontSize: isMobile ? 12 : 13, color: "rgba(245,241,232,0.65)", fontWeight: 300, margin: 0 }}>
-              Masz <span style={{ color: T.gold, fontWeight: 700 }}>3 nadchodzące wydarzenia</span> i <span style={{ color: T.gold, fontWeight: 700 }}>1 nowe powiadomienie</span>.
-            </p>
-          </div>
-        </div>
+      {/* Baner — czyste zdjęcie Warszawy, bez tekstu */}
+      <div style={{ height: isMobile ? 120 : 160, overflow: "hidden", lineHeight: 0, fontSize: 0 }}>
+        <img src="/images/warsaw-aerial.webp" alt="Warszawa" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 55%", display: "block" }} />
       </div>
-      <div style={{ padding: isMobile ? "16px" : "32px" }}>
+      <div style={{ padding: isMobile ? "16px" : "28px 32px 32px" }}>
+        {/* Powitanie */}
+        <div style={{ marginBottom: 20, paddingBottom: 20, borderBottom: `1px solid ${T.border}` }}>
+          <div style={{ fontFamily: T.sans, fontSize: 9, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 6 }}>Strefa Członkowska</div>
+          <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 20 : 26, fontWeight: 300, color: T.ivory, margin: "0 0 6px" }}>Dzień dobry, Aleksandrze</h2>
+          <p style={{ fontFamily: T.sans, fontSize: 13, color: T.muted, fontWeight: 300, margin: 0 }}>
+            Masz <span style={{ color: T.gold, fontWeight: 700 }}>3 nadchodzące wydarzenia</span> i <span style={{ color: T.gold, fontWeight: 700 }}>1 nowe powiadomienie</span>.
+          </p>
+        </div>
         {/* Stats */}
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: isMobile ? 10 : 16, marginBottom: 24 }}>
           {stats.map((s, i) => (
