@@ -83,9 +83,9 @@ export default function HomePage() {
             </div>
           </FadeIn>
           {!isMobile && (
-            <FadeIn dir="right">
-              <div style={{ borderLeft: "1px solid rgba(201,169,97,0.15)", overflow: "hidden", background: T.bgAlt, lineHeight: 0 }}>
-                <img src="/images/ballroom.webp" alt="Sala balowa Ambassador Club" style={{ width: "100%", height: 500, objectFit: "cover", display: "block" }} loading="lazy" />
+            <FadeIn dir="right" style={{ background: T.bgAlt }}>
+              <div style={{ borderLeft: "1px solid rgba(201,169,97,0.15)", overflow: "hidden", background: T.bgAlt, lineHeight: 0, fontSize: 0 }}>
+                <img src="/images/ballroom.webp" alt="Sala balowa Ambassador Club" style={{ width: "100%", height: 500, objectFit: "cover", objectPosition: "center", display: "block", verticalAlign: "bottom" }} loading="lazy" />
               </div>
             </FadeIn>
           )}
@@ -96,8 +96,20 @@ export default function HomePage() {
       </section>
 
       {/* Golden Divider */}
-      <section style={{ background: T.bg, padding: "40px 0", textAlign: "center", lineHeight: 0 }}>
-        <img src="/images/golden-divider.webp" alt="" style={{ width: "100%", maxWidth: 600, margin: "0 auto", opacity: 0.7, display: "block" }} loading="lazy" />
+      <section style={{ background: T.bg, padding: "48px 0" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0, maxWidth: 700, margin: "0 auto", padding: "0 48px" }}>
+          <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, rgba(201,169,97,0.35))` }} />
+          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "0 24px" }}>
+            <div style={{ width: 4, height: 4, background: T.gold, transform: "rotate(45deg)", opacity: 0.5 }} />
+            <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+              <path d="M22 2L26 16L40 18L30 28L33 42L22 35L11 42L14 28L4 18L18 16Z" stroke={T.gold} strokeWidth="0.8" fill="none" opacity="0.7"/>
+              <path d="M22 8L25 18L35 19.5L28 26L30 36L22 31.5L14 36L16 26L9 19.5L19 18Z" fill={T.gold} opacity="0.15"/>
+              <circle cx="22" cy="22" r="4" fill={T.gold} opacity="0.4"/>
+            </svg>
+            <div style={{ width: 4, height: 4, background: T.gold, transform: "rotate(45deg)", opacity: 0.5 }} />
+          </div>
+          <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, rgba(201,169,97,0.35), transparent)` }} />
+        </div>
       </section>
 
       {/* ── EVENTS — tło video szampan ── */}
@@ -134,9 +146,9 @@ export default function HomePage() {
       <section style={{ background: T.bgAlt, padding: sectionPad }}>
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 80, maxWidth: 1200, margin: "0 auto", alignItems: "center" }}>
           {!isMobile && (
-            <FadeIn dir="left">
-              <div style={{ borderRight: "1px solid rgba(201,169,97,0.15)", overflow: "hidden", background: T.bgAlt, lineHeight: 0 }}>
-                <img src="/images/fine-dining.webp" alt="Fine dining" style={{ width: "100%", height: 560, objectFit: "cover", display: "block" }} loading="lazy" />
+            <FadeIn dir="left" style={{ background: T.bgAlt }}>
+              <div style={{ borderRight: "1px solid rgba(201,169,97,0.15)", overflow: "hidden", background: T.bgAlt, lineHeight: 0, fontSize: 0 }}>
+                <img src="/images/fine-dining.webp" alt="Fine dining" style={{ width: "100%", height: 560, objectFit: "cover", objectPosition: "center", display: "block", verticalAlign: "bottom" }} loading="lazy" />
               </div>
             </FadeIn>
           )}
