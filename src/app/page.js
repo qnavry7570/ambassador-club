@@ -1,7 +1,7 @@
 'use client';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { T, GoldBtn, GhostBtn, Divider, PillarCard, EventCard, FeatureBox } from '@/components/ui';
+import { T, GoldBtn, GhostBtn, Divider, PillarCard, EventCard, FeatureBox, FadeIn } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
 
 function Hero() {
@@ -43,45 +43,51 @@ export default function HomePage() {
 
       {/* Pillars */}
       <section style={{ background: T.bg, padding: sectionPad }}>
-        <div style={{ textAlign: "center", marginBottom: 16 }}>
-          <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>NASZE FILARY</div>
-          <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 42, fontWeight: 300, color: T.ivory }}>Cztery wymiary doskonałości</h2>
-        </div>
-        <div style={{ marginBottom: isMobile ? 40 : 64 }}><Divider /></div>
+        <FadeIn>
+          <div style={{ textAlign: "center", marginBottom: 16 }}>
+            <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>NASZE FILARY</div>
+            <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 42, fontWeight: 300, color: T.ivory }}>Cztery wymiary doskonałości</h2>
+          </div>
+          <div style={{ marginBottom: isMobile ? 40 : 64 }}><Divider /></div>
+        </FadeIn>
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: isMobile ? 16 : 24, maxWidth: 1200, margin: "0 auto" }}>
-          <PillarCard title="Sport" tag="SPORT" desc="Wyścigi konne, polo, golf, jachting — sport gentlemanów." img="/images/equestrian.webp" href="/sport" />
-          <PillarCard title="Sztuka i Kultura" tag="KULTURA" desc="Mecenat, kolekcjonerstwo, wernisaże, opera." img="/images/vernissage.webp" href="/culture" />
-          <PillarCard title="Filantropia" tag="FILANTROPIA" desc="Aukcje charytatywne i wspólne inicjatywy." img="/images/charity-gala.webp" href="/philanthropy" />
-          <PillarCard title="Best of Poland" tag="BEST OF POLAND" desc="Polskie marki premium, rzemiosło, talenty." img="/images/amber-jewelry.webp" href="/bestofpoland" />
+          <FadeIn delay={0}><PillarCard title="Sport" tag="SPORT" desc="Wyścigi konne, polo, golf, jachting — sport gentlemanów." img="/images/equestrian.webp" href="/sport" /></FadeIn>
+          <FadeIn delay={80}><PillarCard title="Sztuka i Kultura" tag="KULTURA" desc="Mecenat, kolekcjonerstwo, wernisaże, opera." img="/images/vernissage.webp" href="/culture" /></FadeIn>
+          <FadeIn delay={160}><PillarCard title="Filantropia" tag="FILANTROPIA" desc="Aukcje charytatywne i wspólne inicjatywy." img="/images/charity-gala.webp" href="/philanthropy" /></FadeIn>
+          <FadeIn delay={240}><PillarCard title="Best of Poland" tag="BEST OF POLAND" desc="Polskie marki premium, rzemiosło, talenty." img="/images/amber-jewelry.webp" href="/bestofpoland" /></FadeIn>
         </div>
       </section>
 
       {/* About */}
       <section style={{ background: T.bgAlt, padding: sectionPad }}>
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 80, maxWidth: 1200, margin: "0 auto", alignItems: "center" }}>
-          <div>
-            <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>O AMBASSADOR CLUB</div>
-            <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 42, fontWeight: 300, color: T.ivory, lineHeight: 1.15 }}>Tradycja spotyka przyszłość</h2>
-            <div style={{ margin: "24px 0", width: 60, height: 1, background: T.gold }} />
-            <p style={{ fontFamily: T.sans, fontSize: 16, fontWeight: 300, color: T.muted, lineHeight: 1.8, marginBottom: 20 }}>
-              Ambassador Club to inicjatywa zrodzona z przekonania, że prawdziwy sukces mierzy się nie tylko osiągnięciami, ale również tym, jak inspirujemy innych.
-            </p>
-            <p style={{ fontFamily: T.serif, fontSize: 18, fontStyle: "italic", color: T.ivoryDim, lineHeight: 1.7 }}>
-              Nasze wydarzenia odbywają się w najpiękniejszych pałacach i rezydencjach Polski.
-            </p>
-            <div style={{ display: "flex", gap: isMobile ? 24 : 48, marginTop: isMobile ? 32 : 48, flexWrap: "wrap" }}>
-              {[{ v: "150+", l: "Członków" }, { v: "48", l: "Wydarzeń rocznie" }, { v: "12", l: "Miast w Polsce" }].map((s, i) => (
-                <div key={i}>
-                  <div style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 36, fontWeight: 300, color: T.gold }}>{s.v}</div>
-                  <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.15em", color: T.muted, textTransform: "uppercase" }}>{s.l}</div>
-                </div>
-              ))}
+          <FadeIn dir="left">
+            <div>
+              <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>O AMBASSADOR CLUB</div>
+              <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 42, fontWeight: 300, color: T.ivory, lineHeight: 1.15 }}>Tradycja spotyka przyszłość</h2>
+              <div style={{ margin: "24px 0", width: 60, height: 1, background: T.gold }} />
+              <p style={{ fontFamily: T.sans, fontSize: 16, fontWeight: 300, color: T.muted, lineHeight: 1.8, marginBottom: 20 }}>
+                Ambassador Club to inicjatywa zrodzona z przekonania, że prawdziwy sukces mierzy się nie tylko osiągnięciami, ale również tym, jak inspirujemy innych.
+              </p>
+              <p style={{ fontFamily: T.serif, fontSize: 18, fontStyle: "italic", color: T.ivoryDim, lineHeight: 1.7 }}>
+                Nasze wydarzenia odbywają się w najpiękniejszych pałacach i rezydencjach Polski.
+              </p>
+              <div style={{ display: "flex", gap: isMobile ? 24 : 48, marginTop: isMobile ? 32 : 48, flexWrap: "wrap" }}>
+                {[{ v: "150+", l: "Członków" }, { v: "48", l: "Wydarzeń rocznie" }, { v: "12", l: "Miast w Polsce" }].map((s, i) => (
+                  <div key={i}>
+                    <div style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 36, fontWeight: 300, color: T.gold }}>{s.v}</div>
+                    <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.15em", color: T.muted, textTransform: "uppercase" }}>{s.l}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          </FadeIn>
           {!isMobile && (
-            <div style={{ borderLeft: "1px solid rgba(201,169,97,0.15)" }}>
-              <img src="/images/ballroom.webp" alt="Sala balowa Ambassador Club" style={{ width: "100%", height: 500, objectFit: "cover" }} loading="lazy" />
-            </div>
+            <FadeIn dir="right">
+              <div style={{ borderLeft: "1px solid rgba(201,169,97,0.15)" }}>
+                <img src="/images/ballroom.webp" alt="Sala balowa Ambassador Club" style={{ width: "100%", height: 500, objectFit: "cover" }} loading="lazy" />
+              </div>
+            </FadeIn>
           )}
           {isMobile && (
             <img src="/images/ballroom.webp" alt="Sala balowa Ambassador Club" style={{ width: "100%", height: 260, objectFit: "cover" }} loading="lazy" />
@@ -108,16 +114,18 @@ export default function HomePage() {
         <div style={{ position: "absolute", inset: 0, background: "rgba(8,8,8,0.82)" }} />
 
         <div style={{ position: "relative", zIndex: 2 }}>
-          <div style={{ textAlign: "center", marginBottom: 16 }}>
-            <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>WYDARZENIA</div>
-            <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 42, fontWeight: 300, color: T.ivory }}>Nadchodzące spotkania</h2>
-            <p style={{ fontFamily: T.sans, fontSize: 16, fontWeight: 300, color: T.muted, marginTop: 12 }}>Szczegóły dostępne wyłącznie dla członków</p>
-          </div>
-          <div style={{ marginBottom: isMobile ? 40 : 64 }}><Divider /></div>
+          <FadeIn>
+            <div style={{ textAlign: "center", marginBottom: 16 }}>
+              <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>WYDARZENIA</div>
+              <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 42, fontWeight: 300, color: T.ivory }}>Nadchodzące spotkania</h2>
+              <p style={{ fontFamily: T.sans, fontSize: 16, fontWeight: 300, color: T.muted, marginTop: 12 }}>Szczegóły dostępne wyłącznie dla członków</p>
+            </div>
+            <div style={{ marginBottom: isMobile ? 40 : 64 }}><Divider /></div>
+          </FadeIn>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : isTablet ? "1fr 1fr" : "repeat(3,1fr)", gap: isMobile ? 16 : 32, maxWidth: 1000, margin: "0 auto" }}>
-            <EventCard title="Wieczór Kolekcjonerski" date="15 marca 2026" location="Pałac Zamoyskich, Warszawa" tag="Sztuka" />
-            <EventCard title="Wielka Gala Charytatywna" date="28 marca 2026" location="Sala Balowa, Łazienki" tag="Filantropia" />
-            <EventCard title="Dzień Polo & Champagne" date="12 kwietnia 2026" location="Polo Club Wrocław" tag="Sport" />
+            <FadeIn delay={0}><EventCard title="Wieczór Kolekcjonerski" date="15 marca 2026" location="Pałac Zamoyskich, Warszawa" tag="Sztuka" /></FadeIn>
+            <FadeIn delay={100}><EventCard title="Wielka Gala Charytatywna" date="28 marca 2026" location="Sala Balowa, Łazienki" tag="Filantropia" /></FadeIn>
+            <FadeIn delay={200}><EventCard title="Dzień Polo & Champagne" date="12 kwietnia 2026" location="Polo Club Wrocław" tag="Sport" /></FadeIn>
           </div>
         </div>
       </section>
@@ -126,27 +134,31 @@ export default function HomePage() {
       <section style={{ background: T.bgAlt, padding: sectionPad }}>
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 80, maxWidth: 1200, margin: "0 auto", alignItems: "center" }}>
           {!isMobile && (
-            <div style={{ borderRight: "1px solid rgba(201,169,97,0.15)" }}>
-              <img src="/images/fine-dining.webp" alt="Fine dining" style={{ width: "100%", height: 560, objectFit: "cover" }} loading="lazy" />
-            </div>
+            <FadeIn dir="left">
+              <div style={{ borderRight: "1px solid rgba(201,169,97,0.15)" }}>
+                <img src="/images/fine-dining.webp" alt="Fine dining" style={{ width: "100%", height: 560, objectFit: "cover" }} loading="lazy" />
+              </div>
+            </FadeIn>
           )}
-          <div>
-            <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>CZŁONKOSTWO</div>
-            <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 42, fontWeight: 300, color: T.ivory, lineHeight: 1.15 }}>Zaproszenie do wyjątkowego grona</h2>
-            <div style={{ margin: "24px 0", width: 60, height: 1, background: T.gold }} />
-            <p style={{ fontFamily: T.sans, fontSize: 16, fontWeight: 300, color: T.muted, lineHeight: 1.8, marginBottom: 36 }}>
-              Członkostwo dostępne wyłącznie na zaproszenie lub po rozpatrzeniu aplikacji przez Radę Klubu.
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {["Dostęp do wszystkich wydarzeń", "Prywatna strefa członkowska", "Concierge premium — VIP", "Networking z 150+ liderami", "Eleganckie zaproszenia i RSVP", "Galeria prywatna z wydarzeń"].map((b, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                  <div style={{ width: 6, height: 6, background: T.gold, transform: "rotate(45deg)", flexShrink: 0 }} />
-                  <span style={{ fontFamily: T.sans, fontSize: 14, fontWeight: 300, color: T.ivoryDim }}>{b}</span>
-                </div>
-              ))}
+          <FadeIn dir="right">
+            <div>
+              <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>CZŁONKOSTWO</div>
+              <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 42, fontWeight: 300, color: T.ivory, lineHeight: 1.15 }}>Zaproszenie do wyjątkowego grona</h2>
+              <div style={{ margin: "24px 0", width: 60, height: 1, background: T.gold }} />
+              <p style={{ fontFamily: T.sans, fontSize: 16, fontWeight: 300, color: T.muted, lineHeight: 1.8, marginBottom: 36 }}>
+                Członkostwo dostępne wyłącznie na zaproszenie lub po rozpatrzeniu aplikacji przez Radę Klubu.
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                {["Dostęp do wszystkich wydarzeń", "Prywatna strefa członkowska", "Concierge premium — VIP", "Networking z 150+ liderami", "Eleganckie zaproszenia i RSVP", "Galeria prywatna z wydarzeń"].map((b, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                    <div style={{ width: 6, height: 6, background: T.gold, transform: "rotate(45deg)", flexShrink: 0 }} />
+                    <span style={{ fontFamily: T.sans, fontSize: 14, fontWeight: 300, color: T.ivoryDim }}>{b}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: 48 }}><GoldBtn large href="/membership">Złóż aplikację</GoldBtn></div>
             </div>
-            <div style={{ marginTop: 48 }}><GoldBtn large href="/membership">Złóż aplikację</GoldBtn></div>
-          </div>
+          </FadeIn>
           {isMobile && (
             <img src="/images/fine-dining.webp" alt="Fine dining" style={{ width: "100%", height: 260, objectFit: "cover" }} loading="lazy" />
           )}
@@ -165,18 +177,20 @@ export default function HomePage() {
         <div style={{ position: "absolute", inset: 0, background: "rgba(10,10,10,0.72)" }} />
 
         <div style={{ position: "relative", zIndex: 2, maxWidth: 1200, margin: "0 auto", textAlign: "center" }}>
-          <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>STREFA PRYWATNA</div>
-          <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 42, fontWeight: 300, color: T.ivory }}>Twój świat za zamkniętymi drzwiami</h2>
-          <p style={{ fontFamily: T.sans, fontSize: 16, fontWeight: 300, color: T.muted, marginTop: 16, maxWidth: 600, margin: "16px auto 0" }}>
-            Dashboard, kalendarz, galeria, katalog członków, concierge — w jednym panelu.
-          </p>
+          <FadeIn>
+            <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>STREFA PRYWATNA</div>
+            <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 42, fontWeight: 300, color: T.ivory }}>Twój świat za zamkniętymi drzwiami</h2>
+            <p style={{ fontFamily: T.sans, fontSize: 16, fontWeight: 300, color: T.muted, marginTop: 16, maxWidth: 600, margin: "16px auto 0" }}>
+              Dashboard, kalendarz, galeria, katalog członków, concierge — w jednym panelu.
+            </p>
+          </FadeIn>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: isMobile ? 12 : 24, marginTop: isMobile ? 40 : 64 }}>
-            <FeatureBox icon="◈" title="Dashboard osobisty" desc="Powitanie, skróty, powiadomienia" />
-            <FeatureBox icon="◆" title="Kalendarz & RSVP" desc="Pełne szczegóły, potwierdzenia" />
-            <FeatureBox icon="◇" title="Galeria prywatna" desc="Zdjęcia i wideo z wydarzeń" />
-            <FeatureBox icon="✧" title="Concierge VIP" desc="Rezerwacje i dostępy premium" />
+            <FadeIn delay={0}><FeatureBox icon="◈" title="Dashboard osobisty" desc="Powitanie, skróty, powiadomienia" /></FadeIn>
+            <FadeIn delay={80}><FeatureBox icon="◆" title="Kalendarz & RSVP" desc="Pełne szczegóły, potwierdzenia" /></FadeIn>
+            <FadeIn delay={160}><FeatureBox icon="◇" title="Galeria prywatna" desc="Zdjęcia i wideo z wydarzeń" /></FadeIn>
+            <FadeIn delay={240}><FeatureBox icon="✧" title="Concierge VIP" desc="Rezerwacje i dostępy premium" /></FadeIn>
           </div>
-          <div style={{ marginTop: 48 }}><GhostBtn large href="/login">Zaloguj się</GhostBtn></div>
+          <FadeIn delay={100} style={{ marginTop: 48 }}><GhostBtn large href="/login">Zaloguj się</GhostBtn></FadeIn>
         </div>
       </section>
 
@@ -184,7 +198,7 @@ export default function HomePage() {
       <section style={{ position: "relative", padding: isMobile ? "100px 24px" : "160px 48px", textAlign: "center", overflow: "hidden" }}>
         <img src="/images/hero-lazienki.webp" alt="Łazienki Królewskie" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 40%" }} />
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center,rgba(10,10,10,0.6) 0%,rgba(10,10,10,0.88) 100%)" }} />
-        <div style={{ position: "relative", zIndex: 2 }}>
+        <FadeIn style={{ position: "relative", zIndex: 2 }}>
           <Divider />
           <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 32 : 52, fontWeight: 300, color: T.ivory, marginTop: 48 }}>Dołącz do grona najwybitniejszych</h2>
           <div style={{ fontFamily: T.serif, fontSize: 18, fontStyle: "italic", color: T.muted, marginTop: 16 }}>Membership by invitation only</div>
@@ -192,7 +206,7 @@ export default function HomePage() {
             <GoldBtn large href="/membership">Aplikuj o członkostwo</GoldBtn>
             <GhostBtn large href="/contact">Zapytaj prywatnie</GhostBtn>
           </div>
-        </div>
+        </FadeIn>
       </section>
 
       <Footer />

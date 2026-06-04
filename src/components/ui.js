@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useBreakpoint } from '@/lib/useBreakpoint';
+import { useInView } from '@/lib/useInView';
 
 export const T = {
   gold:"#C9A961",goldLight:"#D4B87A",goldDark:"#A8883F",
@@ -116,6 +117,28 @@ export function Container({children,maxWidth=1200}){
 }
 
 export function GoldLine({w=60}){return <div style={{width:w,height:1,background:T.gold}} />;}
+
+// delay in ms, dir: 'up' | 'down' | 'left' | 'right' | 'none'
+export function FadeIn({ children, delay = 0, dir = 'up', distance = 28, style = {} }) {
+  const [ref, inView] = useInView();
+  const translate = {
+    up: `0 ${distance}px`,
+    down: `0 -${distance}px`,
+    left: `${distance}px 0`,
+    right: `-${distance}px 0`,
+    none: '0 0',
+  }[dir] || `0 ${distance}px`;
+  return (
+    <div ref={ref} style={{
+      opacity: inView ? 1 : 0,
+      transform: inView ? 'translate(0,0)' : `translate(${translate})`,
+      transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms`,
+      ...style,
+    }}>
+      {children}
+    </div>
+  );
+}
 
 export function DisciplineCard({name,desc,img}){
   const[h,setH]=useState(false);
