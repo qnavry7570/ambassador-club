@@ -79,7 +79,7 @@ export default function SportPage() {
         <Container>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 80, alignItems: "center" }}>
             <div>
-              <img src="/images/zuzel.webp" alt="Żużel — loża VIP" style={{ width: "100%", height: isMobile ? 260 : 420, objectFit: "cover", objectPosition: "center 40%" }} loading="lazy" />
+              <img src="/images/zuzel-action.webp" alt="Żużel — akcja na torze" style={{ width: "100%", height: isMobile ? 260 : 420, objectFit: "cover", objectPosition: "center 40%" }} loading="lazy" />
             </div>
             <div>
               <Eyebrow center={false}>ŻUŻEL</Eyebrow>

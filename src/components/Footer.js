@@ -29,14 +29,18 @@ export default function Footer() {
         </div>
         <div>
           <div style={{ fontFamily: T.sans, fontSize: 11, fontWeight: 700, letterSpacing: "0.15em", color: T.ivory, textTransform: "uppercase", marginBottom: 24 }}>Kontakt</div>
-          <div style={{ fontFamily: T.sans, fontSize: 13, color: T.muted, fontWeight: 300, lineHeight: 2 }}>
-            ul. Foksal 3/5<br />00-366 Warszawa<br />
-            <span style={{ color: T.gold }}>concierge@ambassadorclub.pl</span>
+          <div style={{ fontFamily: T.sans, fontSize: 13, color: T.muted, fontWeight: 300, lineHeight: 2.0 }}>
+            Warsaw Financial Center<br />
+            Emilii Plater 53<br />
+            00-113 Warszawa<br />
+            <a href="mailto:b.kawecki@ambassadorclub.pl" style={{ color: T.gold, textDecoration: "none" }}>b.kawecki@ambassadorclub.pl</a><br />
+            <a href="tel:+48501979859" style={{ color: T.muted, textDecoration: "none" }}>+48 501 979 859</a>
           </div>
         </div>
       </div>
-      <div style={{ marginTop: 64, paddingTop: 24, borderTop: "1px solid rgba(201,169,97,0.06)", textAlign: "center" }}>
+      <div style={{ marginTop: 64, paddingTop: 24, borderTop: "1px solid rgba(201,169,97,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
         <span style={{ fontFamily: T.sans, fontSize: 11, color: T.ghost }}>© 2026 Ambassador Club · Best of Poland. Wszelkie prawa zastrzeżone.</span>
+        <a href="/privacy" style={{ fontFamily: T.sans, fontSize: 11, color: T.dim, textDecoration: "none" }}>Polityka prywatności</a>
       </div>
     </footer>
   );
