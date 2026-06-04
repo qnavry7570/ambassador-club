@@ -172,17 +172,12 @@ export default function HomePage() {
 
       {/* ── AMBASSADOR CIGAR CLUB ── */}
       <section style={{ position: "relative", padding: sectionPad, overflow: "hidden" }}>
-        {/* Tło — video kominek */}
-        <video
-          autoPlay muted loop playsInline
-          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-        >
-          <source src="/videos/kominek.mp4" type="video/mp4" />
-        </video>
-        <div style={{ position: "absolute", inset: 0, background: "rgba(6,4,2,0.88)" }} />
+        {/* Tło — lounge z humidorem */}
+        <img src="/images/cigar-lounge.webp" alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(4,2,1,0.96) 0%, rgba(6,4,2,0.88) 50%, rgba(4,2,1,0.94) 100%)" }} />
 
         <div style={{ position: "relative", zIndex: 2, maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 48 : 100, alignItems: "center" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 48 : 80, alignItems: "start" }}>
 
             {/* Lewa — logo + opis */}
             <FadeIn dir="left">
@@ -190,7 +185,7 @@ export default function HomePage() {
                 <img
                   src="/images/logo-cigar-club.webp"
                   alt="Ambassador Cigar Club"
-                  style={{ height: isMobile ? 130 : 160, width: "auto", margin: isMobile ? "0 auto 32px" : "0 0 32px", display: "block", filter: "drop-shadow(0 0 24px rgba(201,169,97,0.3))" }}
+                  style={{ height: isMobile ? 120 : 150, width: "auto", margin: isMobile ? "0 auto 28px" : "0 0 28px", display: "block", filter: "drop-shadow(0 0 20px rgba(201,169,97,0.25))" }}
                   loading="lazy"
                 />
                 <div style={{ fontFamily: T.sans, fontSize: 11, fontWeight: 400, letterSpacing: "0.35em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>
@@ -200,10 +195,16 @@ export default function HomePage() {
                   Ambassador<br />Cigar Club
                 </h2>
                 <div style={{ width: 60, height: 1, background: T.gold, margin: isMobile ? "0 auto 24px" : "0 0 24px" }} />
-                <p style={{ fontFamily: T.sans, fontSize: isMobile ? 14 : 16, fontWeight: 300, color: T.muted, lineHeight: 1.85, marginBottom: 20 }}>
+                <p style={{ fontFamily: T.sans, fontSize: isMobile ? 14 : 15, fontWeight: 300, color: T.muted, lineHeight: 1.85, marginBottom: 24 }}>
                   Ekskluzywne bractwo miłośników hawańskich cygar, skupiające gentlemanów ceniących tradycję, smak i kunszt rolowania. Wieczory w gronie wybranych — w najpiękniejszych wnętrzach Warszawy.
                 </p>
-                <p style={{ fontFamily: T.serif, fontSize: 17, fontStyle: "italic", color: T.ivoryDim, lineHeight: 1.7 }}>
+                {/* Zdjęcie — zapalanie cygara */}
+                {!isMobile && (
+                  <div style={{ lineHeight: 0, fontSize: 0, overflow: "hidden", border: `1px solid ${T.goldBorder}` }}>
+                    <img src="/images/cigar-lighting.webp" alt="Zapalanie cygara" style={{ width: "100%", height: 220, objectFit: "cover", objectPosition: "center 40%", display: "block" }} loading="lazy" />
+                  </div>
+                )}
+                <p style={{ fontFamily: T.serif, fontSize: 16, fontStyle: "italic", color: T.ivoryDim, lineHeight: 1.7, marginTop: 24 }}>
                   "Dobry cygar jest kwintesencją luksusu — łączy ludzi, którzy rozumieją, że czas jest najcenniejszym dobrem."
                 </p>
               </div>
@@ -211,28 +212,34 @@ export default function HomePage() {
 
             {/* Prawa — przywileje */}
             <FadeIn dir="right" delay={100}>
-              <div style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${T.goldBorder}`, padding: isMobile ? "32px 24px" : "48px 40px" }}>
-                <div style={{ fontFamily: T.sans, fontSize: 11, fontWeight: 700, letterSpacing: "0.25em", color: T.gold, textTransform: "uppercase", marginBottom: 32 }}>
-                  ◆ Przywileje członków
+              <div style={{ background: "rgba(12,8,4,0.7)", border: `1px solid ${T.goldBorder}`, backdropFilter: "blur(8px)" }}>
+                <div style={{ lineHeight: 0, fontSize: 0, overflow: "hidden" }}>
+                  <img src="/images/cigar-lounge.webp" alt="Cigar lounge" style={{ width: "100%", height: 200, objectFit: "cover", objectPosition: "center 20%", display: "block", opacity: 0.7 }} loading="lazy" />
+                  <div style={{ background: `linear-gradient(180deg, transparent, rgba(12,8,4,0.95))`, height: 60, marginTop: -60, position: "relative", zIndex: 1 }} />
                 </div>
-                {[
-                  { icon: "◈", t: "Degustacje hawańskich cygar", d: "Kurator dobiera roczniki i regiony dla każdego spotkania" },
-                  { icon: "◆", t: "Prywatne wieczory w pałacach", d: "Kominki, biblioteki, salony — atmosfera niepowtarzalna" },
-                  { icon: "◇", t: "Sommelier tytoniowy", d: "Osobiste doradztwo przy wyborze i przechowywaniu" },
-                  { icon: "✧", t: "Podróże do Hawany i La Romana", d: "Wizyty w manufakturach dla koneserów" },
-                  { icon: "◈", t: "Własna humidor lounge w klubie", d: "Dedykowana przestrzeń z kolekcją limitowanych edycji" },
-                ].map((item, i) => (
-                  <div key={i} style={{ display: "flex", gap: 20, marginBottom: i < 4 ? 28 : 0, alignItems: "flex-start" }}>
-                    <div style={{ width: 36, height: 36, border: `1px solid ${T.goldBorder}`, display: "flex", alignItems: "center", justifyContent: "center", color: T.gold, fontSize: 14, flexShrink: 0, marginTop: 2 }}>{item.icon}</div>
-                    <div>
-                      <div style={{ fontFamily: T.sans, fontSize: 13, fontWeight: 700, color: T.ivory, letterSpacing: "0.04em", marginBottom: 4 }}>{item.t}</div>
-                      <div style={{ fontFamily: T.sans, fontSize: 12, fontWeight: 300, color: T.dim, lineHeight: 1.6 }}>{item.d}</div>
-                    </div>
+                <div style={{ padding: isMobile ? "24px 20px 28px" : "28px 36px 36px" }}>
+                  <div style={{ fontFamily: T.sans, fontSize: 11, fontWeight: 700, letterSpacing: "0.25em", color: T.gold, textTransform: "uppercase", marginBottom: 28 }}>
+                    ◆ Przywileje członków
                   </div>
-                ))}
-                <div style={{ marginTop: 40, paddingTop: 28, borderTop: `1px solid ${T.border}` }}>
-                  <div style={{ fontFamily: T.serif, fontSize: 13, fontStyle: "italic", color: T.dim, textAlign: "center" }}>
-                    Dostępne wyłącznie dla członków Ambassador Club
+                  {[
+                    { icon: "◈", t: "Degustacje hawańskich cygar", d: "Kurator dobiera roczniki i regiony dla każdego spotkania" },
+                    { icon: "◆", t: "Prywatne wieczory w pałacach", d: "Kominki, biblioteki, salony — atmosfera niepowtarzalna" },
+                    { icon: "◇", t: "Sommelier tytoniowy", d: "Osobiste doradztwo przy wyborze i przechowywaniu" },
+                    { icon: "✧", t: "Podróże do Hawany i La Romana", d: "Wizyty w manufakturach dla koneserów" },
+                    { icon: "◈", t: "Własna humidor lounge w klubie", d: "Dedykowana przestrzeń z kolekcją limitowanych edycji" },
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: "flex", gap: 16, marginBottom: i < 4 ? 24 : 0, alignItems: "flex-start" }}>
+                      <div style={{ width: 32, height: 32, border: `1px solid ${T.goldBorder}`, display: "flex", alignItems: "center", justifyContent: "center", color: T.gold, fontSize: 13, flexShrink: 0, marginTop: 1 }}>{item.icon}</div>
+                      <div>
+                        <div style={{ fontFamily: T.sans, fontSize: 13, fontWeight: 700, color: T.ivory, letterSpacing: "0.03em", marginBottom: 3 }}>{item.t}</div>
+                        <div style={{ fontFamily: T.sans, fontSize: 12, fontWeight: 300, color: T.dim, lineHeight: 1.5 }}>{item.d}</div>
+                      </div>
+                    </div>
+                  ))}
+                  <div style={{ marginTop: 32, paddingTop: 24, borderTop: `1px solid ${T.border}`, textAlign: "center" }}>
+                    <div style={{ fontFamily: T.serif, fontSize: 13, fontStyle: "italic", color: T.dim }}>
+                      Dostępne wyłącznie dla członków Ambassador Club
+                    </div>
                   </div>
                 </div>
               </div>
