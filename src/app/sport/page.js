@@ -18,9 +18,8 @@ export default function SportPage() {
       {/* VIDEO HERO */}
       <section style={{ position: "relative", height: isMobile ? "70vh" : "100vh", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <video
-          autoPlay muted loop playsInline
+          autoPlay muted loop playsInline preload="auto"
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-          poster="/images/equestrian.webp"
         >
           <source src="/videos/kon.mp4" type="video/mp4" />
         </video>

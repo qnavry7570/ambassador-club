@@ -109,9 +109,8 @@ export default function HomePage() {
       <section style={{ position: "relative", padding: sectionPad, overflow: "hidden" }}>
         {/* Video background */}
         <video
-          autoPlay muted loop playsInline
+          autoPlay muted loop playsInline preload="auto"
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-          poster="/images/fine-dining.webp"
         >
           <source src="/videos/szampan.mp4" type="video/mp4" />
         </video>

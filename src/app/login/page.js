@@ -87,9 +87,8 @@ export default function LoginPage() {
       <div style={{ width: 480, flexShrink: 0, position: "relative", overflow: "hidden" }}>
         {/* Video tło */}
         <video
-          autoPlay muted loop playsInline
+          autoPlay muted loop playsInline preload="auto"
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-          poster="/images/palace-interior.webp"
         >
           <source src="/videos/kominek.mp4" type="video/mp4" />
         </video>
