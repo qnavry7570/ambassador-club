@@ -14,20 +14,26 @@ export default function Footer() {
           <div style={{ fontFamily: T.sans, fontSize: 12, fontWeight: 700, letterSpacing: "0.25em", color: T.gold, marginBottom: 12 }}>AMBASSADOR CLUB</div>
           <div style={{ fontFamily: T.serif, fontSize: 15, fontStyle: "italic", color: T.dim, marginBottom: 28 }}>Where Poland's Finest Meet</div>
           {/* Loga inicjatyw */}
-          <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
-            <img
-              src="/images/logo-best-of-poland.webp"
-              alt="The Best of Poland"
-              style={{ height: 48, width: "auto", opacity: 0.85, filter: "brightness(0.9)" }}
-              loading="lazy"
-            />
-            <div style={{ width: 1, height: 40, background: "rgba(201,169,97,0.2)" }} />
-            <img
-              src="/images/logo-cigar-club.webp"
-              alt="Ambassador Cigar Club"
-              style={{ height: 48, width: "auto", opacity: 0.85 }}
-              loading="lazy"
-            />
+          <div style={{ display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap", marginTop: 8 }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 6 }}>
+              <div style={{ fontFamily: T.sans, fontSize: 9, letterSpacing: "0.2em", color: T.dim, textTransform: "uppercase" }}>Patronat</div>
+              <img
+                src="/images/logo-best-of-poland.webp"
+                alt="The Best of Poland"
+                style={{ height: 64, width: "auto", opacity: 0.9 }}
+                loading="lazy"
+              />
+            </div>
+            <div style={{ width: 1, height: 60, background: "rgba(201,169,97,0.15)" }} />
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 6 }}>
+              <div style={{ fontFamily: T.sans, fontSize: 9, letterSpacing: "0.2em", color: T.dim, textTransform: "uppercase" }}>Inicjatywa</div>
+              <img
+                src="/images/logo-cigar-club.webp"
+                alt="Ambassador Cigar Club"
+                style={{ height: 64, width: "auto", opacity: 0.9 }}
+                loading="lazy"
+              />
+            </div>
           </div>
         </div>
         <div>

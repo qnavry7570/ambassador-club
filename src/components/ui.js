@@ -73,15 +73,24 @@ export function PillarCard({title,desc,img,tag,href}){
   </a>;
 }
 
-export function EventCard({title,date,location,tag}){
+export function EventCard({title,date,location,tag,img}){
   const[h,setH]=useState(false);
   return <div onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
-    style={{background:T.bgCard,border:`1px solid ${T.border}`,padding:32,position:"relative",transition:"all 0.3s",transform:h?"translateY(-2px)":"none",borderTop:`2px solid ${h?T.gold:"transparent"}`}}>
-    <div style={{fontFamily:T.sans,fontSize:10,fontWeight:700,letterSpacing:"0.15em",color:T.gold,textTransform:"uppercase",marginBottom:16}}>{tag}</div>
-    <div style={{fontFamily:T.serif,fontSize:22,fontWeight:400,color:T.ivory,marginBottom:16,lineHeight:1.3}}>{title}</div>
-    <div style={{fontFamily:T.sans,fontSize:13,color:T.muted,marginBottom:8}}>{date}</div>
-    <div style={{fontFamily:T.sans,fontSize:12,color:T.dim,fontStyle:"italic"}}>{location}</div>
-    <div style={{position:"absolute",top:20,right:20,fontSize:14,color:"rgba(201,169,97,0.4)"}}>🔒</div>
+    style={{background:T.bgCard,border:`1px solid ${h?T.goldBorder:T.border}`,overflow:"hidden",transition:"all 0.3s",transform:h?"translateY(-3px)":"none"}}>
+    {img && (
+      <div style={{height:180,overflow:"hidden",lineHeight:0,fontSize:0,position:"relative"}}>
+        <img src={img} alt={title} style={{width:"100%",height:"100%",objectFit:"cover",transition:"transform 0.5s",transform:h?"scale(1.05)":"scale(1)",display:"block"}} loading="lazy" />
+        <div style={{position:"absolute",inset:0,background:"linear-gradient(180deg,transparent 50%,rgba(10,10,10,0.7) 100%)"}} />
+        <div style={{position:"absolute",top:10,left:12,fontFamily:T.sans,fontSize:9,fontWeight:700,letterSpacing:"0.15em",color:T.gold,textTransform:"uppercase",background:"rgba(10,10,10,0.6)",padding:"3px 8px"}}>{tag}</div>
+        <div style={{position:"absolute",top:10,right:12,fontSize:13,color:"rgba(201,169,97,0.5)"}}>🔒</div>
+      </div>
+    )}
+    <div style={{padding:"20px 24px 24px"}}>
+      {!img && <div style={{fontFamily:T.sans,fontSize:10,fontWeight:700,letterSpacing:"0.15em",color:T.gold,textTransform:"uppercase",marginBottom:12}}>{tag}</div>}
+      <div style={{fontFamily:T.serif,fontSize:20,fontWeight:400,color:T.ivory,marginBottom:12,lineHeight:1.3}}>{title}</div>
+      <div style={{fontFamily:T.sans,fontSize:13,color:T.muted,marginBottom:6}}>{date}</div>
+      <div style={{fontFamily:T.sans,fontSize:12,color:T.dim,fontStyle:"italic"}}>{location}</div>
+    </div>
   </div>;
 }
 

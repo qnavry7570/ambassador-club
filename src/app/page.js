@@ -128,9 +128,9 @@ export default function HomePage() {
             <div style={{ marginBottom: isMobile ? 40 : 64 }}><Divider /></div>
           </FadeIn>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : isTablet ? "1fr 1fr" : "repeat(3,1fr)", gap: isMobile ? 16 : 32, maxWidth: 1000, margin: "0 auto" }}>
-            <FadeIn delay={0}><EventCard title="Wieczór Kolekcjonerski" date="15 marca 2026" location="Pałac Zamoyskich, Warszawa" tag="Sztuka" /></FadeIn>
-            <FadeIn delay={100}><EventCard title="Wielka Gala Charytatywna" date="28 marca 2026" location="Sala Balowa, Łazienki" tag="Filantropia" /></FadeIn>
-            <FadeIn delay={200}><EventCard title="Dzień Polo & Champagne" date="12 kwietnia 2026" location="Polo Club Wrocław" tag="Sport" /></FadeIn>
+            <FadeIn delay={0}><EventCard title="Wieczór Kolekcjonerski" date="15 marca 2026" location="Pałac Zamoyskich, Warszawa" tag="Sztuka" img="/images/vernissage.webp" /></FadeIn>
+            <FadeIn delay={100}><EventCard title="Wielka Gala Charytatywna" date="28 marca 2026" location="Sala Balowa, Łazienki" tag="Filantropia" img="/images/charity-gala.webp" /></FadeIn>
+            <FadeIn delay={200}><EventCard title="Dzień Polo & Champagne" date="12 kwietnia 2026" location="Polo Club Wrocław" tag="Sport" img="/images/equestrian.webp" /></FadeIn>
           </div>
         </div>
       </section>

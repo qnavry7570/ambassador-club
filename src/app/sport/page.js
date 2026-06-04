@@ -1,6 +1,6 @@
 'use client';
 import PageShell from '@/components/PageShell';
-import { T, Eyebrow, Heading, Body, Divider, GoldBtn, Section, Container, GoldLine } from '@/components/ui';
+import { T, Eyebrow, Heading, Body, Divider, GoldBtn, Section, Container, GoldLine, FadeIn } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
 
 export default function SportPage() {
@@ -47,12 +47,12 @@ export default function SportPage() {
       {/* Dyscypliny */}
       <Section>
         <Container>
-          <Eyebrow>DYSCYPLINY</Eyebrow>
+          <FadeIn><Eyebrow>DYSCYPLINY</Eyebrow>
           <Heading size="md">Cztery filary sportu klubowego</Heading>
-          <div style={{ marginTop: 16, marginBottom: 56 }}><Divider /></div>
+          <div style={{ marginTop: 16, marginBottom: 56 }}><Divider /></div></FadeIn>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: isMobile ? 16 : 24 }}>
             {dyscypliny.map((d, i) => (
-              <div key={i} style={{ background: T.bgCard, border: `1px solid ${T.border}`, overflow: "hidden" }}>
+              <FadeIn key={i} delay={i * 80}><div style={{ background: T.bgCard, border: `1px solid ${T.border}`, overflow: "hidden" }}>
                 <div style={{ height: 200, overflow: "hidden" }}>
                   <img src={d.img} alt={d.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} loading="lazy" />
                 </div>
@@ -61,7 +61,7 @@ export default function SportPage() {
                   <h3 style={{ fontFamily: T.serif, fontSize: isMobile ? 18 : 22, fontWeight: 400, color: T.ivory, marginBottom: 10 }}>{d.name}</h3>
                   <Body sz={13}>{d.desc}</Body>
                 </div>
-              </div>
+              </div></FadeIn>
             ))}
           </div>
         </Container>
@@ -71,16 +71,16 @@ export default function SportPage() {
       <Section bg={T.bgAlt}>
         <Container>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 80, alignItems: "center" }}>
-            <div>
+            <FadeIn dir="left"><div>
               <Eyebrow center={false}>GOLF</Eyebrow>
               <Heading center={false} size="md">Pola golfowe wśród dworków</Heading>
               <div style={{ margin: "20px 0" }}><GoldLine /></div>
               <Body>Nasze turnieje odbywają się na polach golfowych otoczonych historyczną architekturą — gdzie sport staje się doświadczeniem estetycznym. Każda runda to połączenie rywalizacji, rozmowy i polskiego krajobrazu.</Body>
               <div style={{ marginTop: 32 }}><GoldBtn href="/membership">Dołącz do turnieju</GoldBtn></div>
-            </div>
-            <div>
+            </div></FadeIn>
+            <FadeIn dir="right"><div>
               <img src="/images/golf-manor.webp" alt="Golf przy dworku" style={{ width: "100%", height: isMobile ? 260 : 420, objectFit: "cover" }} loading="lazy" />
-            </div>
+            </div></FadeIn>
           </div>
         </Container>
       </Section>

@@ -1,6 +1,6 @@
 'use client';
 import PageShell from '@/components/PageShell';
-import { T, Eyebrow, Heading, Body, Divider, GoldBtn, Section, Container, GoldLine } from '@/components/ui';
+import { T, Eyebrow, Heading, Body, Divider, GoldBtn, Section, Container, GoldLine, FadeIn } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
 
 export default function CulturePage() {
@@ -37,16 +37,16 @@ export default function CulturePage() {
       {/* Formy uczestnictwa */}
       <Section>
         <Container>
-          <Eyebrow>FORMY UCZESTNICTWA</Eyebrow>
+          <FadeIn><Eyebrow>FORMY UCZESTNICTWA</Eyebrow>
           <Heading size="md">Jak doświadczamy kultury</Heading>
-          <div style={{ marginTop: 16, marginBottom: 56 }}><Divider /></div>
+          <div style={{ marginTop: 16, marginBottom: 56 }}><Divider /></div></FadeIn>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: isMobile ? 12 : 24 }}>
             {formy.map((f, i) => (
-              <div key={i} style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: isMobile ? "24px 16px" : "36px 24px" }}>
+              <FadeIn key={i} delay={i * 80}><div style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: isMobile ? "24px 16px" : "36px 24px" }}>
                 <div style={{ fontFamily: T.serif, fontSize: isMobile ? 24 : 32, color: T.gold, marginBottom: 16 }}>{f.icon}</div>
                 <h3 style={{ fontFamily: T.serif, fontSize: isMobile ? 17 : 20, fontWeight: 400, color: T.ivory, marginBottom: 10 }}>{f.t}</h3>
                 <Body sz={13}>{f.d}</Body>
-              </div>
+              </div></FadeIn>
             ))}
           </div>
         </Container>

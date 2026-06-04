@@ -1,6 +1,6 @@
 'use client';
 import PageShell from '@/components/PageShell';
-import { T, Eyebrow, Heading, Body, Divider, GoldBtn, Section, Container, GoldLine } from '@/components/ui';
+import { T, Eyebrow, Heading, Body, Divider, GoldBtn, Section, Container, GoldLine, FadeIn } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
 
 export default function PhilanthropyPage() {
@@ -36,16 +36,16 @@ export default function PhilanthropyPage() {
       {/* Inicjatywy */}
       <Section>
         <Container>
-          <Eyebrow>NASZE INICJATYWY</Eyebrow>
+          <FadeIn><Eyebrow>NASZE INICJATYWY</Eyebrow>
           <Heading size="md">Trzy obszary działania</Heading>
-          <div style={{ marginTop: 16, marginBottom: 56 }}><Divider /></div>
+          <div style={{ marginTop: 16, marginBottom: 56 }}><Divider /></div></FadeIn>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3,1fr)", gap: isMobile ? 16 : 24 }}>
             {inicjatywy.map((item, i) => (
-              <div key={i} style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: "36px 28px" }}>
+              <FadeIn key={i} delay={i * 100}><div style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: "36px 28px" }}>
                 <div style={{ fontFamily: T.serif, fontSize: 32, color: T.gold, marginBottom: 16 }}>{item.icon}</div>
                 <h3 style={{ fontFamily: T.serif, fontSize: 22, fontWeight: 400, color: T.ivory, marginBottom: 12 }}>{item.t}</h3>
                 <Body sz={14}>{item.d}</Body>
-              </div>
+              </div></FadeIn>
             ))}
           </div>
         </Container>

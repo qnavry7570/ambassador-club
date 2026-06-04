@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import PageShell from '@/components/PageShell';
-import { T, Eyebrow, Heading, Body, Divider, GoldBtn, FeatureBox, Section, Container, GoldLine } from '@/components/ui';
+import { T, Eyebrow, Heading, Body, Divider, GoldBtn, FeatureBox, Section, Container, GoldLine, FadeIn } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
 
 function Input({ label, placeholder, type = "text", value, onChange }) {
@@ -86,10 +86,10 @@ export default function MembershipPage() {
 
       <Section bg={T.bgAlt}>
         <Container>
-          <Eyebrow>KORZYŚCI</Eyebrow>
-          <div style={{ marginTop: 16, marginBottom: 48 }}><Divider /></div>
+          <FadeIn><Eyebrow>KORZYŚCI</Eyebrow>
+          <div style={{ marginTop: 16, marginBottom: 48 }}><Divider /></div></FadeIn>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(3,1fr)", gap: isMobile ? 12 : 24 }}>
-            {benefits.map((b, i) => <FeatureBox key={i} icon={b.icon} title={b.t} />)}
+            {benefits.map((b, i) => <FadeIn key={i} delay={i * 60}><FeatureBox icon={b.icon} title={b.t} /></FadeIn>)}
           </div>
         </Container>
       </Section>

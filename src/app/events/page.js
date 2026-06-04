@@ -8,14 +8,14 @@ export default function EventsPage() {
   const [filter, setFilter] = useState("all");
   const { isMobile, isTablet } = useBreakpoint();
   const events = [
-    { title: "Wieczór Kolekcjonerski", date: "15 marca 2026", loc: "Pałac Zamoyskich, Warszawa", tag: "Sztuka", cat: "culture" },
-    { title: "Wielka Gala Charytatywna", date: "28 marca 2026", loc: "Łazienki Królewskie", tag: "Filantropia", cat: "philanthropy" },
-    { title: "Dzień Polo & Champagne", date: "12 kwietnia 2026", loc: "Polo Club Wrocław", tag: "Sport", cat: "sport" },
-    { title: "Degustacja Win", date: "25 kwietnia 2026", loc: "Piwnice Biskupie, Kraków", tag: "Best of Poland", cat: "bestofpoland" },
-    { title: "Regaty na Mazurach", date: "10 maja 2026", loc: "Yacht Club Giżycko", tag: "Sport", cat: "sport" },
-    { title: "Wernisaż: Nowa Polska", date: "22 maja 2026", loc: "Galeria Foksal, Warszawa", tag: "Sztuka", cat: "culture" },
-    { title: "Turniej Golfowy AC Open", date: "18 czerwca 2026", loc: "Modry Las Golf Club", tag: "Sport", cat: "sport" },
-    { title: "Noc Operowa", date: "2 lipca 2026", loc: "Teatr Wielki, Warszawa", tag: "Sztuka", cat: "culture" },
+    { title: "Wieczór Kolekcjonerski", date: "15 marca 2026", loc: "Pałac Zamoyskich, Warszawa", tag: "Sztuka", cat: "culture", img: "/images/vernissage.webp" },
+    { title: "Wielka Gala Charytatywna", date: "28 marca 2026", loc: "Łazienki Królewskie", tag: "Filantropia", cat: "philanthropy", img: "/images/charity-gala.webp" },
+    { title: "Dzień Polo & Champagne", date: "12 kwietnia 2026", loc: "Polo Club Wrocław", tag: "Sport", cat: "sport", img: "/images/equestrian.webp" },
+    { title: "Degustacja Win", date: "25 kwietnia 2026", loc: "Piwnice Biskupie, Kraków", tag: "Best of Poland", cat: "bestofpoland", img: "/images/fine-dining.webp" },
+    { title: "Regaty na Mazurach", date: "10 maja 2026", loc: "Yacht Club Giżycko", tag: "Sport", cat: "sport", img: "/images/regaty.webp" },
+    { title: "Wernisaż: Nowa Polska", date: "22 maja 2026", loc: "Galeria Foksal, Warszawa", tag: "Sztuka", cat: "culture", img: "/images/art-collector.webp" },
+    { title: "Turniej Golfowy AC Open", date: "18 czerwca 2026", loc: "Modry Las Golf Club", tag: "Sport", cat: "sport", img: "/images/golf-manor.webp" },
+    { title: "Noc Operowa", date: "2 lipca 2026", loc: "Teatr Wielki, Warszawa", tag: "Sztuka", cat: "culture", img: "/images/opera.webp" },
   ];
   const cats = ["all", "sport", "culture", "philanthropy", "bestofpoland"];
   const labels = { all: "Wszystkie", sport: "Sport", culture: "Kultura", philanthropy: "Filantropia", bestofpoland: "Best of Poland" };
@@ -43,7 +43,7 @@ export default function EventsPage() {
       <Section bg={T.bgAlt} padding="60px 48px 100px">
         <Container maxWidth={1000}>
           <div style={{ display: "grid", gridTemplateColumns: gridCols, gap: isMobile ? 16 : 24 }}>
-            {filtered.map((ev, i) => <EventCard key={i} {...ev} />)}
+            {filtered.map((ev, i) => <EventCard key={i} title={ev.title} date={ev.date} location={ev.loc} tag={ev.tag} img={ev.img} />)}
           </div>
           <div style={{ textAlign: "center", marginTop: 48 }}>
             <Body center muted>Zaloguj się aby zobaczyć pełne szczegóły i RSVP.</Body>
