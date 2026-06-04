@@ -84,8 +84,8 @@ export default function HomePage() {
           </FadeIn>
           {!isMobile && (
             <FadeIn dir="right">
-              <div style={{ borderLeft: "1px solid rgba(201,169,97,0.15)" }}>
-                <img src="/images/ballroom.webp" alt="Sala balowa Ambassador Club" style={{ width: "100%", height: 500, objectFit: "cover" }} loading="lazy" />
+              <div style={{ borderLeft: "1px solid rgba(201,169,97,0.15)", overflow: "hidden", background: T.bgAlt, lineHeight: 0 }}>
+                <img src="/images/ballroom.webp" alt="Sala balowa Ambassador Club" style={{ width: "100%", height: 500, objectFit: "cover", display: "block" }} loading="lazy" />
               </div>
             </FadeIn>
           )}
@@ -96,8 +96,8 @@ export default function HomePage() {
       </section>
 
       {/* Golden Divider */}
-      <section style={{ background: T.bg, padding: "40px 0", textAlign: "center" }}>
-        <img src="/images/golden-divider.webp" alt="" style={{ width: "100%", maxWidth: 600, margin: "0 auto", opacity: 0.7 }} loading="lazy" />
+      <section style={{ background: T.bg, padding: "40px 0", textAlign: "center", lineHeight: 0 }}>
+        <img src="/images/golden-divider.webp" alt="" style={{ width: "100%", maxWidth: 600, margin: "0 auto", opacity: 0.7, display: "block" }} loading="lazy" />
       </section>
 
       {/* ── EVENTS — tło video szampan ── */}
@@ -135,8 +135,8 @@ export default function HomePage() {
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 80, maxWidth: 1200, margin: "0 auto", alignItems: "center" }}>
           {!isMobile && (
             <FadeIn dir="left">
-              <div style={{ borderRight: "1px solid rgba(201,169,97,0.15)" }}>
-                <img src="/images/fine-dining.webp" alt="Fine dining" style={{ width: "100%", height: 560, objectFit: "cover" }} loading="lazy" />
+              <div style={{ borderRight: "1px solid rgba(201,169,97,0.15)", overflow: "hidden", background: T.bgAlt, lineHeight: 0 }}>
+                <img src="/images/fine-dining.webp" alt="Fine dining" style={{ width: "100%", height: 560, objectFit: "cover", display: "block" }} loading="lazy" />
               </div>
             </FadeIn>
           )}
