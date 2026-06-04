@@ -35,7 +35,6 @@ function Hero() {
 export default function HomePage() {
   const { isMobile, isTablet } = useBreakpoint();
   const sectionPad = isMobile ? "80px 20px" : isTablet ? "100px 32px" : "120px 48px";
-  const altPad = isMobile ? "80px 20px" : isTablet ? "100px 32px" : "120px 48px";
 
   return (
     <main>
@@ -50,15 +49,15 @@ export default function HomePage() {
         </div>
         <div style={{ marginBottom: isMobile ? 40 : 64 }}><Divider /></div>
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: isMobile ? 16 : 24, maxWidth: 1200, margin: "0 auto" }}>
-          <PillarCard title="Sport" tag="SPORT" desc="Wyścigi konne, polo, golf, jachting — sport gentlemanów." img="/images/golf.webp" href="/sport" />
-          <PillarCard title="Sztuka i Kultura" tag="KULTURA" desc="Mecenat, kolekcjonerstwo, wernisaże, opera." img="/images/gallery-event.webp" href="/culture" />
-          <PillarCard title="Filantropia" tag="FILANTROPIA" desc="Aukcje charytatywne i wspólne inicjatywy." img="/images/amber.webp" href="/philanthropy" />
-          <PillarCard title="Best of Poland" tag="BEST OF POLAND" desc="Polskie marki premium, rzemiosło, talenty." img="/images/krakow.webp" href="/bestofpoland" />
+          <PillarCard title="Sport" tag="SPORT" desc="Wyścigi konne, polo, golf, jachting — sport gentlemanów." img="/images/equestrian.webp" href="/sport" />
+          <PillarCard title="Sztuka i Kultura" tag="KULTURA" desc="Mecenat, kolekcjonerstwo, wernisaże, opera." img="/images/vernissage.webp" href="/culture" />
+          <PillarCard title="Filantropia" tag="FILANTROPIA" desc="Aukcje charytatywne i wspólne inicjatywy." img="/images/charity-gala.webp" href="/philanthropy" />
+          <PillarCard title="Best of Poland" tag="BEST OF POLAND" desc="Polskie marki premium, rzemiosło, talenty." img="/images/amber-jewelry.webp" href="/bestofpoland" />
         </div>
       </section>
 
       {/* About */}
-      <section style={{ background: T.bgAlt, padding: altPad }}>
+      <section style={{ background: T.bgAlt, padding: sectionPad }}>
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 80, maxWidth: 1200, margin: "0 auto", alignItems: "center" }}>
           <div>
             <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>O AMBASSADOR CLUB</div>
@@ -81,11 +80,11 @@ export default function HomePage() {
           </div>
           {!isMobile && (
             <div style={{ borderLeft: "1px solid rgba(201,169,97,0.15)" }}>
-              <img src="/images/palace-interior.webp" alt="Gala w pałacu" style={{ width: "100%", height: 500, objectFit: "cover" }} loading="lazy" />
+              <img src="/images/ballroom.webp" alt="Sala balowa Ambassador Club" style={{ width: "100%", height: 500, objectFit: "cover" }} loading="lazy" />
             </div>
           )}
           {isMobile && (
-            <img src="/images/palace-interior.webp" alt="Gala w pałacu" style={{ width: "100%", height: 260, objectFit: "cover" }} loading="lazy" />
+            <img src="/images/ballroom.webp" alt="Sala balowa Ambassador Club" style={{ width: "100%", height: 260, objectFit: "cover" }} loading="lazy" />
           )}
         </div>
       </section>
@@ -111,7 +110,7 @@ export default function HomePage() {
       </section>
 
       {/* Membership */}
-      <section style={{ background: T.bgAlt, padding: altPad }}>
+      <section style={{ background: T.bgAlt, padding: sectionPad }}>
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 80, maxWidth: 1200, margin: "0 auto", alignItems: "center" }}>
           {!isMobile && (
             <div style={{ borderRight: "1px solid rgba(201,169,97,0.15)" }}>
@@ -162,8 +161,8 @@ export default function HomePage() {
 
       {/* Final CTA */}
       <section style={{ position: "relative", padding: isMobile ? "100px 24px" : "160px 48px", textAlign: "center", overflow: "hidden" }}>
-        <img src="/images/hero-krakow.webp" alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center,rgba(10,10,10,0.65) 0%,rgba(10,10,10,0.9) 100%)" }} />
+        <img src="/images/hero-lazienki.webp" alt="Łazienki Królewskie" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 40%" }} />
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center,rgba(10,10,10,0.6) 0%,rgba(10,10,10,0.88) 100%)" }} />
         <div style={{ position: "relative", zIndex: 2 }}>
           <Divider />
           <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 32 : 52, fontWeight: 300, color: T.ivory, marginTop: 48 }}>Dołącz do grona najwybitniejszych</h2>

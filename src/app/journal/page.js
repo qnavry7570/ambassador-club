@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import PageShell from '@/components/PageShell';
-import { T, Eyebrow, Heading, Body, Badge, GhostBtn, Section, Container } from '@/components/ui';
+import { T, Eyebrow, Heading, Body, Badge, Section, Container } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
 
 function ArticleCard({ title, date, cat, excerpt, img }) {
@@ -27,12 +27,42 @@ function ArticleCard({ title, date, cat, excerpt, img }) {
 export default function JournalPage() {
   const { isMobile, isTablet } = useBreakpoint();
   const articles = [
-    { title: "Sztuka kolekcjonowania — jak zacząć", date: "28 lut 2026", cat: "Kultura", excerpt: "Kolekcjonerstwo to nie tylko inwestycja — to styl życia.", img: "/images/amber.webp" },
-    { title: "Pałac Zamoyskich — historia", date: "15 lut 2026", cat: "Dziedzictwo", excerpt: "Od renesansowej rezydencji do centrum wydarzeń.", img: "/images/palace-interior.webp" },
-    { title: "Polo w Polsce — odrodzenie", date: "2 lut 2026", cat: "Sport", excerpt: "Trzy polskie kluby polo budują scenę.", img: "/images/golf.webp" },
-    { title: "Bursztyn bałtycki — złoto Północy", date: "20 sty 2026", cat: "Best of Poland", excerpt: "Jak polski bursztyn podbija rynki luksusu.", img: "/images/watch.webp" },
-    { title: "Filantropia cicha", date: "8 sty 2026", cat: "Filantropia", excerpt: "Członkowie o tym, dlaczego lubią dawać po cichu.", img: "/images/fine-dining.webp" },
-    { title: "Regaty na Mazurach", date: "28 gru 2025", cat: "Sport", excerpt: "Pierwsze w historii regaty zimowe na Mazurach.", img: "/images/yacht.webp" },
+    {
+      title: "Wernisaż prywatny — sztuka zanim trafi do publiczności",
+      date: "28 lut 2026", cat: "Kultura",
+      excerpt: "Ekskluzywny dostęp do wystawy przed oficjalnym otwarciem — relacja z wieczoru.",
+      img: "/images/vernissage.webp"
+    },
+    {
+      title: "Pałac Zamoyskich — historia i dzisiejsze życie",
+      date: "15 lut 2026", cat: "Dziedzictwo",
+      excerpt: "Od renesansowej rezydencji do centrum wydarzeń Ambassador Club.",
+      img: "/images/ballroom.webp"
+    },
+    {
+      title: "Jeździectwo w Polsce — odrodzenie dyscypliny",
+      date: "2 lut 2026", cat: "Sport",
+      excerpt: "Polskie stadniny i turnieje skokowe wracają na mapę europejskiego jeździectwa.",
+      img: "/images/equestrian.webp"
+    },
+    {
+      title: "Bursztyn bałtycki — złoto Północy",
+      date: "20 sty 2026", cat: "Best of Poland",
+      excerpt: "Jak polski bursztyn i jego mistrzowie podbijają rynki luksusu na świecie.",
+      img: "/images/amber-jewelry.webp"
+    },
+    {
+      title: "Wielka Gala Charytatywna — relacja",
+      date: "8 sty 2026", cat: "Filantropia",
+      excerpt: "Ponad 1,2 mln zł zebrane w jeden wieczór. Jak to robimy i dlaczego warto.",
+      img: "/images/charity-gala.webp"
+    },
+    {
+      title: "Regaty na Mazurach — żeglarstwo dla wymagających",
+      date: "28 gru 2025", cat: "Sport",
+      excerpt: "Pierwsze w historii zimowe regaty Ambassador Club. Relacja i zdjęcia.",
+      img: "/images/regaty.webp"
+    },
   ];
   const gridCols = isMobile ? "1fr" : isTablet ? "1fr 1fr" : "repeat(3,1fr)";
 
@@ -42,7 +72,9 @@ export default function JournalPage() {
         <div style={{ textAlign: "center" }}>
           <Eyebrow>JOURNAL</Eyebrow>
           <Heading size="xl">Magazyn klubowy</Heading>
-          <div style={{ marginTop: 16 }}><Body center>Artykuły o sztuce, sportach gentlemanów i polskim dziedzictwie</Body></div>
+          <div style={{ marginTop: 16 }}>
+            <Body center>Artykuły o sztuce, sportach gentlemanów i polskim dziedzictwie</Body>
+          </div>
         </div>
       </Section>
       <Section bg={T.bgAlt} padding="60px 48px 100px">

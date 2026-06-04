@@ -21,22 +21,39 @@ export default function AboutPage() {
         </div>
       </Section>
 
+      {/* Misja — split */}
       <Section bg={T.bgAlt}>
         <Container>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 80, alignItems: "center" }}>
-            {!isMobile && <div><img src="/images/palace-interior.webp" alt="Gala" style={{ width: "100%", height: 500, objectFit: "cover" }} /></div>}
+            {!isMobile && (
+              <div>
+                <img src="/images/networking.webp" alt="Networking Ambassador Club" style={{ width: "100%", height: 500, objectFit: "cover" }} />
+              </div>
+            )}
             <div>
               <Eyebrow center={false}>NASZA MISJA</Eyebrow>
               <Heading center={false} size="md">Łączymy ludzi, którzy kształtują Polskę</Heading>
               <div style={{ margin: "20px 0" }}><GoldLine /></div>
               <Body>Ambassador Club powstał z wiary, że najciekawsze rzeczy dzieją się wtedy, gdy w jednym miejscu spotykają się ludzie wyjątkowi — liderzy biznesu, mecenasi sztuki, sportowcy i filantropi.</Body>
-              <div style={{ marginTop: 20 }}><Body italic sz={18}>Nasze wydarzenia odbywają się w najpiękniejszych rezydencjach Polski.</Body></div>
+              <div style={{ marginTop: 20 }}>
+                <Body italic sz={18}>Nasze wydarzenia odbywają się w najpiękniejszych rezydencjach Polski.</Body>
+              </div>
             </div>
-            {isMobile && <img src="/images/palace-interior.webp" alt="Gala" style={{ width: "100%", height: 260, objectFit: "cover" }} />}
+            {isMobile && (
+              <img src="/images/networking.webp" alt="Networking Ambassador Club" style={{ width: "100%", height: 260, objectFit: "cover" }} />
+            )}
           </div>
         </Container>
       </Section>
 
+      {/* Sala balowa — pełna szerokość */}
+      <Section padding="0">
+        <div style={{ width: "100%", height: isMobile ? 240 : 400, overflow: "hidden" }}>
+          <img src="/images/ballroom.webp" alt="Sala balowa" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 40%" }} loading="lazy" />
+        </div>
+      </Section>
+
+      {/* Wartości */}
       <Section>
         <Container>
           <Eyebrow>NASZE WARTOŚCI</Eyebrow>
