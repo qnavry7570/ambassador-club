@@ -170,6 +170,78 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── AMBASSADOR CIGAR CLUB ── */}
+      <section style={{ position: "relative", padding: sectionPad, overflow: "hidden" }}>
+        {/* Tło — video kominek */}
+        <video
+          autoPlay muted loop playsInline
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+        >
+          <source src="/videos/kominek.mp4" type="video/mp4" />
+        </video>
+        <div style={{ position: "absolute", inset: 0, background: "rgba(6,4,2,0.88)" }} />
+
+        <div style={{ position: "relative", zIndex: 2, maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 48 : 100, alignItems: "center" }}>
+
+            {/* Lewa — logo + opis */}
+            <FadeIn dir="left">
+              <div style={{ textAlign: isMobile ? "center" : "left" }}>
+                <img
+                  src="/images/logo-cigar-club.webp"
+                  alt="Ambassador Cigar Club"
+                  style={{ height: isMobile ? 130 : 160, width: "auto", margin: isMobile ? "0 auto 32px" : "0 0 32px", display: "block", filter: "drop-shadow(0 0 24px rgba(201,169,97,0.3))" }}
+                  loading="lazy"
+                />
+                <div style={{ fontFamily: T.sans, fontSize: 11, fontWeight: 400, letterSpacing: "0.35em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>
+                  Inicjatywa Ambassador Club
+                </div>
+                <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 42, fontWeight: 300, color: T.ivory, lineHeight: 1.15, margin: "0 0 20px" }}>
+                  Ambassador<br />Cigar Club
+                </h2>
+                <div style={{ width: 60, height: 1, background: T.gold, margin: isMobile ? "0 auto 24px" : "0 0 24px" }} />
+                <p style={{ fontFamily: T.sans, fontSize: isMobile ? 14 : 16, fontWeight: 300, color: T.muted, lineHeight: 1.85, marginBottom: 20 }}>
+                  Ekskluzywne bractwo miłośników hawańskich cygar, skupiające gentlemanów ceniących tradycję, smak i kunszt rolowania. Wieczory w gronie wybranych — w najpiękniejszych wnętrzach Warszawy.
+                </p>
+                <p style={{ fontFamily: T.serif, fontSize: 17, fontStyle: "italic", color: T.ivoryDim, lineHeight: 1.7 }}>
+                  "Dobry cygar jest kwintesencją luksusu — łączy ludzi, którzy rozumieją, że czas jest najcenniejszym dobrem."
+                </p>
+              </div>
+            </FadeIn>
+
+            {/* Prawa — przywileje */}
+            <FadeIn dir="right" delay={100}>
+              <div style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${T.goldBorder}`, padding: isMobile ? "32px 24px" : "48px 40px" }}>
+                <div style={{ fontFamily: T.sans, fontSize: 11, fontWeight: 700, letterSpacing: "0.25em", color: T.gold, textTransform: "uppercase", marginBottom: 32 }}>
+                  ◆ Przywileje członków
+                </div>
+                {[
+                  { icon: "◈", t: "Degustacje hawańskich cygar", d: "Kurator dobiera roczniki i regiony dla każdego spotkania" },
+                  { icon: "◆", t: "Prywatne wieczory w pałacach", d: "Kominki, biblioteki, salony — atmosfera niepowtarzalna" },
+                  { icon: "◇", t: "Sommelier tytoniowy", d: "Osobiste doradztwo przy wyborze i przechowywaniu" },
+                  { icon: "✧", t: "Podróże do Hawany i La Romana", d: "Wizyty w manufakturach dla koneserów" },
+                  { icon: "◈", t: "Własna humidor lounge w klubie", d: "Dedykowana przestrzeń z kolekcją limitowanych edycji" },
+                ].map((item, i) => (
+                  <div key={i} style={{ display: "flex", gap: 20, marginBottom: i < 4 ? 28 : 0, alignItems: "flex-start" }}>
+                    <div style={{ width: 36, height: 36, border: `1px solid ${T.goldBorder}`, display: "flex", alignItems: "center", justifyContent: "center", color: T.gold, fontSize: 14, flexShrink: 0, marginTop: 2 }}>{item.icon}</div>
+                    <div>
+                      <div style={{ fontFamily: T.sans, fontSize: 13, fontWeight: 700, color: T.ivory, letterSpacing: "0.04em", marginBottom: 4 }}>{item.t}</div>
+                      <div style={{ fontFamily: T.sans, fontSize: 12, fontWeight: 300, color: T.dim, lineHeight: 1.6 }}>{item.d}</div>
+                    </div>
+                  </div>
+                ))}
+                <div style={{ marginTop: 40, paddingTop: 28, borderTop: `1px solid ${T.border}` }}>
+                  <div style={{ fontFamily: T.serif, fontSize: 13, fontStyle: "italic", color: T.dim, textAlign: "center" }}>
+                    Dostępne wyłącznie dla członków Ambassador Club
+                  </div>
+                </div>
+              </div>
+            </FadeIn>
+
+          </div>
+        </div>
+      </section>
+
       {/* ── STREFA PRYWATNA — tło video złote światło ── */}
       <section style={{ position: "relative", padding: sectionPad, overflow: "hidden" }}>
         <video
