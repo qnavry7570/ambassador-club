@@ -96,19 +96,29 @@ export default function HomePage() {
       </section>
 
       {/* Golden Divider */}
-      <section style={{ background: T.bg, padding: "48px 0" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0, maxWidth: 700, margin: "0 auto", padding: "0 48px" }}>
-          <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, rgba(201,169,97,0.35))` }} />
-          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "0 24px" }}>
-            <div style={{ width: 4, height: 4, background: T.gold, transform: "rotate(45deg)", opacity: 0.5 }} />
-            <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-              <path d="M22 2L26 16L40 18L30 28L33 42L22 35L11 42L14 28L4 18L18 16Z" stroke={T.gold} strokeWidth="0.8" fill="none" opacity="0.7"/>
-              <path d="M22 8L25 18L35 19.5L28 26L30 36L22 31.5L14 36L16 26L9 19.5L19 18Z" fill={T.gold} opacity="0.15"/>
-              <circle cx="22" cy="22" r="4" fill={T.gold} opacity="0.4"/>
-            </svg>
-            <div style={{ width: 4, height: 4, background: T.gold, transform: "rotate(45deg)", opacity: 0.5 }} />
-          </div>
-          <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, rgba(201,169,97,0.35), transparent)` }} />
+      <section style={{ background: T.bg, padding: "0", lineHeight: 0, fontSize: 0 }}>
+        <div style={{ maxWidth: 680, margin: "0 auto", height: 80, overflow: "hidden", position: "relative" }}>
+          {/* Obraz — przycięty do centrum (bez białych krawędzi) */}
+          <img
+            src="/images/golden-divider.webp"
+            alt=""
+            style={{
+              position: "absolute",
+              top: "50%", left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "120%",
+              height: "300%",
+              objectFit: "cover",
+              objectPosition: "center center",
+              opacity: 0.85,
+              display: "block",
+            }}
+            loading="lazy"
+          />
+          {/* Gradienty przykrywające beżowe krawędzie */}
+          <div style={{ position: "absolute", inset: 0, background: `linear-gradient(90deg, ${T.bg} 0%, transparent 18%, transparent 82%, ${T.bg} 100%)`, zIndex: 1 }} />
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 24, background: `linear-gradient(180deg, transparent, ${T.bg})`, zIndex: 1 }} />
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 16, background: `linear-gradient(0deg, transparent, ${T.bg})`, zIndex: 1 }} />
         </div>
       </section>
 
