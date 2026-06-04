@@ -78,10 +78,12 @@ export default function Navbar() {
           <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
             <NavLink href="/about">O Klubie</NavLink>
             <div style={{ position: "relative" }} onMouseEnter={() => setPillarsOpen(true)} onMouseLeave={() => setPillarsOpen(false)}>
-              <span style={{ fontFamily: T.sans, fontSize: 12, fontWeight: 300, letterSpacing: "0.08em", color: T.ivory, cursor: "pointer", opacity: 0.7 }}>Filary ▾</span>
+              <span style={{ fontFamily: T.sans, fontSize: 12, fontWeight: 300, letterSpacing: "0.08em", color: T.ivory, cursor: "pointer", opacity: pillarsOpen ? 1 : 0.7, transition: "opacity 0.2s" }}>Filary ▾</span>
               {pillarsOpen && (
-                <div style={{ position: "absolute", top: "100%", left: -16, background: "rgba(15,15,15,0.98)", border: `1px solid ${T.border}`, padding: "8px 0", minWidth: 200, backdropFilter: "blur(20px)", marginTop: 8 }}>
-                  {pillars.map(p => <a key={p.href} href={p.href} style={{ display: "block", padding: "10px 24px", fontFamily: T.sans, fontSize: 12, color: T.muted, textDecoration: "none", letterSpacing: "0.05em" }}>{p.l}</a>)}
+                <div style={{ position: "absolute", top: "100%", left: -16, paddingTop: 8, minWidth: 220 }}>
+                  <div style={{ background: "rgba(12,12,12,0.99)", border: `1px solid ${T.border}`, padding: "8px 0", backdropFilter: "blur(20px)" }}>
+                    {pillars.map(p => <a key={p.href} href={p.href} style={{ display: "block", padding: "11px 24px", fontFamily: T.sans, fontSize: 12, color: T.muted, textDecoration: "none", letterSpacing: "0.05em" }}>{p.l}</a>)}
+                  </div>
                 </div>
               )}
             </div>
