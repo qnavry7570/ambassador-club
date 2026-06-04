@@ -94,18 +94,31 @@ export default function HomePage() {
         <img src="/images/golden-divider.webp" alt="" style={{ width: "100%", maxWidth: 600, margin: "0 auto", opacity: 0.7 }} loading="lazy" />
       </section>
 
-      {/* Events */}
-      <section style={{ background: T.bg, padding: sectionPad }}>
-        <div style={{ textAlign: "center", marginBottom: 16 }}>
-          <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>WYDARZENIA</div>
-          <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 42, fontWeight: 300, color: T.ivory }}>Nadchodzące spotkania</h2>
-          <p style={{ fontFamily: T.sans, fontSize: 16, fontWeight: 300, color: T.muted, marginTop: 12 }}>Szczegóły dostępne wyłącznie dla członków</p>
-        </div>
-        <div style={{ marginBottom: isMobile ? 40 : 64 }}><Divider /></div>
-        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : isTablet ? "1fr 1fr" : "repeat(3,1fr)", gap: isMobile ? 16 : 32, maxWidth: 1000, margin: "0 auto" }}>
-          <EventCard title="Wieczór Kolekcjonerski" date="15 marca 2026" location="Pałac Zamoyskich, Warszawa" tag="Sztuka" />
-          <EventCard title="Wielka Gala Charytatywna" date="28 marca 2026" location="Sala Balowa, Łazienki" tag="Filantropia" />
-          <EventCard title="Dzień Polo & Champagne" date="12 kwietnia 2026" location="Polo Club Wrocław" tag="Sport" />
+      {/* ── EVENTS — tło video szampan ── */}
+      <section style={{ position: "relative", padding: sectionPad, overflow: "hidden" }}>
+        {/* Video background */}
+        <video
+          autoPlay muted loop playsInline
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+          poster="/images/fine-dining.webp"
+        >
+          <source src="/videos/szampan.mp4" type="video/mp4" />
+        </video>
+        {/* Ciemny overlay — tekst musi być czytelny */}
+        <div style={{ position: "absolute", inset: 0, background: "rgba(8,8,8,0.82)" }} />
+
+        <div style={{ position: "relative", zIndex: 2 }}>
+          <div style={{ textAlign: "center", marginBottom: 16 }}>
+            <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>WYDARZENIA</div>
+            <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 42, fontWeight: 300, color: T.ivory }}>Nadchodzące spotkania</h2>
+            <p style={{ fontFamily: T.sans, fontSize: 16, fontWeight: 300, color: T.muted, marginTop: 12 }}>Szczegóły dostępne wyłącznie dla członków</p>
+          </div>
+          <div style={{ marginBottom: isMobile ? 40 : 64 }}><Divider /></div>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : isTablet ? "1fr 1fr" : "repeat(3,1fr)", gap: isMobile ? 16 : 32, maxWidth: 1000, margin: "0 auto" }}>
+            <EventCard title="Wieczór Kolekcjonerski" date="15 marca 2026" location="Pałac Zamoyskich, Warszawa" tag="Sztuka" />
+            <EventCard title="Wielka Gala Charytatywna" date="28 marca 2026" location="Sala Balowa, Łazienki" tag="Filantropia" />
+            <EventCard title="Dzień Polo & Champagne" date="12 kwietnia 2026" location="Polo Club Wrocław" tag="Sport" />
+          </div>
         </div>
       </section>
 
@@ -140,9 +153,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Private Access */}
-      <section style={{ background: T.bg, padding: sectionPad, position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 70% 50%,rgba(92,26,27,0.12) 0%,transparent 60%)" }} />
+      {/* ── STREFA PRYWATNA — tło video złote światło ── */}
+      <section style={{ position: "relative", padding: sectionPad, overflow: "hidden" }}>
+        <video
+          autoPlay muted loop playsInline
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+        >
+          <source src="/videos/swiatlo-zlote.mp4" type="video/mp4" />
+        </video>
+        {/* Overlay — złote cząsteczki widoczne, ale nie przytłaczają */}
+        <div style={{ position: "absolute", inset: 0, background: "rgba(10,10,10,0.72)" }} />
+
         <div style={{ position: "relative", zIndex: 2, maxWidth: 1200, margin: "0 auto", textAlign: "center" }}>
           <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>STREFA PRYWATNA</div>
           <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 42, fontWeight: 300, color: T.ivory }}>Twój świat za zamkniętymi drzwiami</h2>

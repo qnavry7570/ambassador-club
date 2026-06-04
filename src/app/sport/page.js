@@ -5,6 +5,7 @@ import { useBreakpoint } from '@/lib/useBreakpoint';
 
 export default function SportPage() {
   const { isMobile } = useBreakpoint();
+
   const dyscypliny = [
     { name: "Jeździectwo", desc: "Skoki przez przeszkody, ujeżdżanie i wyścigi konne na najpiękniejszych torach Polski.", img: "/images/equestrian.webp" },
     { name: "Golf", desc: "Turnieje i rundy na prestiżowych polach golfowych — od Modrego Lasu po klub w Rajszewie.", img: "/images/golf-manor.webp" },
@@ -14,24 +15,34 @@ export default function SportPage() {
 
   return (
     <PageShell>
-      {/* Hero */}
-      <Section padding="140px 48px 100px">
-        <div style={{ textAlign: "center", maxWidth: 800, margin: "0 auto" }}>
-          <Eyebrow>FILAR: SPORT</Eyebrow>
-          <Heading size="xl">Sport gentlemanów na najwyższym poziomie</Heading>
-          <div style={{ marginTop: 24 }}><Divider /></div>
-          <div style={{ marginTop: 24 }}>
-            <Body center>Od wyścigów konnych po regaty — łączymy pasjonatów sportów, które wymagają nie tylko sprawności, ale i klasy.</Body>
-          </div>
+      {/* VIDEO HERO */}
+      <section style={{ position: "relative", height: isMobile ? "70vh" : "100vh", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <video
+          autoPlay muted loop playsInline
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+          poster="/images/equestrian.webp"
+        >
+          <source src="/videos/kon.mp4" type="video/mp4" />
+        </video>
+        {/* Gradient overlay */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.5) 60%, rgba(10,10,10,0.95) 100%)" }} />
+        {/* Treść */}
+        <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: isMobile ? "0 24px" : "0 48px", maxWidth: 800 }}>
+          <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.4em", color: T.gold, marginBottom: 20 }}>FILAR: SPORT</div>
+          <h1 style={{ fontFamily: T.serif, fontSize: isMobile ? 38 : 64, fontWeight: 300, color: T.ivory, lineHeight: 1.1, margin: 0 }}>
+            Sport gentlemanów<br />na najwyższym poziomie
+          </h1>
+          <div style={{ margin: "24px auto", width: 60, height: 1, background: T.gold }} />
+          <p style={{ fontFamily: T.sans, fontSize: isMobile ? 14 : 17, fontWeight: 300, color: T.ivoryDim, lineHeight: 1.7, maxWidth: 560, margin: "0 auto" }}>
+            Od wyścigów konnych po regaty — łączymy pasjonatów sportów, które wymagają nie tylko sprawności, ale i klasy.
+          </p>
         </div>
-      </Section>
-
-      {/* Główny obraz — jeździectwo */}
-      <Section bg={T.bgAlt} padding="0">
-        <div style={{ width: "100%", height: isMobile ? 280 : 500, overflow: "hidden" }}>
-          <img src="/images/equestrian.webp" alt="Jeździectwo" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%" }} loading="lazy" />
+        {/* Scroll indicator */}
+        <div style={{ position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+          <div style={{ width: 1, height: 40, background: `linear-gradient(180deg,transparent,${T.gold})` }} />
+          <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 4L6 8L10 4" stroke={T.gold} strokeWidth="1" fill="none" /></svg>
         </div>
-      </Section>
+      </section>
 
       {/* Dyscypliny */}
       <Section>
@@ -42,13 +53,13 @@ export default function SportPage() {
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: isMobile ? 16 : 24 }}>
             {dyscypliny.map((d, i) => (
               <div key={i} style={{ background: T.bgCard, border: `1px solid ${T.border}`, overflow: "hidden" }}>
-                <div style={{ height: 220, overflow: "hidden" }}>
+                <div style={{ height: 200, overflow: "hidden" }}>
                   <img src={d.img} alt={d.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} loading="lazy" />
                 </div>
-                <div style={{ padding: "24px 20px" }}>
+                <div style={{ padding: isMobile ? "16px 14px" : "24px 20px" }}>
                   <div style={{ fontFamily: T.sans, fontSize: 10, fontWeight: 700, letterSpacing: "0.2em", color: T.gold, marginBottom: 8 }}>◆ SPORT</div>
-                  <h3 style={{ fontFamily: T.serif, fontSize: 22, fontWeight: 400, color: T.ivory, marginBottom: 10 }}>{d.name}</h3>
-                  <Body sz={14}>{d.desc}</Body>
+                  <h3 style={{ fontFamily: T.serif, fontSize: isMobile ? 18 : 22, fontWeight: 400, color: T.ivory, marginBottom: 10 }}>{d.name}</h3>
+                  <Body sz={13}>{d.desc}</Body>
                 </div>
               </div>
             ))}
@@ -56,7 +67,7 @@ export default function SportPage() {
         </Container>
       </Section>
 
-      {/* Golf & Manor — full width split */}
+      {/* Golf split */}
       <Section bg={T.bgAlt}>
         <Container>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 80, alignItems: "center" }}>
@@ -74,7 +85,7 @@ export default function SportPage() {
         </Container>
       </Section>
 
-      {/* Żużel — split */}
+      {/* Żużel split */}
       <Section>
         <Container>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 80, alignItems: "center" }}>
