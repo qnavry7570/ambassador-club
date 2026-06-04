@@ -7,6 +7,7 @@ const pillars = [
   { href: "/culture", l: "Sztuka i Kultura" },
   { href: "/philanthropy", l: "Filantropia" },
   { href: "/bestofpoland", l: "Best of Poland" },
+  { href: "/cigar-club", l: "Cigar Club" },
 ];
 const links = [
   { href: "/about", l: "O Klubie" },

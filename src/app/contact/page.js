@@ -118,12 +118,20 @@ export default function ContactPage() {
                   </a>
                 </div>
 
-                {/* Mapa placeholder */}
-                <div style={{ border: `1px solid ${T.border}`, padding: "20px", background: "rgba(22,22,22,0.4)" }}>
-                  <div style={{ fontFamily: T.sans, fontSize: 10, letterSpacing: "0.15em", color: T.gold, textTransform: "uppercase", marginBottom: 8 }}>Warsaw Financial Center</div>
-                  <div style={{ fontFamily: T.serif, fontSize: 15, fontStyle: "italic", color: T.dim }}>Emilii Plater 53, 00-113 Warszawa</div>
-                  <a href="https://maps.google.com/?q=Emilii+Plater+53+Warszawa" target="_blank" rel="noopener noreferrer"
-                    style={{ display: "inline-block", marginTop: 12, fontFamily: T.sans, fontSize: 11, color: T.gold, textDecoration: "none", letterSpacing: "0.08em", borderBottom: `1px solid ${T.goldMuted}` }}>
+                {/* Mapa osadzona */}
+                <div style={{ border: `1px solid ${T.border}`, overflow: "hidden" }}>
+                  <div style={{ fontFamily: T.sans, fontSize: 10, letterSpacing: "0.15em", color: T.gold, textTransform: "uppercase", padding: "12px 16px 10px", background: "rgba(22,22,22,0.6)" }}>Warsaw Financial Center — Emilii Plater 53</div>
+                  <iframe
+                    title="Warsaw Financial Center"
+                    width="100%"
+                    height="220"
+                    style={{ display: "block", border: "none", filter: "invert(0.9) hue-rotate(180deg) saturate(0.4)" }}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2443.4!2d21.00624!3d52.22977!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x471ecc8c92692e49%3A0x7c3d8c1befc2dd68!2sWarsaw%20Financial%20Center!5e0!3m2!1spl!2spl!4v1700000000000!5m2!1spl!2spl"
+                  />
+                  <a href="https://maps.google.com/?q=Warsaw+Financial+Center+Emilii+Plater+53+Warszawa" target="_blank" rel="noopener noreferrer"
+                    style={{ display: "block", padding: "10px 16px", fontFamily: T.sans, fontSize: 11, color: T.gold, textDecoration: "none", letterSpacing: "0.08em", background: "rgba(22,22,22,0.6)", borderTop: `1px solid ${T.border}` }}>
                     Otwórz w Google Maps →
                   </a>
                 </div>

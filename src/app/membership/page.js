@@ -63,12 +63,12 @@ export default function MembershipPage() {
   };
 
   const benefits = [
-    { icon: "◈", t: "Wszystkie wydarzenia" },
-    { icon: "◆", t: "Strefa członkowska" },
-    { icon: "◇", t: "Concierge premium" },
-    { icon: "✧", t: "Networking 150+ liderów" },
-    { icon: "❖", t: "Best of Poland" },
-    { icon: "✦", t: "Eleganckie zaproszenia" },
+    { icon: "◈", t: "Wszystkie wydarzenia", d: "Priorytowy dostęp do gal, kolacji i wydarzeń zamkniętych przez cały rok" },
+    { icon: "◆", t: "Strefa członkowska", d: "Ekskluzywna platforma z archiwum relacji, ofertami i kontaktami do członków" },
+    { icon: "◇", t: "Concierge premium", d: "Dedykowany opiekun wspierający rezerwacje, podróże i potrzeby biznesowe" },
+    { icon: "✧", t: "Networking 150+ liderów", d: "Grono prezesów, założycieli i osobistości ze świata kultury i biznesu" },
+    { icon: "❖", t: "Best of Poland", d: "Dostęp do programu promującego najlepsze polskie marki, miejsca i inicjatywy" },
+    { icon: "✦", t: "Eleganckie zaproszenia", d: "Personalizowane zaproszenia na premiery, wernisaże i wydarzenia partnerów" },
   ];
 
   return (
@@ -89,7 +89,7 @@ export default function MembershipPage() {
           <FadeIn><Eyebrow>KORZYŚCI</Eyebrow>
           <div style={{ marginTop: 16, marginBottom: 48 }}><Divider /></div></FadeIn>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(3,1fr)", gap: isMobile ? 12 : 24 }}>
-            {benefits.map((b, i) => <FadeIn key={i} delay={i * 60}><FeatureBox icon={b.icon} title={b.t} /></FadeIn>)}
+            {benefits.map((b, i) => <FadeIn key={i} delay={i * 60}><FeatureBox icon={b.icon} title={b.t} desc={b.d} /></FadeIn>)}
           </div>
         </Container>
       </Section>
