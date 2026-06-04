@@ -83,11 +83,9 @@ export default function HomePage() {
             </div>
           </FadeIn>
           {!isMobile && (
-            <FadeIn dir="right" style={{ display: "block", background: T.bgAlt, lineHeight: 0, fontSize: 0 }}>
-              <div style={{ borderLeft: "1px solid rgba(201,169,97,0.15)", overflow: "hidden", background: T.bgAlt, lineHeight: 0, fontSize: 0, height: 500 }}>
-                <img src="/images/ballroom.webp" alt="Sala balowa Ambassador Club" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }} loading="lazy" />
-              </div>
-            </FadeIn>
+            <div style={{ borderLeft: "1px solid rgba(201,169,97,0.15)", overflow: "hidden", background: T.bgAlt, height: 500, lineHeight: 0, fontSize: 0 }}>
+              <img src="/images/ballroom.webp" alt="Sala balowa Ambassador Club" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }} loading="lazy" />
+            </div>
           )}
           {isMobile && (
             <img src="/images/ballroom.webp" alt="Sala balowa Ambassador Club" style={{ width: "100%", height: 260, objectFit: "cover" }} loading="lazy" />
@@ -96,16 +94,16 @@ export default function HomePage() {
       </section>
 
       {/* Golden Divider */}
-      <section style={{ background: T.bg, padding: "32px 0" }}>
-        <div style={{ maxWidth: 680, margin: "0 auto", background: T.bg, lineHeight: 0, fontSize: 0 }}>
+      <div style={{ background: T.bg, padding: "32px 0", lineHeight: 0, fontSize: 0 }}>
+        <div style={{ maxWidth: 680, margin: "0 auto", overflow: "hidden", lineHeight: 0, fontSize: 0 }}>
           <img
             src="/images/golden-divider.webp"
             alt=""
-            style={{ width: "100%", display: "block", opacity: 0.92 }}
+            style={{ width: "100%", height: "auto", display: "block", opacity: 0.92 }}
             loading="lazy"
           />
         </div>
-      </section>
+      </div>
 
       {/* ── EVENTS — tło video szampan ── */}
       <section style={{ position: "relative", padding: sectionPad, overflow: "hidden" }}>
@@ -141,11 +139,9 @@ export default function HomePage() {
       <section style={{ background: T.bgAlt, padding: sectionPad }}>
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 40 : 80, maxWidth: 1200, margin: "0 auto", alignItems: "center" }}>
           {!isMobile && (
-            <FadeIn dir="left" style={{ display: "block", background: T.bgAlt, lineHeight: 0, fontSize: 0 }}>
-              <div style={{ borderRight: "1px solid rgba(201,169,97,0.15)", overflow: "hidden", background: T.bgAlt, lineHeight: 0, fontSize: 0, height: 560 }}>
-                <img src="/images/fine-dining.webp" alt="Fine dining" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }} loading="lazy" />
-              </div>
-            </FadeIn>
+            <div style={{ borderRight: "1px solid rgba(201,169,97,0.15)", overflow: "hidden", background: T.bgAlt, height: 560, lineHeight: 0, fontSize: 0 }}>
+              <img src="/images/fine-dining.webp" alt="Fine dining" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }} loading="lazy" />
+            </div>
           )}
           <FadeIn dir="right">
             <div>
