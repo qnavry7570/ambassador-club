@@ -221,22 +221,22 @@ function DashboardView({ isMobile, onMenuClick }) {
   const stats = [{ v: "3", l: "Nadchodzące" }, { v: "18", l: "Uczestniczono" }, { v: "42", l: "Kontakty" }, { v: "2", l: "Zaproszenia" }];
   return (
     <>
-      <TopBar title="Dashboard" subtitle="Witaj, Aleksandrze" isMobile={isMobile} onMenuClick={onMenuClick} />
-      <div style={{ padding: isMobile ? "16px" : "32px" }}>
-        {/* Baner powitalny — Warszawa */}
-        <div style={{ position: "relative", height: isMobile ? 140 : 200, overflow: "hidden", marginBottom: 24, lineHeight: 0, fontSize: 0 }}>
-          <img src="/images/warsaw-aerial.webp" alt="Warszawa" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 60%", display: "block" }} />
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, rgba(8,8,8,0.85) 0%, rgba(8,8,8,0.4) 60%, rgba(8,8,8,0.65) 100%)" }} />
-          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", padding: isMobile ? "0 20px" : "0 36px" }}>
-            <div>
-              <div style={{ fontFamily: T.sans, fontSize: 10, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 8 }}>Strefa Członkowska</div>
-              <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 22 : 32, fontWeight: 300, color: T.ivory, margin: "0 0 6px" }}>Dzień dobry, Aleksandrze</h2>
-              <p style={{ fontFamily: T.sans, fontSize: isMobile ? 12 : 13, color: "rgba(245,241,232,0.65)", fontWeight: 300, margin: 0 }}>
-                Masz <span style={{ color: T.gold, fontWeight: 700 }}>3 nadchodzące wydarzenia</span> i <span style={{ color: T.gold, fontWeight: 700 }}>1 nowe powiadomienie</span>.
-              </p>
-            </div>
+      <TopBar title="Dashboard" isMobile={isMobile} onMenuClick={onMenuClick} />
+      {/* Baner powitalny — Warszawa, bez paddingu = flush pod TopBar */}
+      <div style={{ position: "relative", height: isMobile ? 140 : 200, overflow: "hidden", lineHeight: 0, fontSize: 0 }}>
+        <img src="/images/warsaw-aerial.webp" alt="Warszawa" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 60%", display: "block" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, rgba(8,8,8,0.85) 0%, rgba(8,8,8,0.4) 60%, rgba(8,8,8,0.65) 100%)" }} />
+        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", padding: isMobile ? "0 20px" : "0 36px" }}>
+          <div>
+            <div style={{ fontFamily: T.sans, fontSize: 10, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 8 }}>Strefa Członkowska</div>
+            <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 22 : 32, fontWeight: 300, color: T.ivory, margin: "0 0 6px" }}>Dzień dobry, Aleksandrze</h2>
+            <p style={{ fontFamily: T.sans, fontSize: isMobile ? 12 : 13, color: "rgba(245,241,232,0.65)", fontWeight: 300, margin: 0 }}>
+              Masz <span style={{ color: T.gold, fontWeight: 700 }}>3 nadchodzące wydarzenia</span> i <span style={{ color: T.gold, fontWeight: 700 }}>1 nowe powiadomienie</span>.
+            </p>
           </div>
         </div>
+      </div>
+      <div style={{ padding: isMobile ? "16px" : "32px" }}>
         {/* Stats */}
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: isMobile ? 10 : 16, marginBottom: 24 }}>
           {stats.map((s, i) => (
