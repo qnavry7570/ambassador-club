@@ -96,30 +96,13 @@ export default function HomePage() {
       </section>
 
       {/* Golden Divider */}
-      <section style={{ background: T.bg, padding: "0", lineHeight: 0, fontSize: 0 }}>
-        <div style={{ maxWidth: 680, margin: "0 auto", height: 80, overflow: "hidden", position: "relative" }}>
-          {/* Obraz — przycięty do centrum (bez białych krawędzi) */}
-          <img
-            src="/images/golden-divider.webp"
-            alt=""
-            style={{
-              position: "absolute",
-              top: "50%", left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "120%",
-              height: "300%",
-              objectFit: "cover",
-              objectPosition: "center center",
-              opacity: 0.85,
-              display: "block",
-            }}
-            loading="lazy"
-          />
-          {/* Gradienty przykrywające beżowe krawędzie */}
-          <div style={{ position: "absolute", inset: 0, background: `linear-gradient(90deg, ${T.bg} 0%, transparent 18%, transparent 82%, ${T.bg} 100%)`, zIndex: 1 }} />
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 24, background: `linear-gradient(180deg, transparent, ${T.bg})`, zIndex: 1 }} />
-          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 16, background: `linear-gradient(0deg, transparent, ${T.bg})`, zIndex: 1 }} />
-        </div>
+      <section style={{ background: T.bg, padding: "32px 0", lineHeight: 0, fontSize: 0, textAlign: "center" }}>
+        <img
+          src="/images/golden-divider.webp"
+          alt=""
+          style={{ maxWidth: 680, width: "90%", margin: "0 auto", opacity: 0.92, display: "block" }}
+          loading="lazy"
+        />
       </section>
 
       {/* ── EVENTS — tło video szampan ── */}
