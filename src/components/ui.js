@@ -130,9 +130,12 @@ export function FadeIn({ children, delay = 0, dir = 'up', distance = 28, style =
   }[dir] || `0 ${distance}px`;
   return (
     <div ref={ref} style={{
+      display: 'block',
       opacity: inView ? 1 : 0,
       transform: inView ? 'translate(0,0)' : `translate(${translate})`,
       transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms`,
+      lineHeight: 'normal',
+      fontSize: 'revert',
       ...style,
     }}>
       {children}
