@@ -18,7 +18,12 @@ export default function BestOfPolandPage() {
       {/* Hero */}
       <Section padding="140px 48px 100px">
         <div style={{ textAlign: "center", maxWidth: 800, margin: "0 auto" }}>
-          <Eyebrow>BEST OF POLAND</Eyebrow>
+          <img
+            src="/images/logo-best-of-poland.webp"
+            alt="The Best of Poland"
+            style={{ height: isMobile ? 64 : 88, width: "auto", margin: "0 auto 32px", opacity: 0.92 }}
+            loading="eager"
+          />
           <Heading size="xl">To, co w Polsce najlepsze</Heading>
           <div style={{ marginTop: 24 }}><Divider /></div>
           <div style={{ marginTop: 24 }}>
