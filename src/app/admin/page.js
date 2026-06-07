@@ -189,13 +189,16 @@ function MemberForm({ initial = emptyMember, onSave, onCancel, saving }) {
   );
 }
 
-function MembersTab() {
+function MembersTab({ adminEmail }) {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState('');
+  const [showLoginForm, setShowLoginForm] = useState(null); // member id
+  const [loginPass, setLoginPass] = useState('');
+  const [creatingLogin, setCreatingLogin] = useState(false);
 
   const load = async () => {
     const { data } = await supabase.from('members').select('*').order('created_at', { ascending: false });
@@ -223,6 +226,23 @@ function MembersTab() {
     load();
   };
 
+  const createLogin = async (m) => {
+    if (!loginPass || loginPass.length < 6) { setMsg('Hasło musi mieć min. 6 znaków.'); return; }
+    setCreatingLogin(true);
+    const res = await fetch('/api/admin/create-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: m.email, password: loginPass, full_name: m.full_name, requestEmail: adminEmail }),
+    });
+    const data = await res.json();
+    setCreatingLogin(false);
+    setLoginPass('');
+    setShowLoginForm(null);
+    if (data.error) setMsg(`Błąd: ${data.error}`);
+    else setMsg(`Konto dla ${m.email} zostało utworzone.`);
+    setTimeout(() => setMsg(''), 4000);
+  };
+
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
@@ -236,18 +256,30 @@ function MembersTab() {
         <div style={{ border: `1px solid ${T.border}` }}>
           {members.length === 0 && <div style={{ padding: 24, fontFamily: T.sans, fontSize: 14, color: T.dim, textAlign: "center" }}>Brak członków. Dodaj pierwszego.</div>}
           {members.map((m, i) => (
-            <div key={m.id} style={{ padding: "14px 20px", borderBottom: i < members.length - 1 ? `1px solid ${T.border}` : "none", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-                  <span style={{ fontFamily: T.serif, fontSize: 15, color: T.ivory }}>{m.full_name || '—'}</span>
-                  {m.is_admin && <span style={{ fontFamily: T.sans, fontSize: 10, color: T.gold, border: `1px solid ${T.goldBorder}`, padding: "2px 6px" }}>ADMIN</span>}
+            <div key={m.id}>
+              <div style={{ padding: "14px 20px", borderBottom: showLoginForm === m.id ? "none" : i < members.length - 1 ? `1px solid ${T.border}` : "none", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+                    <span style={{ fontFamily: T.serif, fontSize: 15, color: T.ivory }}>{m.full_name || '—'}</span>
+                    {m.is_admin && <span style={{ fontFamily: T.sans, fontSize: 10, color: T.gold, border: `1px solid ${T.goldBorder}`, padding: "2px 6px" }}>ADMIN</span>}
+                  </div>
+                  <div style={{ fontFamily: T.sans, fontSize: 12, color: T.dim }}>{m.email} · {m.role || '—'} · {m.sector || '—'}</div>
                 </div>
-                <div style={{ fontFamily: T.sans, fontSize: 12, color: T.dim }}>{m.email} · {m.role || '—'} · {m.sector || '—'}</div>
+                <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                  <Btn small color="outline" onClick={() => { setShowLoginForm(showLoginForm === m.id ? null : m.id); setLoginPass(''); }}>🔑 Konto</Btn>
+                  <Btn small color="outline" onClick={() => { setEditing(m); setShowForm(false); }}>Edytuj</Btn>
+                  <Btn small color="red" onClick={() => del(m.id)}>Usuń</Btn>
+                </div>
               </div>
-              <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-                <Btn small color="outline" onClick={() => { setEditing(m); setShowForm(false); }}>Edytuj</Btn>
-                <Btn small color="red" onClick={() => del(m.id)}>Usuń</Btn>
-              </div>
+              {showLoginForm === m.id && (
+                <div style={{ padding: "16px 20px", background: "rgba(201,169,97,0.04)", borderBottom: i < members.length - 1 ? `1px solid ${T.border}` : "none", display: "flex", gap: 12, alignItems: "center" }}>
+                  <span style={{ fontFamily: T.sans, fontSize: 12, color: T.muted, flexShrink: 0 }}>Hasło dla {m.email}:</span>
+                  <input type="password" value={loginPass} onChange={e => setLoginPass(e.target.value)} placeholder="min. 6 znaków"
+                    style={{ flex: 1, padding: "8px 12px", background: "#111", border: `1px solid ${T.border}`, color: T.ivory, fontFamily: T.sans, fontSize: 13, outline: "none" }} />
+                  <Btn small onClick={() => createLogin(m)} disabled={creatingLogin}>{creatingLogin ? "Tworzę..." : "Utwórz konto"}</Btn>
+                  <Btn small color="outline" onClick={() => setShowLoginForm(null)}>Anuluj</Btn>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -290,6 +322,77 @@ function StatsTab() {
   );
 }
 
+/* ─── RSVP TAB ─── */
+function RsvpTab() {
+  const [events, setEvents] = useState([]);
+  const [rsvpData, setRsvpData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(null);
+
+  useEffect(() => {
+    supabase.from('events').select('*').eq('published', true).order('date', { ascending: true })
+      .then(async ({ data: evs }) => {
+        setEvents(evs || []);
+        const result = {};
+        await Promise.all((evs || []).map(async ev => {
+          const { data } = await supabase
+            .from('rsvp')
+            .select('user_id, created_at')
+            .eq('event_id', ev.id);
+          result[ev.id] = data || [];
+        }));
+        setRsvpData(result);
+        setLoading(false);
+      });
+  }, []);
+
+  return (
+    <div>
+      <h2 style={{ fontFamily: T.serif, fontSize: 24, color: T.ivory, margin: "0 0 24px", fontWeight: 400 }}>RSVP — lista zapisanych</h2>
+      {loading ? <div style={{ color: T.dim, fontFamily: T.sans }}>Ładowanie...</div> : (
+        <div style={{ border: `1px solid ${T.border}` }}>
+          {events.length === 0 && <div style={{ padding: 24, fontFamily: T.sans, fontSize: 14, color: T.dim, textAlign: "center" }}>Brak wydarzeń.</div>}
+          {events.map((ev, i) => {
+            const list = rsvpData[ev.id] || [];
+            const isOpen = open === ev.id;
+            return (
+              <div key={ev.id} style={{ borderBottom: i < events.length - 1 ? `1px solid ${T.border}` : "none" }}>
+                <div onClick={() => setOpen(isOpen ? null : ev.id)}
+                  style={{ padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", background: isOpen ? "rgba(201,169,97,0.04)" : "transparent" }}>
+                  <div>
+                    <div style={{ fontFamily: T.serif, fontSize: 16, color: T.ivory }}>{ev.title}</div>
+                    <div style={{ fontFamily: T.sans, fontSize: 12, color: T.dim, marginTop: 2 }}>{ev.date} · {ev.location}</div>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                    <div style={{ background: list.length > 0 ? "rgba(201,169,97,0.1)" : "transparent", border: `1px solid ${list.length > 0 ? T.gold : T.border}`, padding: "4px 14px", fontFamily: T.sans, fontSize: 13, color: list.length > 0 ? T.gold : T.dim }}>
+                      {list.length} zapisanych
+                    </div>
+                    <span style={{ color: T.gold, fontSize: 12 }}>{isOpen ? "▲" : "▼"}</span>
+                  </div>
+                </div>
+                {isOpen && (
+                  <div style={{ padding: "0 20px 16px", borderTop: `1px solid ${T.border}` }}>
+                    {list.length === 0 ? (
+                      <div style={{ padding: "12px 0", fontFamily: T.sans, fontSize: 13, color: T.dim }}>Nikt jeszcze się nie zapisał.</div>
+                    ) : (
+                      list.map((r, j) => (
+                        <div key={j} style={{ padding: "10px 0", borderBottom: j < list.length - 1 ? `1px solid ${T.border}` : "none", display: "flex", justifyContent: "space-between" }}>
+                          <span style={{ fontFamily: T.sans, fontSize: 13, color: T.muted }}>{r.user_id}</span>
+                          <span style={{ fontFamily: T.sans, fontSize: 11, color: T.dim }}>{new Date(r.created_at).toLocaleDateString('pl-PL')}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─── MAIN ─── */
 export default function AdminPage() {
   const [tab, setTab] = useState("events");
@@ -325,6 +428,7 @@ export default function AdminPage() {
   const tabs = [
     { id: "events", label: "Wydarzenia" },
     { id: "members", label: "Członkowie" },
+    { id: "rsvp", label: "RSVP" },
     { id: "stats", label: "Statystyki" },
   ];
 
@@ -356,7 +460,8 @@ export default function AdminPage() {
         </div>
 
         {tab === "events"  && <EventsTab />}
-        {tab === "members" && <MembersTab />}
+        {tab === "members" && <MembersTab adminEmail={user?.email} />}
+        {tab === "rsvp"    && <RsvpTab />}
         {tab === "stats"   && <StatsTab />}
       </div>
     </div>
