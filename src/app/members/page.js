@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { T, Badge, GoldBtn, GhostBtn, FeatureBox, Body } from '@/components/ui';
+import { supabase } from '@/lib/supabase';
 import { useBreakpoint } from '@/lib/useBreakpoint';
 
 /* ─── NAV ITEMS ─── */
@@ -14,7 +15,9 @@ const NAV_ITEMS = [
 ];
 
 /* ─── SIDEBAR (desktop) ─── */
-function Sidebar({ active, setActive }) {
+function Sidebar({ active, setActive, user, initials, onLogout }) {
+  const displayName = user?.user_metadata?.full_name || user?.email || '';
+  const shortName = displayName.includes('@') ? displayName.split('@')[0] : displayName.split(' ').slice(0,2).join(' ');
   return (
     <aside style={{ width: 240, background: "#080808", borderRight: `1px solid ${T.border}`, display: "flex", flexDirection: "column", height: "100vh", position: "fixed", left: 0, top: 0, zIndex: 50 }}>
       <div style={{ padding: "28px 24px 20px", borderBottom: `1px solid ${T.border}` }}>
@@ -33,13 +36,16 @@ function Sidebar({ active, setActive }) {
       </nav>
       <div style={{ padding: "16px 20px", borderTop: `1px solid ${T.border}` }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(201,169,97,0.1)", border: `1px solid ${T.goldBorder}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: T.serif, fontSize: 16, color: T.gold }}>AW</div>
+          <div style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(201,169,97,0.1)", border: `1px solid ${T.goldBorder}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: T.serif, fontSize: 16, color: T.gold }}>{initials}</div>
           <div>
-            <div style={{ fontFamily: T.sans, fontSize: 13, color: T.ivory }}>Aleksander W.</div>
-            <div style={{ fontFamily: T.sans, fontSize: 10, color: T.dim }}>Członek od 2024</div>
+            <div style={{ fontFamily: T.sans, fontSize: 13, color: T.ivory }}>{shortName}</div>
+            <div style={{ fontFamily: T.sans, fontSize: 10, color: T.dim }}>Strefa członkowska</div>
           </div>
         </div>
-        <a href="/" style={{ display: "block", marginTop: 16, fontFamily: T.sans, fontSize: 11, color: T.dim, textDecoration: "none", letterSpacing: "0.08em" }}>← Wróć do strony</a>
+        <div style={{ marginTop: 12, display: "flex", gap: 12 }}>
+          <a href="/" style={{ fontFamily: T.sans, fontSize: 11, color: T.dim, textDecoration: "none", letterSpacing: "0.08em" }}>← Strona główna</a>
+          <button onClick={onLogout} style={{ background: "none", border: "none", fontFamily: T.sans, fontSize: 11, color: T.dim, cursor: "pointer", letterSpacing: "0.08em", padding: 0 }}>Wyloguj →</button>
+        </div>
       </div>
     </aside>
   );
@@ -212,7 +218,7 @@ function Toggle({ label, defaultOn }) {
 }
 
 /* ─── DASHBOARD ─── */
-function DashboardView({ isMobile, onMenuClick }) {
+function DashboardView({ isMobile, onMenuClick, firstName }) {
   const events = [
     { title: "Wieczór Kolekcjonerski", day: "15", month: "mar", loc: "Pałac Zamoyskich", tag: "Sztuka", tagColor: "gold", rsvp: true },
     { title: "Wielka Gala Charytatywna", day: "28", month: "mar", loc: "Łazienki Królewskie", tag: "Filantropia", tagColor: "red", rsvp: false },
@@ -230,7 +236,7 @@ function DashboardView({ isMobile, onMenuClick }) {
         {/* Powitanie */}
         <div style={{ marginBottom: 20, paddingBottom: 20, borderBottom: `1px solid ${T.border}` }}>
           <div style={{ fontFamily: T.sans, fontSize: 9, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 6 }}>Strefa Członkowska</div>
-          <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 20 : 26, fontWeight: 300, color: T.ivory, margin: "0 0 6px" }}>Dzień dobry, Aleksandrze</h2>
+          <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 20 : 26, fontWeight: 300, color: T.ivory, margin: "0 0 6px" }}>Dzień dobry, {firstName}</h2>
           <p style={{ fontFamily: T.sans, fontSize: 13, color: T.muted, fontWeight: 300, margin: 0 }}>
             Masz <span style={{ color: T.gold, fontWeight: 700 }}>3 nadchodzące wydarzenia</span> i <span style={{ color: T.gold, fontWeight: 700 }}>1 nowe powiadomienie</span>.
           </p>
@@ -451,33 +457,55 @@ function BottomNav({ active, setActive }) {
 export default function MembersArea() {
   const [page, setPage] = useState("dashboard");
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const { isMobile } = useBreakpoint();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        window.location.href = '/login';
+      } else {
+        setUser(session.user);
+        setLoading(false);
+      }
+    });
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/login';
+  };
+
+  if (loading) return (
+    <div style={{ background: T.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ fontFamily: T.serif, fontSize: 20, color: T.gold, fontStyle: "italic" }}>Ładowanie...</div>
+    </div>
+  );
+
+  const firstName = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Członku';
+  const initials = user?.user_metadata?.full_name ? user.user_metadata.full_name.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase() : user?.email?.slice(0,2).toUpperCase();
 
   const views = { dashboard: DashboardView, events: EventsView, members: MembersView, gallery: GalleryView, concierge: ConciergeView, profile: ProfileView };
   const View = views[page] || DashboardView;
 
   return (
     <div style={{ background: T.bg, color: T.ivory, minHeight: "100vh", display: "flex" }}>
-      {/* Desktop sidebar */}
-      {!isMobile && <Sidebar active={page} setActive={setPage} />}
+      {!isMobile && <Sidebar active={page} setActive={setPage} user={user} initials={initials} onLogout={handleLogout} />}
 
-      {/* Mobile drawer */}
       {isMobile && (
         <MobileDrawer active={page} setActive={setPage} open={drawerOpen} onClose={() => setDrawerOpen(false)} />
       )}
 
-      {/* Main content */}
       <main style={{ flex: 1, marginLeft: isMobile ? 0 : 240, minHeight: "100vh", paddingBottom: isMobile ? 72 : 0, position: "relative" }}>
-        {/* Tło — złoty wzór geometryczny */}
         <div style={{ position: "fixed", inset: 0, marginLeft: isMobile ? 0 : 240, zIndex: 0, pointerEvents: "none" }}>
           <img src="/images/members-pattern.webp" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.035, display: "block" }} />
         </div>
         <div style={{ position: "relative", zIndex: 1 }}>
-          <View isMobile={isMobile} onMenuClick={() => setDrawerOpen(true)} />
+          <View isMobile={isMobile} onMenuClick={() => setDrawerOpen(true)} firstName={firstName} user={user} />
         </div>
       </main>
 
-      {/* Mobile bottom nav */}
       {isMobile && <BottomNav active={page} setActive={setPage} />}
     </div>
   );
