@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { T, Body } from '@/components/ui';
+import { T, Body, Eyebrow, Heading, Divider } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
 import { supabase } from '@/lib/supabase';
 
