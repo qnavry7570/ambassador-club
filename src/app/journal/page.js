@@ -1,33 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
 import PageShell from '@/components/PageShell';
-import { T, Eyebrow, Heading, Body, Badge, Section, Container, GoldBtn, GhostBtn, FadeIn } from '@/components/ui';
+import { T, Eyebrow, Heading, Body, Badge, Section, Container, FadeIn } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
 import { supabase } from '@/lib/supabase';
 
-function MembersModal({ article, onClose }) {
-  return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}
-      onClick={onClose}>
-      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)" }} />
-      <div style={{ position: "relative", background: T.bgCard, border: `1px solid ${T.goldBorder}`, maxWidth: 480, width: "100%", padding: "48px 40px", textAlign: "center" }}
-        onClick={e => e.stopPropagation()}>
-        <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", cursor: "pointer", color: T.dim, fontSize: 20, lineHeight: 1 }}>✕</button>
-        <div style={{ width: 56, height: 56, border: `1px solid ${T.goldBorder}`, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px", fontSize: 22, color: T.gold }}>🔒</div>
-        <div style={{ fontFamily: T.sans, fontSize: 10, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 12 }}>Treść zastrzeżona</div>
-        <h3 style={{ fontFamily: T.serif, fontSize: 24, fontWeight: 300, color: T.ivory, lineHeight: 1.3, margin: "0 0 16px" }}>{article.title}</h3>
-        <div style={{ width: 40, height: 1, background: T.gold, margin: "0 auto 20px" }} />
-        <p style={{ fontFamily: T.sans, fontSize: 14, fontWeight: 300, color: T.muted, lineHeight: 1.7, margin: "0 0 32px" }}>
-          Ten artykuł jest dostępny wyłącznie dla członków Ambassador Club. Zaloguj się lub złóż aplikację o członkostwo.
-        </p>
-        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-          <GoldBtn href="/login">Zaloguj się</GoldBtn>
-          <GhostBtn href="/membership">Aplikuj o członkostwo</GhostBtn>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function ArticleCard({ id, title, date, category, excerpt, image_url }) {
   const [h, setH] = useState(false);
