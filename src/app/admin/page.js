@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { T } from '@/components/ui';
+import dynamic from 'next/dynamic';
+const ArticleEditor = dynamic(() => import('@/components/ArticleEditor'), { ssr: false });
 
 const ADMIN_EMAIL = 'b.kawecki@ambassadorclub.pl';
 
@@ -291,9 +293,33 @@ function MembersTab({ adminEmail }) {
 const emptyArticle = { title: "", excerpt: "", content: "", category: "Sport", image_url: "", published: true };
 const articleCategories = ["Sport", "Kultura", "Filantropia", "Best of Poland", "Biznes", "Dziedzictwo", "Cigar Club"];
 
-function ArticleForm({ initial = emptyArticle, onSave, onCancel, saving }) {
+function ArticleForm({ initial = emptyArticle, onSave, onCancel, saving, adminEmail }) {
   const [form, setForm] = useState(initial);
+  const [uploading, setUploading] = useState(false);
+  const [uploadErr, setUploadErr] = useState('');
   const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadErr('');
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/admin/upload-image', {
+      method: 'POST',
+      headers: { 'x-admin-email': adminEmail },
+      body: fd,
+    });
+    const json = await res.json();
+    if (json.url) {
+      setForm(f => ({ ...f, image_url: json.url }));
+    } else {
+      setUploadErr(json.error || 'Błąd uploadu');
+    }
+    setUploading(false);
+  };
+
   return (
     <div style={{ background: "#0d0d0d", border: `1px solid ${T.goldBorder}`, padding: 24, marginBottom: 24 }}>
       <h3 style={{ fontFamily: T.serif, fontSize: 20, color: T.ivory, margin: "0 0 20px", fontWeight: 400 }}>
@@ -301,7 +327,10 @@ function ArticleForm({ initial = emptyArticle, onSave, onCancel, saving }) {
       </h3>
       <Field label="Tytuł" value={form.title} onChange={set("title")} placeholder="Tytuł artykułu" required />
       <Field label="Zajawka (skrót widoczny na liście)" value={form.excerpt} onChange={set("excerpt")} placeholder="Krótki opis..." textarea />
-      <Field label="Treść artykułu" value={form.content} onChange={set("content")} placeholder="Pełna treść..." textarea />
+      <div style={{ marginBottom: 16 }}>
+        <label style={{ display: "block", fontFamily: T.sans, fontSize: 11, letterSpacing: "0.1em", color: T.muted, textTransform: "uppercase", marginBottom: 6 }}>Treść artykułu</label>
+        <ArticleEditor value={form.content} onChange={val => setForm(f => ({ ...f, content: val }))} />
+      </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
         <div style={{ marginBottom: 16 }}>
           <label style={{ display: "block", fontFamily: T.sans, fontSize: 11, letterSpacing: "0.1em", color: T.muted, textTransform: "uppercase", marginBottom: 6 }}>Kategoria</label>
@@ -309,21 +338,40 @@ function ArticleForm({ initial = emptyArticle, onSave, onCancel, saving }) {
             {articleCategories.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
-        <Field label="URL zdjęcia" value={form.image_url} onChange={set("image_url")} placeholder="https://... lub /images/..." />
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ display: "block", fontFamily: T.sans, fontSize: 11, letterSpacing: "0.1em", color: T.muted, textTransform: "uppercase", marginBottom: 6 }}>Zdjęcie</label>
+          <label style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", background: "#111", border: `1px solid ${T.border}`, cursor: "pointer" }}>
+            <span style={{ fontFamily: T.sans, fontSize: 12, color: T.gold }}>
+              {uploading ? "Wgrywam..." : "📁 Wybierz plik"}
+            </span>
+            <span style={{ fontFamily: T.sans, fontSize: 11, color: T.dim }}>JPG, PNG, WebP</span>
+            <input type="file" accept="image/*" onChange={handleFileUpload} style={{ display: "none" }} disabled={uploading} />
+          </label>
+          {uploadErr && <div style={{ fontFamily: T.sans, fontSize: 11, color: "#e05555", marginTop: 4 }}>{uploadErr}</div>}
+          {form.image_url && (
+            <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8 }}>
+              <img src={form.image_url} alt="" style={{ width: 60, height: 40, objectFit: "cover", border: `1px solid ${T.border}` }} />
+              <span style={{ fontFamily: T.sans, fontSize: 11, color: T.dim, wordBreak: "break-all" }}>
+                {form.image_url.length > 40 ? form.image_url.slice(-40) : form.image_url}
+              </span>
+              <button onClick={() => setForm(f => ({ ...f, image_url: "" }))} style={{ background: "none", border: "none", color: "#e05555", cursor: "pointer", fontSize: 14, padding: 0 }}>✕</button>
+            </div>
+          )}
+        </div>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
         <input type="checkbox" id="art_pub" checked={form.published} onChange={e => setForm(f => ({ ...f, published: e.target.checked }))} />
         <label htmlFor="art_pub" style={{ fontFamily: T.sans, fontSize: 13, color: T.muted, cursor: "pointer" }}>Opublikowany (widoczny w Journal)</label>
       </div>
       <div style={{ display: "flex", gap: 12 }}>
-        <Btn onClick={() => onSave(form)} disabled={saving}>{saving ? "Zapisuję..." : "Zapisz"}</Btn>
+        <Btn onClick={() => onSave(form)} disabled={saving || uploading}>{saving ? "Zapisuję..." : "Zapisz"}</Btn>
         <Btn onClick={onCancel} color="outline">Anuluj</Btn>
       </div>
     </div>
   );
 }
 
-function ArticlesTab() {
+function ArticlesTab({ adminEmail }) {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -364,8 +412,8 @@ function ArticlesTab() {
         <Btn onClick={() => { setShowForm(true); setEditing(null); }}>+ Nowy artykuł</Btn>
       </div>
       {msg && <div style={{ background: "rgba(201,169,97,0.1)", border: `1px solid ${T.goldBorder}`, padding: "10px 16px", fontFamily: T.sans, fontSize: 13, color: T.gold, marginBottom: 16 }}>{msg}</div>}
-      {(showForm && !editing) && <ArticleForm onSave={save} onCancel={() => setShowForm(false)} saving={saving} />}
-      {editing && <ArticleForm initial={editing} onSave={save} onCancel={() => setEditing(null)} saving={saving} />}
+      {(showForm && !editing) && <ArticleForm onSave={save} onCancel={() => setShowForm(false)} saving={saving} adminEmail={adminEmail} />}
+      {editing && <ArticleForm initial={editing} onSave={save} onCancel={() => setEditing(null)} saving={saving} adminEmail={adminEmail} />}
       {loading ? <div style={{ color: T.dim, fontFamily: T.sans }}>Ładowanie...</div> : (
         <div style={{ border: `1px solid ${T.border}` }}>
           {articles.length === 0 && <div style={{ padding: 24, fontFamily: T.sans, fontSize: 14, color: T.dim, textAlign: "center" }}>Brak artykułów. Dodaj pierwszy.</div>}
@@ -566,7 +614,7 @@ export default function AdminPage() {
         </div>
 
         {tab === "events"   && <EventsTab />}
-        {tab === "articles" && <ArticlesTab />}
+        {tab === "articles" && <ArticlesTab adminEmail={user?.email} />}
         {tab === "members"  && <MembersTab adminEmail={user?.email} />}
         {tab === "rsvp"     && <RsvpTab />}
         {tab === "stats"    && <StatsTab />}

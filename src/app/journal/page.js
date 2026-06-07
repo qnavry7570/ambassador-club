@@ -29,26 +29,27 @@ function MembersModal({ article, onClose }) {
   );
 }
 
-function ArticleCard({ title, date, category, excerpt, image_url, onClick }) {
+function ArticleCard({ id, title, date, category, excerpt, image_url }) {
   const [h, setH] = useState(false);
   const img = image_url || "/images/networking.webp";
   return (
-    <div onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-      style={{ background: T.bgCard, border: "1px solid " + (h ? T.goldBorder : T.border), transition: "all 0.35s", cursor: "pointer", transform: h ? "translateY(-3px)" : "none", overflow: "hidden" }}>
-      <div style={{ height: 200, overflow: "hidden", position: "relative" }}>
-        <img src={img} alt={title} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s", transform: h ? "scale(1.05)" : "scale(1)" }} loading="lazy" />
-        <div style={{ position: "absolute", top: 12, right: 12, background: "rgba(10,10,10,0.7)", padding: "4px 8px", fontSize: 12 }}>🔒</div>
-      </div>
-      <div style={{ padding: "24px 20px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-          <Badge>{category}</Badge>
-          <span style={{ fontFamily: T.sans, fontSize: 10, color: T.dim }}>{date}</span>
+    <a href={`/journal/${id}`} style={{ textDecoration: "none", display: "block" }}
+      onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}>
+      <div style={{ background: T.bgCard, border: "1px solid " + (h ? T.goldBorder : T.border), transition: "all 0.35s", cursor: "pointer", transform: h ? "translateY(-3px)" : "none", overflow: "hidden" }}>
+        <div style={{ height: 200, overflow: "hidden" }}>
+          <img src={img} alt={title} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s", transform: h ? "scale(1.05)" : "scale(1)" }} loading="lazy" />
         </div>
-        <h3 style={{ fontFamily: T.serif, fontSize: 20, fontWeight: 400, color: T.ivory, marginBottom: 8, lineHeight: 1.3 }}>{title}</h3>
-        <Body sz={13} muted>{excerpt}</Body>
-        <div style={{ marginTop: 16, fontFamily: T.sans, fontSize: 11, color: h ? T.gold : T.dim, letterSpacing: "0.1em", textTransform: "uppercase", transition: "color 0.3s" }}>Czytaj więcej →</div>
+        <div style={{ padding: "24px 20px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <Badge>{category}</Badge>
+            <span style={{ fontFamily: T.sans, fontSize: 10, color: T.dim }}>{date}</span>
+          </div>
+          <h3 style={{ fontFamily: T.serif, fontSize: 20, fontWeight: 400, color: T.ivory, marginBottom: 8, lineHeight: 1.3 }}>{title}</h3>
+          <Body sz={13} muted>{excerpt}</Body>
+          <div style={{ marginTop: 16, fontFamily: T.sans, fontSize: 11, color: h ? T.gold : T.dim, letterSpacing: "0.1em", textTransform: "uppercase", transition: "color 0.3s" }}>Czytaj więcej →</div>
+        </div>
       </div>
-    </div>
+    </a>
   );
 }
 
@@ -61,7 +62,6 @@ function formatDate(str) {
 
 export default function JournalPage() {
   const { isMobile, isTablet } = useBreakpoint();
-  const [activeArticle, setActiveArticle] = useState(null);
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
@@ -81,8 +81,6 @@ export default function JournalPage() {
 
   return (
     <PageShell>
-      {activeArticle && <MembersModal article={activeArticle} onClose={() => setActiveArticle(null)} />}
-
       <Section padding="140px 48px 60px">
         <div style={{ textAlign: "center" }}>
           <Eyebrow>JOURNAL</Eyebrow>
@@ -131,11 +129,7 @@ export default function JournalPage() {
             <div style={{ display: "grid", gridTemplateColumns: gridCols, gap: isMobile ? 16 : 24 }}>
               {filtered.map((a, i) => (
                 <FadeIn key={a.id} delay={i * 60}>
-                  <ArticleCard
-                    {...a}
-                    date={formatDate(a.created_at)}
-                    onClick={() => setActiveArticle(a)}
-                  />
+                  <ArticleCard {...a} date={formatDate(a.created_at)} />
                 </FadeIn>
               ))}
             </div>

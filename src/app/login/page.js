@@ -51,6 +51,22 @@ export default function LoginPage() {
     }
   };
 
+  const handleResetPassword = async () => {
+    if (!email) { setError('Wpisz adres email aby zresetować hasło.'); return; }
+    setLoading(true);
+    setError('');
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    });
+    if (error) {
+      setError('Nie udało się wysłać emaila. Spróbuj ponownie.');
+    } else {
+      setError('');
+      alert(`Link do zmiany hasła wysłany na ${email}`);
+    }
+    setLoading(false);
+  };
+
   const handleMagicLink = async () => {
     if (!email) { setError('Wpisz adres email.'); return; }
     setLoading(true);
@@ -86,7 +102,7 @@ export default function LoginPage() {
           <AuthInput label="Hasło" placeholder="••••••••" type="password" icon="🔒" value={password} onChange={e => setPassword(e.target.value)} />
           {error && <div style={{ fontFamily: T.sans, fontSize: 13, color: "#e05555", marginBottom: 16, textAlign: "center" }}>{error}</div>}
           <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 24 }}>
-            <span style={{ fontFamily: T.sans, fontSize: 12, color: T.muted, cursor: "pointer" }}>Nie pamiętasz hasła?</span>
+            <span onClick={handleResetPassword} style={{ fontFamily: T.sans, fontSize: 12, color: T.gold, cursor: "pointer", textDecoration: "underline" }}>Nie pamiętasz hasła?</span>
           </div>
           <LoginBtn onClick={handleLogin}>{loading ? "Loguję..." : "Zaloguj się"}</LoginBtn>
           <div style={{ display: "flex", alignItems: "center", gap: 16, margin: "20px 0" }}>
@@ -159,7 +175,7 @@ export default function LoginPage() {
             <AuthInput label="Hasło" placeholder="••••••••" type="password" icon="🔒" value={password} onChange={e => setPassword(e.target.value)} />
             {error && <div style={{ fontFamily: T.sans, fontSize: 13, color: "#e05555", marginBottom: 16 }}>{error}</div>}
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 24 }}>
-              <span style={{ fontFamily: T.sans, fontSize: 12, color: T.muted, cursor: "pointer" }}>Nie pamiętasz hasła?</span>
+              <span onClick={handleResetPassword} style={{ fontFamily: T.sans, fontSize: 12, color: T.gold, cursor: "pointer", textDecoration: "underline" }}>Nie pamiętasz hasła?</span>
             </div>
             <LoginBtn onClick={handleLogin}>{loading ? "Loguję..." : "Zaloguj się"}</LoginBtn>
             <div style={{ display: "flex", alignItems: "center", gap: 16, margin: "24px 0" }}>
