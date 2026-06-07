@@ -1,25 +1,36 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PageShell from '@/components/PageShell';
-import { T, Eyebrow, Heading, Body, Divider, EventCard, GhostBtn, Section, Container } from '@/components/ui';
+import { T, Eyebrow, Heading, Body, Divider, EventCard, GhostBtn, Section, Container, FadeIn } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
+import { supabase } from '@/lib/supabase';
+
+function tagToCategory(tag) {
+  const map = { "Sport": "sport", "Sztuka": "culture", "Filantropia": "philanthropy", "Best of Poland": "bestofpoland", "Cigar Club": "cigar", "Biznes": "biznes" };
+  return map[tag] || "all";
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  const months = ["stycznia","lutego","marca","kwietnia","maja","czerwca","lipca","sierpnia","września","października","listopada","grudnia"];
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
 
 export default function EventsPage() {
   const [filter, setFilter] = useState("all");
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { isMobile, isTablet } = useBreakpoint();
-  const events = [
-    { title: "Wieczór Kolekcjonerski", date: "15 marca 2026", loc: "Pałac Zamoyskich, Warszawa", tag: "Sztuka", cat: "culture", img: "/images/vernissage.webp" },
-    { title: "Wielka Gala Charytatywna", date: "28 marca 2026", loc: "Łazienki Królewskie", tag: "Filantropia", cat: "philanthropy", img: "/images/charity-gala.webp" },
-    { title: "Dzień Polo & Champagne", date: "12 kwietnia 2026", loc: "Polo Club Wrocław", tag: "Sport", cat: "sport", img: "/images/equestrian.webp" },
-    { title: "Degustacja Win", date: "25 kwietnia 2026", loc: "Piwnice Biskupie, Kraków", tag: "Best of Poland", cat: "bestofpoland", img: "/images/fine-dining.webp" },
-    { title: "Regaty na Mazurach", date: "10 maja 2026", loc: "Yacht Club Giżycko", tag: "Sport", cat: "sport", img: "/images/regaty.webp" },
-    { title: "Wernisaż: Nowa Polska", date: "22 maja 2026", loc: "Galeria Foksal, Warszawa", tag: "Sztuka", cat: "culture", img: "/images/art-collector.webp" },
-    { title: "Turniej Golfowy AC Open", date: "18 czerwca 2026", loc: "Modry Las Golf Club", tag: "Sport", cat: "sport", img: "/images/golf-manor.webp" },
-    { title: "Noc Operowa", date: "2 lipca 2026", loc: "Teatr Wielki, Warszawa", tag: "Sztuka", cat: "culture", img: "/images/opera.webp" },
-  ];
+
+  useEffect(() => {
+    supabase.from('events').select('*').eq('published', true).order('date', { ascending: true })
+      .then(({ data }) => { setEvents(data || []); setLoading(false); });
+  }, []);
+
   const cats = ["all", "sport", "culture", "philanthropy", "bestofpoland"];
   const labels = { all: "Wszystkie", sport: "Sport", culture: "Kultura", philanthropy: "Filantropia", bestofpoland: "Best of Poland" };
-  const filtered = filter === "all" ? events : events.filter(e => e.cat === filter);
+  const filtered = filter === "all" ? events : events.filter(e => tagToCategory(e.tag) === filter);
   const gridCols = isMobile ? "1fr" : isTablet ? "1fr 1fr" : "repeat(3,1fr)";
 
   return (
@@ -42,9 +53,25 @@ export default function EventsPage() {
 
       <Section bg={T.bgAlt} padding="60px 48px 100px">
         <Container maxWidth={1000}>
-          <div style={{ display: "grid", gridTemplateColumns: gridCols, gap: isMobile ? 16 : 24 }}>
-            {filtered.map((ev, i) => <EventCard key={i} title={ev.title} date={ev.date} location={ev.loc} tag={ev.tag} img={ev.img} />)}
-          </div>
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "60px 0", fontFamily: T.serif, fontSize: 18, color: T.gold, fontStyle: "italic" }}>Ładowanie wydarzeń...</div>
+          ) : filtered.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "60px 0", fontFamily: T.sans, fontSize: 14, color: T.dim }}>Brak wydarzeń w tej kategorii.</div>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: gridCols, gap: isMobile ? 16 : 24 }}>
+              {filtered.map((ev, i) => (
+                <FadeIn key={ev.id} delay={i * 60}>
+                  <EventCard
+                    title={ev.title}
+                    date={formatDate(ev.date) + (ev.time ? ` · ${ev.time}` : '')}
+                    location={ev.location}
+                    tag={ev.tag}
+                    img={ev.image_url || "/images/networking.webp"}
+                  />
+                </FadeIn>
+              ))}
+            </div>
+          )}
           <div style={{ textAlign: "center", marginTop: 48 }}>
             <Body center muted>Zaloguj się aby zobaczyć pełne szczegóły i RSVP.</Body>
             <div style={{ marginTop: 20 }}><GhostBtn href="/login">Zaloguj się</GhostBtn></div>

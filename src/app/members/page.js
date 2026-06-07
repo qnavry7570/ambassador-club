@@ -283,21 +283,47 @@ function DashboardView({ isMobile, onMenuClick, firstName }) {
   );
 }
 
+function formatDay(dateStr) { return dateStr ? new Date(dateStr).getDate().toString() : ''; }
+function formatMonth(dateStr) {
+  if (!dateStr) return '';
+  const m = ["sty","lut","mar","kwi","maj","cze","lip","sie","wrz","paź","lis","gru"];
+  return m[new Date(dateStr).getMonth()];
+}
+
 /* ─── EVENTS VIEW ─── */
 function EventsView({ isMobile, onMenuClick }) {
-  const events = [
-    { title: "Wieczór Kolekcjonerski", day: "15", month: "mar", loc: "Pałac Zamoyskich · 19:00 · Black tie", tag: "Sztuka", tagColor: "gold", rsvp: true, img: "/images/vernissage.webp" },
-    { title: "Wielka Gala Charytatywna", day: "28", month: "mar", loc: "Łazienki · 18:30 · White tie", tag: "Filantropia", tagColor: "red", rsvp: false, img: "/images/charity-gala.webp" },
-    { title: "Dzień Polo & Champagne", day: "12", month: "kwi", loc: "Polo Club Wrocław · 11:00 · Smart casual", tag: "Sport", tagColor: "blue", rsvp: false, img: "/images/equestrian.webp" },
-    { title: "Degustacja Win", day: "25", month: "kwi", loc: "Piwnice Biskupie · 20:00 · Business casual", tag: "Best of Poland", tagColor: "outline", rsvp: false, img: "/images/fine-dining.webp" },
-  ];
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.from('events').select('*').eq('published', true).order('date', { ascending: true })
+      .then(({ data }) => { setEvents(data || []); setLoading(false); });
+  }, []);
+
+  const mapped = events.map(ev => ({
+    id: ev.id,
+    title: ev.title,
+    day: formatDay(ev.date),
+    month: formatMonth(ev.date),
+    loc: [ev.location, ev.time, ev.dress_code].filter(Boolean).join(' · '),
+    tag: ev.tag,
+    tagColor: ev.tag_color || 'gold',
+    rsvp: false,
+    img: ev.image_url || null,
+  }));
+
   return (
     <>
       <TopBar title="Wydarzenia" subtitle="Pełny kalendarz klubowy" isMobile={isMobile} onMenuClick={onMenuClick} />
       <div style={{ padding: isMobile ? "16px" : "32px" }}>
-        <div style={{ background: T.bgCard, border: `1px solid ${T.border}` }}>
-          {events.map((ev, i) => <EventRow key={i} ev={ev} isMobile={isMobile} />)}
-        </div>
+        {loading ? (
+          <div style={{ fontFamily: T.serif, fontSize: 18, color: T.gold, fontStyle: "italic", padding: 32, textAlign: "center" }}>Ładowanie...</div>
+        ) : (
+          <div style={{ background: T.bgCard, border: `1px solid ${T.border}` }}>
+            {mapped.length === 0 && <div style={{ padding: 32, fontFamily: T.sans, fontSize: 14, color: T.dim, textAlign: "center" }}>Brak nadchodzących wydarzeń.</div>}
+            {mapped.map((ev, i) => <EventRow key={ev.id} ev={ev} isMobile={isMobile} />)}
+          </div>
+        )}
       </div>
     </>
   );
