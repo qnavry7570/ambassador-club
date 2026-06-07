@@ -152,32 +152,102 @@ function EventsTab() {
 }
 
 /* ─── MEMBERS TAB ─── */
+const emptyMember = { full_name: "", email: "", company: "", role: "", sector: "", member_since: new Date().getFullYear().toString(), is_admin: false };
+
+function MemberForm({ initial = emptyMember, onSave, onCancel, saving }) {
+  const [form, setForm] = useState(initial);
+  const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
+  const sectors = ["Finanse", "Technologia", "Prawo", "Nieruchomości", "Moda", "Sztuka", "Jachting", "Filantropia", "Biznes", "Inne"];
+  return (
+    <div style={{ background: "#0d0d0d", border: `1px solid ${T.goldBorder}`, padding: 24, marginBottom: 24 }}>
+      <h3 style={{ fontFamily: T.serif, fontSize: 20, color: T.ivory, margin: "0 0 20px", fontWeight: 400 }}>
+        {initial.id ? "Edytuj członka" : "Nowy członek"}
+      </h3>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
+        <Field label="Imię i nazwisko" value={form.full_name} onChange={set("full_name")} placeholder="Jan Kowalski" required />
+        <Field label="Email" value={form.email} onChange={set("email")} type="email" placeholder="jan@example.com" required />
+        <Field label="Firma" value={form.company} onChange={set("company")} placeholder="Firma XYZ" />
+        <Field label="Stanowisko" value={form.role} onChange={set("role")} placeholder="CEO" />
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ display: "block", fontFamily: T.sans, fontSize: 11, letterSpacing: "0.1em", color: T.muted, textTransform: "uppercase", marginBottom: 6 }}>Sektor</label>
+          <select value={form.sector} onChange={set("sector")} style={{ width: "100%", padding: "10px 12px", background: "#111", border: `1px solid ${T.border}`, color: T.ivory, fontFamily: T.sans, fontSize: 13, outline: "none" }}>
+            <option value="">— wybierz —</option>
+            {sectors.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>
+        <Field label="Członek od (rok)" value={form.member_since} onChange={set("member_since")} placeholder="2025" />
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+        <input type="checkbox" id="is_admin" checked={form.is_admin} onChange={e => setForm(f => ({ ...f, is_admin: e.target.checked }))} />
+        <label htmlFor="is_admin" style={{ fontFamily: T.sans, fontSize: 13, color: T.muted, cursor: "pointer" }}>Uprawnienia admina</label>
+      </div>
+      <div style={{ display: "flex", gap: 12 }}>
+        <Btn onClick={() => onSave(form)} disabled={saving}>{saving ? "Zapisuję..." : "Zapisz"}</Btn>
+        <Btn onClick={onCancel} color="outline">Anuluj</Btn>
+      </div>
+    </div>
+  );
+}
+
 function MembersTab() {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState('');
 
-  useEffect(() => {
-    supabase.from('members').select('*').order('created_at', { ascending: false })
-      .then(({ data }) => { setMembers(data || []); setLoading(false); });
-  }, []);
+  const load = async () => {
+    const { data } = await supabase.from('members').select('*').order('created_at', { ascending: false });
+    setMembers(data || []);
+    setLoading(false);
+  };
+  useEffect(() => { load(); }, []);
+
+  const save = async (form) => {
+    setSaving(true);
+    if (editing) {
+      await supabase.from('members').update(form).eq('id', editing.id);
+      setMsg('Zaktualizowano.'); setEditing(null);
+    } else {
+      await supabase.from('members').insert(form);
+      setMsg('Dodano członka.'); setShowForm(false);
+    }
+    setSaving(false); load();
+    setTimeout(() => setMsg(''), 3000);
+  };
+
+  const del = async (id) => {
+    if (!confirm('Usunąć tego członka?')) return;
+    await supabase.from('members').delete().eq('id', id);
+    load();
+  };
 
   return (
     <div>
-      <h2 style={{ fontFamily: T.serif, fontSize: 24, color: T.ivory, margin: "0 0 24px", fontWeight: 400 }}>Członkowie ({members.length})</h2>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+        <h2 style={{ fontFamily: T.serif, fontSize: 24, color: T.ivory, margin: 0, fontWeight: 400 }}>Członkowie ({members.length})</h2>
+        <Btn onClick={() => { setShowForm(true); setEditing(null); }}>+ Dodaj członka</Btn>
+      </div>
+      {msg && <div style={{ background: "rgba(201,169,97,0.1)", border: `1px solid ${T.goldBorder}`, padding: "10px 16px", fontFamily: T.sans, fontSize: 13, color: T.gold, marginBottom: 16 }}>{msg}</div>}
+      {(showForm && !editing) && <MemberForm onSave={save} onCancel={() => setShowForm(false)} saving={saving} />}
+      {editing && <MemberForm initial={editing} onSave={save} onCancel={() => setEditing(null)} saving={saving} />}
       {loading ? <div style={{ color: T.dim, fontFamily: T.sans }}>Ładowanie...</div> : (
         <div style={{ border: `1px solid ${T.border}` }}>
-          {members.length === 0 && (
-            <div style={{ padding: 24, fontFamily: T.sans, fontSize: 14, color: T.dim, textAlign: "center" }}>
-              Brak członków w tabeli. Dodaj przez SQL Editor w Supabase.
-            </div>
-          )}
+          {members.length === 0 && <div style={{ padding: 24, fontFamily: T.sans, fontSize: 14, color: T.dim, textAlign: "center" }}>Brak członków. Dodaj pierwszego.</div>}
           {members.map((m, i) => (
-            <div key={m.id} style={{ padding: "14px 20px", borderBottom: i < members.length - 1 ? `1px solid ${T.border}` : "none", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
-                <div style={{ fontFamily: T.serif, fontSize: 15, color: T.ivory }}>{m.full_name || '—'}</div>
-                <div style={{ fontFamily: T.sans, fontSize: 12, color: T.dim, marginTop: 2 }}>{m.email} · {m.role || '—'} · {m.sector || '—'}</div>
+            <div key={m.id} style={{ padding: "14px 20px", borderBottom: i < members.length - 1 ? `1px solid ${T.border}` : "none", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+                  <span style={{ fontFamily: T.serif, fontSize: 15, color: T.ivory }}>{m.full_name || '—'}</span>
+                  {m.is_admin && <span style={{ fontFamily: T.sans, fontSize: 10, color: T.gold, border: `1px solid ${T.goldBorder}`, padding: "2px 6px" }}>ADMIN</span>}
+                </div>
+                <div style={{ fontFamily: T.sans, fontSize: 12, color: T.dim }}>{m.email} · {m.role || '—'} · {m.sector || '—'}</div>
               </div>
-              {m.is_admin && <span style={{ fontFamily: T.sans, fontSize: 10, color: T.gold, border: `1px solid ${T.goldBorder}`, padding: "3px 8px" }}>ADMIN</span>}
+              <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                <Btn small color="outline" onClick={() => { setEditing(m); setShowForm(false); }}>Edytuj</Btn>
+                <Btn small color="red" onClick={() => del(m.id)}>Usuń</Btn>
+              </div>
             </div>
           ))}
         </div>
