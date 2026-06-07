@@ -1,16 +1,17 @@
 'use client';
 import { useState } from 'react';
-import { T, Eyebrow, Heading, Body, Divider } from '@/components/ui';
+import { T, Body } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
+import { supabase } from '@/lib/supabase';
 
-function AuthInput({ label, placeholder, type = "text", icon }) {
+function AuthInput({ label, placeholder, type = "text", icon, value, onChange }) {
   const [f, setF] = useState(false);
   return (
     <div style={{ marginBottom: 20 }}>
       {label && <label style={{ display: "block", fontFamily: T.sans, fontSize: 11, letterSpacing: "0.12em", color: T.muted, textTransform: "uppercase", marginBottom: 8 }}>{label}</label>}
       <div style={{ position: "relative" }}>
         {icon && <div style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", fontSize: 16, color: f ? T.gold : T.dim, transition: "color 0.2s" }}>{icon}</div>}
-        <input type={type} placeholder={placeholder} onFocus={() => setF(true)} onBlur={() => setF(false)}
+        <input type={type} placeholder={placeholder} value={value} onChange={onChange} onFocus={() => setF(true)} onBlur={() => setF(false)}
           style={{ width: "100%", padding: icon ? "15px 16px 15px 44px" : "15px 16px", background: "rgba(22,22,22,0.6)", border: `1px solid ${f ? T.gold : T.border}`, color: T.ivory, fontFamily: T.sans, fontSize: 15, fontWeight: 300, outline: "none", transition: "all 0.25s" }} />
       </div>
     </div>
@@ -30,11 +31,37 @@ function LoginBtn({ children, onClick, variant = "gold" }) {
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const { isMobile } = useBreakpoint();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    if (!email || !password) { setError('Wpisz email i hasło.'); return; }
     setLoading(true);
-    setTimeout(() => { window.location.href = "/members"; }, 1200);
+    setError('');
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setError('Nieprawidłowy email lub hasło.');
+      setLoading(false);
+    } else {
+      window.location.href = '/members';
+    }
+  };
+
+  const handleMagicLink = async () => {
+    if (!email) { setError('Wpisz adres email.'); return; }
+    setLoading(true);
+    setError('');
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) {
+      setError('Nie udało się wysłać linku. Spróbuj ponownie.');
+      setLoading(false);
+    } else {
+      setError('');
+      alert(`Link logowania wysłany na ${email}`);
+      setLoading(false);
+    }
   };
 
   /* ── MOBILE ── */
@@ -53,8 +80,9 @@ export default function LoginPage() {
             <h1 style={{ fontFamily: T.serif, fontSize: 30, fontWeight: 300, color: T.ivory, margin: 0 }}>Witaj ponownie</h1>
             <p style={{ fontFamily: T.sans, fontSize: 14, color: T.muted, fontWeight: 300, marginTop: 10 }}>Zaloguj się do swojego konta</p>
           </div>
-          <AuthInput label="Email" placeholder="twoj@email.com" type="email" icon="✉" />
-          <AuthInput label="Hasło" placeholder="••••••••" type="password" icon="🔒" />
+          <AuthInput label="Email" placeholder="twoj@email.com" type="email" icon="✉" value={email} onChange={e => setEmail(e.target.value)} />
+          <AuthInput label="Hasło" placeholder="••••••••" type="password" icon="🔒" value={password} onChange={e => setPassword(e.target.value)} />
+          {error && <div style={{ fontFamily: T.sans, fontSize: 13, color: "#e05555", marginBottom: 16, textAlign: "center" }}>{error}</div>}
           <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 24 }}>
             <span style={{ fontFamily: T.sans, fontSize: 12, color: T.muted, cursor: "pointer" }}>Nie pamiętasz hasła?</span>
           </div>
@@ -64,7 +92,7 @@ export default function LoginPage() {
             <span style={{ fontFamily: T.sans, fontSize: 10, letterSpacing: "0.15em", color: T.dim, textTransform: "uppercase" }}>lub</span>
             <div style={{ flex: 1, height: 1, background: T.border }} />
           </div>
-          <LoginBtn variant="ghost" onClick={handleLogin}>✨ Magic Link</LoginBtn>
+          <LoginBtn variant="ghost" onClick={handleMagicLink}>✨ Magic Link</LoginBtn>
           <div style={{ textAlign: "center", marginTop: 28 }}>
             <Body sz={12} muted>Nie masz jeszcze konta?</Body>
             <div style={{ marginTop: 8 }}>
@@ -125,8 +153,9 @@ export default function LoginPage() {
           <Heading size="md">Witaj ponownie</Heading>
           <div style={{ marginTop: 8 }}><Body center>Zaloguj się do swojego konta członkowskiego</Body></div>
           <div style={{ marginTop: 40 }}>
-            <AuthInput label="Email" placeholder="twoj@email.com" type="email" icon="✉" />
-            <AuthInput label="Hasło" placeholder="••••••••" type="password" icon="🔒" />
+            <AuthInput label="Email" placeholder="twoj@email.com" type="email" icon="✉" value={email} onChange={e => setEmail(e.target.value)} />
+            <AuthInput label="Hasło" placeholder="••••••••" type="password" icon="🔒" value={password} onChange={e => setPassword(e.target.value)} />
+            {error && <div style={{ fontFamily: T.sans, fontSize: 13, color: "#e05555", marginBottom: 16 }}>{error}</div>}
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 24 }}>
               <span style={{ fontFamily: T.sans, fontSize: 12, color: T.muted, cursor: "pointer" }}>Nie pamiętasz hasła?</span>
             </div>
@@ -136,7 +165,7 @@ export default function LoginPage() {
               <span style={{ fontFamily: T.sans, fontSize: 10, letterSpacing: "0.15em", color: T.dim, textTransform: "uppercase" }}>lub</span>
               <div style={{ flex: 1, height: 1, background: T.border }} />
             </div>
-            <LoginBtn variant="ghost" onClick={handleLogin}>✨ Zaloguj przez Magic Link</LoginBtn>
+            <LoginBtn variant="ghost" onClick={handleMagicLink}>✨ Zaloguj przez Magic Link</LoginBtn>
             <div style={{ textAlign: "center", marginTop: 32 }}>
               <Body sz={12} muted>Nie masz jeszcze konta?</Body>
               <div style={{ marginTop: 8 }}>
