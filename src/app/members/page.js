@@ -33,6 +33,11 @@ function Sidebar({ active, setActive, user, initials, onLogout }) {
             <span style={{ fontSize: 14, width: 20, textAlign: "center" }}>{n.icon}</span>{n.label}
           </button>
         ))}
+        {user?.email === 'b.kawecki@ambassadorclub.pl' && (
+          <a href="/admin" style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", marginTop: 8, borderTop: `1px solid ${T.border}`, color: T.gold, fontFamily: T.sans, fontSize: 13, fontWeight: 400, letterSpacing: "0.04em", textDecoration: "none", borderLeft: `2px solid ${T.gold}`, background: "rgba(201,169,97,0.05)" }}>
+            <span style={{ fontSize: 14, width: 20, textAlign: "center" }}>⚙</span>Panel Admina
+          </a>
+        )}
       </nav>
       <div style={{ padding: "16px 20px", borderTop: `1px solid ${T.border}` }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -52,7 +57,7 @@ function Sidebar({ active, setActive, user, initials, onLogout }) {
 }
 
 /* ─── MOBILE DRAWER ─── */
-function MobileDrawer({ active, setActive, open, onClose }) {
+function MobileDrawer({ active, setActive, open, onClose, user }) {
   return (
     <>
       {/* backdrop */}
@@ -75,6 +80,11 @@ function MobileDrawer({ active, setActive, open, onClose }) {
               <span style={{ fontSize: 16, width: 22, textAlign: "center" }}>{n.icon}</span>{n.label}
             </button>
           ))}
+          {user?.email === 'b.kawecki@ambassadorclub.pl' && (
+            <a href="/admin" style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 16px", marginTop: 8, borderTop: `1px solid ${T.border}`, color: T.gold, fontFamily: T.sans, fontSize: 14, textDecoration: "none", borderLeft: `2px solid ${T.gold}`, background: "rgba(201,169,97,0.05)" }}>
+              <span style={{ fontSize: 16, width: 22, textAlign: "center" }}>⚙</span>Panel Admina
+            </a>
+          )}
         </nav>
         <div style={{ padding: "16px 20px", borderTop: `1px solid ${T.border}` }}>
           <a href="/" style={{ fontFamily: T.sans, fontSize: 12, color: T.dim, textDecoration: "none" }}>← Wróć do strony</a>
@@ -565,7 +575,7 @@ export default function MembersArea() {
       {!isMobile && <Sidebar active={page} setActive={setPage} user={user} initials={initials} onLogout={handleLogout} />}
 
       {isMobile && (
-        <MobileDrawer active={page} setActive={setPage} open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+        <MobileDrawer active={page} setActive={setPage} open={drawerOpen} onClose={() => setDrawerOpen(false)} user={user} />
       )}
 
       <main style={{ flex: 1, marginLeft: isMobile ? 0 : 240, minHeight: "100vh", paddingBottom: isMobile ? 72 : 0, position: "relative" }}>
