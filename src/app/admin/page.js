@@ -288,6 +288,109 @@ function MembersTab({ adminEmail }) {
   );
 }
 
+/* ─── ARTICLES TAB ─── */
+const emptyArticle = { title: "", excerpt: "", content: "", category: "Sport", image_url: "", published: true };
+const articleCategories = ["Sport", "Kultura", "Filantropia", "Best of Poland", "Biznes", "Dziedzictwo", "Cigar Club"];
+
+function ArticleForm({ initial = emptyArticle, onSave, onCancel, saving }) {
+  const [form, setForm] = useState(initial);
+  const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
+  return (
+    <div style={{ background: "#0d0d0d", border: `1px solid ${T.goldBorder}`, padding: 24, marginBottom: 24 }}>
+      <h3 style={{ fontFamily: T.serif, fontSize: 20, color: T.ivory, margin: "0 0 20px", fontWeight: 400 }}>
+        {initial.id ? "Edytuj artykuł" : "Nowy artykuł"}
+      </h3>
+      <Field label="Tytuł" value={form.title} onChange={set("title")} placeholder="Tytuł artykułu" required />
+      <Field label="Zajawka (skrót widoczny na liście)" value={form.excerpt} onChange={set("excerpt")} placeholder="Krótki opis..." textarea />
+      <Field label="Treść artykułu" value={form.content} onChange={set("content")} placeholder="Pełna treść..." textarea />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ display: "block", fontFamily: T.sans, fontSize: 11, letterSpacing: "0.1em", color: T.muted, textTransform: "uppercase", marginBottom: 6 }}>Kategoria</label>
+          <select value={form.category} onChange={set("category")} style={{ width: "100%", padding: "10px 12px", background: "#111", border: `1px solid ${T.border}`, color: T.ivory, fontFamily: T.sans, fontSize: 13, outline: "none" }}>
+            {articleCategories.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
+        <Field label="URL zdjęcia" value={form.image_url} onChange={set("image_url")} placeholder="https://... lub /images/..." />
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+        <input type="checkbox" id="art_pub" checked={form.published} onChange={e => setForm(f => ({ ...f, published: e.target.checked }))} />
+        <label htmlFor="art_pub" style={{ fontFamily: T.sans, fontSize: 13, color: T.muted, cursor: "pointer" }}>Opublikowany (widoczny w Journal)</label>
+      </div>
+      <div style={{ display: "flex", gap: 12 }}>
+        <Btn onClick={() => onSave(form)} disabled={saving}>{saving ? "Zapisuję..." : "Zapisz"}</Btn>
+        <Btn onClick={onCancel} color="outline">Anuluj</Btn>
+      </div>
+    </div>
+  );
+}
+
+function ArticlesTab() {
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState('');
+
+  const load = async () => {
+    const { data } = await supabase.from('articles').select('*').order('created_at', { ascending: false });
+    setArticles(data || []);
+    setLoading(false);
+  };
+  useEffect(() => { load(); }, []);
+
+  const save = async (form) => {
+    setSaving(true);
+    if (editing) {
+      await supabase.from('articles').update(form).eq('id', editing.id);
+      setMsg('Zaktualizowano.'); setEditing(null);
+    } else {
+      await supabase.from('articles').insert(form);
+      setMsg('Dodano artykuł.'); setShowForm(false);
+    }
+    setSaving(false); load();
+    setTimeout(() => setMsg(''), 3000);
+  };
+
+  const del = async (id) => {
+    if (!confirm('Usunąć ten artykuł?')) return;
+    await supabase.from('articles').delete().eq('id', id);
+    load();
+  };
+
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+        <h2 style={{ fontFamily: T.serif, fontSize: 24, color: T.ivory, margin: 0, fontWeight: 400 }}>Artykuły ({articles.length})</h2>
+        <Btn onClick={() => { setShowForm(true); setEditing(null); }}>+ Nowy artykuł</Btn>
+      </div>
+      {msg && <div style={{ background: "rgba(201,169,97,0.1)", border: `1px solid ${T.goldBorder}`, padding: "10px 16px", fontFamily: T.sans, fontSize: 13, color: T.gold, marginBottom: 16 }}>{msg}</div>}
+      {(showForm && !editing) && <ArticleForm onSave={save} onCancel={() => setShowForm(false)} saving={saving} />}
+      {editing && <ArticleForm initial={editing} onSave={save} onCancel={() => setEditing(null)} saving={saving} />}
+      {loading ? <div style={{ color: T.dim, fontFamily: T.sans }}>Ładowanie...</div> : (
+        <div style={{ border: `1px solid ${T.border}` }}>
+          {articles.length === 0 && <div style={{ padding: 24, fontFamily: T.sans, fontSize: 14, color: T.dim, textAlign: "center" }}>Brak artykułów. Dodaj pierwszy.</div>}
+          {articles.map((a, i) => (
+            <div key={a.id} style={{ padding: "16px 20px", borderBottom: i < articles.length - 1 ? `1px solid ${T.border}` : "none", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+                  <span style={{ fontFamily: T.serif, fontSize: 16, color: T.ivory }}>{a.title}</span>
+                  {!a.published && <span style={{ fontFamily: T.sans, fontSize: 10, color: T.dim, border: `1px solid ${T.border}`, padding: "2px 6px" }}>UKRYTY</span>}
+                </div>
+                <div style={{ fontFamily: T.sans, fontSize: 12, color: T.dim }}>{a.category} · {new Date(a.created_at).toLocaleDateString('pl-PL')}</div>
+              </div>
+              <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                <Btn small color="outline" onClick={() => { setEditing(a); setShowForm(false); }}>Edytuj</Btn>
+                <Btn small color="red" onClick={() => del(a.id)}>Usuń</Btn>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─── STATS TAB ─── */
 function StatsTab() {
   const [stats, setStats] = useState({ events: 0, members: 0, rsvp: 0 });
@@ -429,10 +532,11 @@ export default function AdminPage() {
   );
 
   const tabs = [
-    { id: "events", label: "Wydarzenia" },
-    { id: "members", label: "Członkowie" },
-    { id: "rsvp", label: "RSVP" },
-    { id: "stats", label: "Statystyki" },
+    { id: "events",   label: "Wydarzenia" },
+    { id: "articles", label: "Artykuły" },
+    { id: "members",  label: "Członkowie" },
+    { id: "rsvp",     label: "RSVP" },
+    { id: "stats",    label: "Statystyki" },
   ];
 
   return (
@@ -462,10 +566,11 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {tab === "events"  && <EventsTab />}
-        {tab === "members" && <MembersTab adminEmail={user?.email} />}
-        {tab === "rsvp"    && <RsvpTab />}
-        {tab === "stats"   && <StatsTab />}
+        {tab === "events"   && <EventsTab />}
+        {tab === "articles" && <ArticlesTab />}
+        {tab === "members"  && <MembersTab adminEmail={user?.email} />}
+        {tab === "rsvp"     && <RsvpTab />}
+        {tab === "stats"    && <StatsTab />}
       </div>
     </div>
   );

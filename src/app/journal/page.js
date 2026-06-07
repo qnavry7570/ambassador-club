@@ -1,8 +1,9 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PageShell from '@/components/PageShell';
-import { T, Eyebrow, Heading, Body, Badge, Section, Container, GoldBtn, GhostBtn } from '@/components/ui';
+import { T, Eyebrow, Heading, Body, Badge, Section, Container, GoldBtn, GhostBtn, FadeIn } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
+import { supabase } from '@/lib/supabase';
 
 function MembersModal({ article, onClose }) {
   return (
@@ -11,11 +12,8 @@ function MembersModal({ article, onClose }) {
       <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)" }} />
       <div style={{ position: "relative", background: T.bgCard, border: `1px solid ${T.goldBorder}`, maxWidth: 480, width: "100%", padding: "48px 40px", textAlign: "center" }}
         onClick={e => e.stopPropagation()}>
-        {/* zamknij */}
         <button onClick={onClose} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", cursor: "pointer", color: T.dim, fontSize: 20, lineHeight: 1 }}>✕</button>
-
         <div style={{ width: 56, height: 56, border: `1px solid ${T.goldBorder}`, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px", fontSize: 22, color: T.gold }}>🔒</div>
-
         <div style={{ fontFamily: T.sans, fontSize: 10, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 12 }}>Treść zastrzeżona</div>
         <h3 style={{ fontFamily: T.serif, fontSize: 24, fontWeight: 300, color: T.ivory, lineHeight: 1.3, margin: "0 0 16px" }}>{article.title}</h3>
         <div style={{ width: 40, height: 1, background: T.gold, margin: "0 auto 20px" }} />
@@ -31,8 +29,9 @@ function MembersModal({ article, onClose }) {
   );
 }
 
-function ArticleCard({ title, date, cat, excerpt, img, onClick }) {
+function ArticleCard({ title, date, category, excerpt, image_url, onClick }) {
   const [h, setH] = useState(false);
+  const img = image_url || "/images/networking.webp";
   return (
     <div onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
       style={{ background: T.bgCard, border: "1px solid " + (h ? T.goldBorder : T.border), transition: "all 0.35s", cursor: "pointer", transform: h ? "translateY(-3px)" : "none", overflow: "hidden" }}>
@@ -42,7 +41,7 @@ function ArticleCard({ title, date, cat, excerpt, img, onClick }) {
       </div>
       <div style={{ padding: "24px 20px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-          <Badge>{cat}</Badge>
+          <Badge>{category}</Badge>
           <span style={{ fontFamily: T.sans, fontSize: 10, color: T.dim }}>{date}</span>
         </div>
         <h3 style={{ fontFamily: T.serif, fontSize: 20, fontWeight: 400, color: T.ivory, marginBottom: 8, lineHeight: 1.3 }}>{title}</h3>
@@ -53,48 +52,27 @@ function ArticleCard({ title, date, cat, excerpt, img, onClick }) {
   );
 }
 
+function formatDate(str) {
+  if (!str) return '';
+  const d = new Date(str);
+  const months = ["sty","lut","mar","kwi","maj","cze","lip","sie","wrz","paź","lis","gru"];
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
 export default function JournalPage() {
   const { isMobile, isTablet } = useBreakpoint();
   const [activeArticle, setActiveArticle] = useState(null);
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("all");
 
-  const articles = [
-    {
-      title: "Wernisaż prywatny — sztuka zanim trafi do publiczności",
-      date: "28 lut 2026", cat: "Kultura",
-      excerpt: "Ekskluzywny dostęp do wystawy przed oficjalnym otwarciem — relacja z wieczoru.",
-      img: "/images/vernissage.webp"
-    },
-    {
-      title: "Pałac Zamoyskich — historia i dzisiejsze życie",
-      date: "15 lut 2026", cat: "Dziedzictwo",
-      excerpt: "Od renesansowej rezydencji do centrum wydarzeń Ambassador Club.",
-      img: "/images/ballroom.webp"
-    },
-    {
-      title: "Jeździectwo w Polsce — odrodzenie dyscypliny",
-      date: "2 lut 2026", cat: "Sport",
-      excerpt: "Polskie stadniny i turnieje skokowe wracają na mapę europejskiego jeździectwa.",
-      img: "/images/equestrian.webp"
-    },
-    {
-      title: "Bursztyn bałtycki — złoto Północy",
-      date: "20 sty 2026", cat: "Best of Poland",
-      excerpt: "Jak polski bursztyn i jego mistrzowie podbijają rynki luksusu na świecie.",
-      img: "/images/amber-jewelry.webp"
-    },
-    {
-      title: "Wielka Gala Charytatywna — relacja",
-      date: "8 sty 2026", cat: "Filantropia",
-      excerpt: "Ponad 1,2 mln zł zebrane w jeden wieczór. Jak to robimy i dlaczego warto.",
-      img: "/images/charity-gala.webp"
-    },
-    {
-      title: "Regaty na Mazurach — żeglarstwo dla wymagających",
-      date: "28 gru 2025", cat: "Sport",
-      excerpt: "Pierwsze w historii zimowe regaty Ambassador Club. Relacja i zdjęcia.",
-      img: "/images/regaty.webp"
-    },
-  ];
+  useEffect(() => {
+    supabase.from('articles').select('*').eq('published', true).order('created_at', { ascending: false })
+      .then(({ data }) => { setArticles(data || []); setLoading(false); });
+  }, []);
+
+  const categories = ["all", ...Array.from(new Set(articles.map(a => a.category)))];
+  const filtered = filter === "all" ? articles : articles.filter(a => a.category === filter);
   const gridCols = isMobile ? "1fr" : isTablet ? "1fr 1fr" : "repeat(3,1fr)";
 
   return (
@@ -108,13 +86,38 @@ export default function JournalPage() {
           <div style={{ marginTop: 16 }}>
             <Body center>Artykuły o sztuce, sportach gentlemanów i polskim dziedzictwie</Body>
           </div>
+          {articles.length > 0 && (
+            <div style={{ marginTop: 32, display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
+              {categories.map(c => (
+                <button key={c} onClick={() => setFilter(c)}
+                  style={{ padding: isMobile ? "8px 14px" : "8px 20px", background: filter === c ? "rgba(201,169,97,0.1)" : "transparent", border: `1px solid ${filter === c ? T.gold : T.border}`, color: filter === c ? T.gold : T.muted, fontFamily: T.sans, fontSize: 12, letterSpacing: "0.08em", cursor: "pointer", transition: "all 0.2s" }}>
+                  {c === "all" ? "Wszystkie" : c}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </Section>
+
       <Section bg={T.bgAlt} padding="60px 48px 100px">
         <Container maxWidth={1100}>
-          <div style={{ display: "grid", gridTemplateColumns: gridCols, gap: isMobile ? 16 : 24 }}>
-            {articles.map((a, i) => <ArticleCard key={i} {...a} onClick={() => setActiveArticle(a)} />)}
-          </div>
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "60px 0", fontFamily: T.serif, fontSize: 18, color: T.gold, fontStyle: "italic" }}>Ładowanie...</div>
+          ) : filtered.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "60px 0", fontFamily: T.sans, fontSize: 14, color: T.dim }}>Brak artykułów.</div>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: gridCols, gap: isMobile ? 16 : 24 }}>
+              {filtered.map((a, i) => (
+                <FadeIn key={a.id} delay={i * 60}>
+                  <ArticleCard
+                    {...a}
+                    date={formatDate(a.created_at)}
+                    onClick={() => setActiveArticle(a)}
+                  />
+                </FadeIn>
+              ))}
+            </div>
+          )}
         </Container>
       </Section>
     </PageShell>
