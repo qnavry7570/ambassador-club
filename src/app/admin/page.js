@@ -5,7 +5,7 @@ import { T } from '@/components/ui';
 import dynamic from 'next/dynamic';
 const ArticleEditor = dynamic(() => import('@/components/ArticleEditor'), { ssr: false });
 
-const ADMIN_EMAIL = 'b.kawecki@ambassadorclub.pl';
+const ADMIN_EMAILS = ['b.kawecki@ambassadorclub.pl', 'janusz.janke@svarion.com'];
 
 /* ─── HELPERS ─── */
 function Btn({ children, onClick, color = "gold", small, disabled }) {
@@ -596,7 +596,7 @@ export default function AdminPage() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) { window.location.href = '/login?redirect=/admin'; return; }
-      if (session.user.email !== ADMIN_EMAIL) { setDenied(true); setLoading(false); return; }
+      if (!ADMIN_EMAILS.includes(session.user.email)) { setDenied(true); setLoading(false); return; }
       setUser(session.user);
       setLoading(false);
     });
