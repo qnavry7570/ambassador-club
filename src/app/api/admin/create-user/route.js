@@ -1,18 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 
-const ADMIN_EMAIL = 'b.kawecki@ambassadorclub.pl';
+const ADMIN_EMAILS = ['b.kawecki@ambassadorclub.pl'];
 
 export async function POST(request) {
   try {
-    const { email, password, full_name, requestEmail } = await request.json();
+    const { email, full_name, requestEmail } = await request.json();
 
-    // Sprawdź czy requester to admin
-    if (requestEmail !== ADMIN_EMAIL) {
+    if (!ADMIN_EMAILS.includes(requestEmail)) {
       return Response.json({ error: 'Brak uprawnień.' }, { status: 403 });
     }
 
-    if (!email || !password) {
-      return Response.json({ error: 'Email i hasło są wymagane.' }, { status: 400 });
+    if (!email) {
+      return Response.json({ error: 'Email jest wymagany.' }, { status: 400 });
     }
 
     const supabaseAdmin = createClient(
@@ -21,11 +20,10 @@ export async function POST(request) {
       { auth: { autoRefreshToken: false, persistSession: false } }
     );
 
-    const { data, error } = await supabaseAdmin.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: { full_name },
+    // Wyślij zaproszenie — członek sam ustawi hasło
+    const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+      data: { full_name },
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://ambassador-club.vercel.app'}/auth/callback`,
     });
 
     if (error) return Response.json({ error: error.message }, { status: 400 });

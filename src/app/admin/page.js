@@ -226,21 +226,19 @@ function MembersTab({ adminEmail }) {
     load();
   };
 
-  const createLogin = async (m) => {
-    if (!loginPass || loginPass.length < 6) { setMsg('Hasło musi mieć min. 6 znaków.'); return; }
+  const sendInvite = async (m) => {
     setCreatingLogin(true);
     const res = await fetch('/api/admin/create-user', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: m.email, password: loginPass, full_name: m.full_name, requestEmail: adminEmail }),
+      body: JSON.stringify({ email: m.email, full_name: m.full_name, requestEmail: adminEmail }),
     });
     const data = await res.json();
     setCreatingLogin(false);
-    setLoginPass('');
     setShowLoginForm(null);
     if (data.error) setMsg(`Błąd: ${data.error}`);
-    else setMsg(`Konto dla ${m.email} zostało utworzone.`);
-    setTimeout(() => setMsg(''), 4000);
+    else setMsg(`Zaproszenie wysłane na ${m.email}. Członek ustawi hasło samodzielnie.`);
+    setTimeout(() => setMsg(''), 5000);
   };
 
   return (
@@ -272,11 +270,12 @@ function MembersTab({ adminEmail }) {
                 </div>
               </div>
               {showLoginForm === m.id && (
-                <div style={{ padding: "16px 20px", background: "rgba(201,169,97,0.04)", borderBottom: i < members.length - 1 ? `1px solid ${T.border}` : "none", display: "flex", gap: 12, alignItems: "center" }}>
-                  <span style={{ fontFamily: T.sans, fontSize: 12, color: T.muted, flexShrink: 0 }}>Hasło dla {m.email}:</span>
-                  <input type="password" value={loginPass} onChange={e => setLoginPass(e.target.value)} placeholder="min. 6 znaków"
-                    style={{ flex: 1, padding: "8px 12px", background: "#111", border: `1px solid ${T.border}`, color: T.ivory, fontFamily: T.sans, fontSize: 13, outline: "none" }} />
-                  <Btn small onClick={() => createLogin(m)} disabled={creatingLogin}>{creatingLogin ? "Tworzę..." : "Utwórz konto"}</Btn>
+                <div style={{ padding: "16px 20px", background: "rgba(201,169,97,0.04)", borderBottom: i < members.length - 1 ? `1px solid ${T.border}` : "none", display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontFamily: T.sans, fontSize: 13, color: T.ivory, marginBottom: 4 }}>Wyślij zaproszenie do: <strong>{m.email}</strong></div>
+                    <div style={{ fontFamily: T.sans, fontSize: 12, color: T.dim }}>Członek otrzyma email z linkiem i sam ustawi hasło.</div>
+                  </div>
+                  <Btn small onClick={() => sendInvite(m)} disabled={creatingLogin}>{creatingLogin ? "Wysyłam..." : "✉ Wyślij zaproszenie"}</Btn>
                   <Btn small color="outline" onClick={() => setShowLoginForm(null)}>Anuluj</Btn>
                 </div>
               )}
