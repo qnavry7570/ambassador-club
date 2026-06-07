@@ -65,6 +65,8 @@ export default function JournalPage() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
+  const [searchFocus, setSearchFocus] = useState(false);
 
   useEffect(() => {
     supabase.from('articles').select('*').eq('published', true).order('created_at', { ascending: false })
@@ -72,7 +74,9 @@ export default function JournalPage() {
   }, []);
 
   const categories = ["all", ...Array.from(new Set(articles.map(a => a.category)))];
-  const filtered = filter === "all" ? articles : articles.filter(a => a.category === filter);
+  const filtered = articles
+    .filter(a => filter === "all" || a.category === filter)
+    .filter(a => !search || a.title.toLowerCase().includes(search.toLowerCase()) || a.excerpt?.toLowerCase().includes(search.toLowerCase()));
   const gridCols = isMobile ? "1fr" : isTablet ? "1fr 1fr" : "repeat(3,1fr)";
 
   return (
@@ -86,8 +90,26 @@ export default function JournalPage() {
           <div style={{ marginTop: 16 }}>
             <Body center>Artykuły o sztuce, sportach gentlemanów i polskim dziedzictwie</Body>
           </div>
+          {/* Wyszukiwarka */}
+          <div style={{ marginTop: 32, maxWidth: 420, margin: "32px auto 0" }}>
+            <div style={{ position: "relative" }}>
+              <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: searchFocus ? T.gold : T.dim, fontSize: 14, transition: "color 0.2s" }}>⌕</span>
+              <input
+                type="text"
+                placeholder="Szukaj artykułów..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                onFocus={() => setSearchFocus(true)}
+                onBlur={() => setSearchFocus(false)}
+                style={{ width: "100%", padding: "12px 16px 12px 40px", background: "rgba(22,22,22,0.6)", border: `1px solid ${searchFocus ? T.gold : T.border}`, color: T.ivory, fontFamily: T.sans, fontSize: 14, fontWeight: 300, outline: "none", transition: "all 0.2s" }}
+              />
+              {search && (
+                <button onClick={() => setSearch("")} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: T.dim, cursor: "pointer", fontSize: 16, lineHeight: 1 }}>✕</button>
+              )}
+            </div>
+          </div>
           {articles.length > 0 && (
-            <div style={{ marginTop: 32, display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
+            <div style={{ marginTop: 16, display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
               {categories.map(c => (
                 <button key={c} onClick={() => setFilter(c)}
                   style={{ padding: isMobile ? "8px 14px" : "8px 20px", background: filter === c ? "rgba(201,169,97,0.1)" : "transparent", border: `1px solid ${filter === c ? T.gold : T.border}`, color: filter === c ? T.gold : T.muted, fontFamily: T.sans, fontSize: 12, letterSpacing: "0.08em", cursor: "pointer", transition: "all 0.2s" }}>

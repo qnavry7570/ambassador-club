@@ -386,23 +386,30 @@ function EventsView({ isMobile, onMenuClick, user }) {
 
 /* ─── MEMBERS VIEW ─── */
 function MembersView({ isMobile, onMenuClick }) {
-  const members = [
-    { name: "Katarzyna Malinowska", initials: "KM", role: "CEO, Aurora Capital", sector: "Finanse" },
-    { name: "Tomasz Borkowski", initials: "TB", role: "Borkowski Yachts", sector: "Jachting" },
-    { name: "Maria Zamoyska", initials: "MZ", role: "Fundacja Zamoyskich", sector: "Filantropia" },
-    { name: "Piotr Nowak", initials: "PN", role: "CTO, TechVentures", sector: "Technologia" },
-    { name: "Anna Lewandowska", initials: "AL", role: "Atelier AL", sector: "Moda" },
-    { name: "Jan Wiśniewski", initials: "JW", role: "Wiśniewski & Partners", sector: "Prawo" },
-    { name: "Magdalena Kowalczyk", initials: "MK", role: "Galeria Narodowa", sector: "Sztuka" },
-    { name: "Robert Szymański", initials: "RS", role: "RS Holdings", sector: "Nieruchomości" },
-  ];
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.from('members').select('*').order('full_name')
+      .then(({ data }) => { setMembers(data || []); setLoading(false); });
+  }, []);
+
   return (
     <>
-      <TopBar title="Katalog członków" subtitle={`${members.length} członków`} isMobile={isMobile} onMenuClick={onMenuClick} />
+      <TopBar title="Katalog członków" subtitle={loading ? '' : `${members.length} członków`} isMobile={isMobile} onMenuClick={onMenuClick} />
       <div style={{ padding: isMobile ? "16px" : "32px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: isMobile ? 10 : 16 }}>
-          {members.map((m, i) => <MemberCard key={i} m={m} />)}
-        </div>
+        {loading ? (
+          <div style={{ fontFamily: T.serif, fontSize: 18, color: T.gold, fontStyle: "italic", padding: 32, textAlign: "center" }}>Ładowanie...</div>
+        ) : members.length === 0 ? (
+          <div style={{ padding: 32, fontFamily: T.sans, fontSize: 14, color: T.dim, textAlign: "center" }}>Brak członków w katalogu.</div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: isMobile ? 10 : 16 }}>
+            {members.map((m) => {
+              const initials = (m.full_name || m.email || '?').split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase();
+              return <MemberCard key={m.id} m={{ name: m.full_name || m.email, initials, role: [m.role, m.company].filter(Boolean).join(', '), sector: m.sector }} />;
+            })}
+          </div>
+        )}
       </div>
     </>
   );
@@ -459,39 +466,72 @@ function ConciergeView({ isMobile, onMenuClick }) {
 }
 
 /* ─── PROFILE VIEW ─── */
-function ProfileView({ isMobile, onMenuClick }) {
+function ProfileView({ isMobile, onMenuClick, user }) {
   const [tab, setTab] = useState("info");
+  const [member, setMember] = useState(null);
+  const [rsvpHistory, setRsvpHistory] = useState([]);
+  const [loadingRsvp, setLoadingRsvp] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+    // pobierz dane z tabeli members
+    supabase.from('members').select('*').eq('email', user.email).single()
+      .then(({ data }) => setMember(data));
+    // pobierz historię RSVP
+    supabase.from('rsvp').select('event_id, created_at').eq('user_id', user.id)
+      .then(async ({ data: rsvpData }) => {
+        if (!rsvpData?.length) { setLoadingRsvp(false); return; }
+        const ids = rsvpData.map(r => r.event_id);
+        const { data: evData } = await supabase.from('events').select('id, title, date, location').in('id', ids);
+        const merged = rsvpData.map(r => ({
+          ...r,
+          event: evData?.find(e => e.id === r.event_id),
+        }));
+        setRsvpHistory(merged);
+        setLoadingRsvp(false);
+      });
+  }, [user]);
+
+  const fullName = user?.user_metadata?.full_name || member?.full_name || user?.email || '—';
+  const initials = fullName.includes('@') ? fullName.slice(0,2).toUpperCase() : fullName.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase();
+
+  const infoRows = [
+    ["Imię i nazwisko", fullName],
+    ["Email", user?.email || '—'],
+    ["Firma", member?.company || '—'],
+    ["Stanowisko", member?.role || '—'],
+    ["Sektor", member?.sector || '—'],
+    ["Członek od", member?.member_since || '—'],
+  ];
+
   return (
     <>
-      <TopBar title="Mój profil" subtitle="Zarządzaj swoimi danymi" isMobile={isMobile} onMenuClick={onMenuClick} />
+      <TopBar title="Mój profil" subtitle="Twoje dane i historia" isMobile={isMobile} onMenuClick={onMenuClick} />
       <div style={{ padding: isMobile ? "16px" : "32px" }}>
-        {/* Header card */}
+        {/* Header */}
         <div style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: isMobile ? "20px" : "28px 36px", display: "flex", gap: 20, alignItems: "center", marginBottom: 20 }}>
-          <div style={{ width: isMobile ? 56 : 80, height: isMobile ? 56 : 80, borderRadius: "50%", background: T.goldMuted, border: `2px solid ${T.gold}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: T.serif, fontSize: isMobile ? 20 : 28, color: T.gold, flexShrink: 0 }}>AW</div>
+          <div style={{ width: isMobile ? 56 : 80, height: isMobile ? 56 : 80, borderRadius: "50%", background: T.goldMuted, border: `2px solid ${T.gold}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: T.serif, fontSize: isMobile ? 20 : 28, color: T.gold, flexShrink: 0 }}>{initials}</div>
           <div>
-            <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 20 : 28, fontWeight: 300, color: T.ivory, margin: "0 0 4px" }}>Aleksander Wiśniewski</h2>
-            <p style={{ fontFamily: T.sans, fontSize: 12, color: T.muted, margin: 0 }}>CEO, TechVentures · Warszawa · Członek od 2024</p>
+            <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 20 : 28, fontWeight: 300, color: T.ivory, margin: "0 0 4px" }}>{fullName}</h2>
+            <p style={{ fontFamily: T.sans, fontSize: 12, color: T.muted, margin: 0 }}>
+              {[member?.role, member?.company, member?.member_since ? `Członek od ${member.member_since}` : null].filter(Boolean).join(' · ')}
+            </p>
           </div>
         </div>
+
         {/* Tabs */}
         <div style={{ display: "flex", gap: 0, borderBottom: `1px solid ${T.border}`, marginBottom: 20 }}>
-          {[{ id: "info", l: "Dane osobowe" }, { id: "prefs", l: "Preferencje" }].map(t => (
+          {[{ id: "info", l: "Dane osobowe" }, { id: "rsvp", l: "Historia RSVP" }, { id: "prefs", l: "Preferencje" }].map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               style={{ padding: "12px 20px", background: "transparent", border: "none", borderBottom: `2px solid ${tab === t.id ? T.gold : "transparent"}`, color: tab === t.id ? T.gold : T.muted, fontFamily: T.sans, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", marginBottom: -1 }}>
               {t.l}
             </button>
           ))}
         </div>
+
         {tab === "info" && (
           <div style={{ maxWidth: 600 }}>
-            {[
-              ["Imię i nazwisko", "Aleksander Wiśniewski"],
-              ["Email", "aleksander@techventures.pl"],
-              ["Telefon", "+48 600 123 456"],
-              ["Firma", "TechVentures sp. z o.o."],
-              ["Stanowisko", "CEO & Founder"],
-              ["Miasto", "Warszawa"],
-            ].map(([l, v], i) => (
+            {infoRows.map(([l, v], i) => (
               <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "14px 0", borderBottom: `1px solid ${T.border}`, gap: 16 }}>
                 <span style={{ fontFamily: T.sans, fontSize: 11, color: T.dim, letterSpacing: "0.08em", textTransform: "uppercase", flexShrink: 0 }}>{l}</span>
                 <span style={{ fontFamily: T.sans, fontSize: 13, color: T.ivory, fontWeight: 300, textAlign: "right" }}>{v}</span>
@@ -499,6 +539,37 @@ function ProfileView({ isMobile, onMenuClick }) {
             ))}
           </div>
         )}
+
+        {tab === "rsvp" && (
+          <div style={{ maxWidth: 700 }}>
+            <div style={{ fontFamily: T.sans, fontSize: 11, color: T.dim, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 16 }}>
+              Łącznie: {rsvpHistory.length} potwierdzeń
+            </div>
+            {loadingRsvp ? (
+              <div style={{ fontFamily: T.serif, fontSize: 16, color: T.gold, fontStyle: "italic" }}>Ładowanie...</div>
+            ) : rsvpHistory.length === 0 ? (
+              <div style={{ fontFamily: T.sans, fontSize: 14, color: T.dim, padding: "24px 0" }}>Nie potwierdziłeś jeszcze udziału w żadnym wydarzeniu.</div>
+            ) : (
+              <div style={{ border: `1px solid ${T.border}` }}>
+                {rsvpHistory.map((r, i) => (
+                  <div key={i} style={{ padding: "16px 20px", borderBottom: i < rsvpHistory.length - 1 ? `1px solid ${T.border}` : "none", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
+                    <div>
+                      <div style={{ fontFamily: T.serif, fontSize: 15, color: T.ivory }}>{r.event?.title || '—'}</div>
+                      <div style={{ fontFamily: T.sans, fontSize: 12, color: T.dim, marginTop: 3 }}>
+                        {r.event?.date} · {r.event?.location}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: "right", flexShrink: 0 }}>
+                      <div style={{ fontFamily: T.sans, fontSize: 10, color: T.gold, border: `1px solid ${T.goldBorder}`, padding: "3px 10px" }}>✓ RSVP</div>
+                      <div style={{ fontFamily: T.sans, fontSize: 10, color: T.dim, marginTop: 4 }}>{new Date(r.created_at).toLocaleDateString('pl-PL')}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {tab === "prefs" && (
           <div style={{ maxWidth: 500 }}>
             <h3 style={{ fontFamily: T.serif, fontSize: 18, color: T.ivory, fontWeight: 400, marginBottom: 16 }}>Typy wydarzeń</h3>
@@ -567,7 +638,7 @@ export default function MembersArea() {
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Członku';
   const initials = user?.user_metadata?.full_name ? user.user_metadata.full_name.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase() : user?.email?.slice(0,2).toUpperCase();
 
-  const views = { dashboard: DashboardView, events: EventsView, members: MembersView, gallery: GalleryView, concierge: ConciergeView, profile: ProfileView };
+  const views = { dashboard: DashboardView, events: EventsView, members: MembersView, gallery: GalleryView, concierge: ConciergeView, profile: (p) => <ProfileView {...p} user={user} /> };
   const View = views[page] || DashboardView;
 
   return (
