@@ -336,8 +336,8 @@ function RsvpTab() {
         const result = {};
         await Promise.all((evs || []).map(async ev => {
           const { data } = await supabase
-            .from('rsvp')
-            .select('user_id, created_at')
+            .from('rsvp_with_names')
+            .select('user_id, email, full_name, created_at')
             .eq('event_id', ev.id);
           result[ev.id] = data || [];
         }));
@@ -376,8 +376,11 @@ function RsvpTab() {
                       <div style={{ padding: "12px 0", fontFamily: T.sans, fontSize: 13, color: T.dim }}>Nikt jeszcze się nie zapisał.</div>
                     ) : (
                       list.map((r, j) => (
-                        <div key={j} style={{ padding: "10px 0", borderBottom: j < list.length - 1 ? `1px solid ${T.border}` : "none", display: "flex", justifyContent: "space-between" }}>
-                          <span style={{ fontFamily: T.sans, fontSize: 13, color: T.muted }}>{r.user_id}</span>
+                        <div key={j} style={{ padding: "10px 0", borderBottom: j < list.length - 1 ? `1px solid ${T.border}` : "none", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <div>
+                            <span style={{ fontFamily: T.serif, fontSize: 14, color: T.ivory }}>{r.full_name || '—'}</span>
+                            <span style={{ fontFamily: T.sans, fontSize: 12, color: T.dim, marginLeft: 10 }}>{r.email}</span>
+                          </div>
                           <span style={{ fontFamily: T.sans, fontSize: 11, color: T.dim }}>{new Date(r.created_at).toLocaleDateString('pl-PL')}</span>
                         </div>
                       ))
