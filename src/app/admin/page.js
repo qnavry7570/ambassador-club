@@ -38,11 +38,34 @@ function Field({ label, value, onChange, type = "text", placeholder, textarea, r
 /* ─── EVENT FORM ─── */
 const emptyEvent = { title: "", date: "", time: "", location: "", description: "", tag: "Sztuka", tag_color: "gold", dress_code: "", image_url: "", published: true };
 
-function EventForm({ initial = emptyEvent, onSave, onCancel, saving }) {
+function EventForm({ initial = emptyEvent, onSave, onCancel, saving, adminEmail }) {
   const [form, setForm] = useState(initial);
+  const [uploading, setUploading] = useState(false);
+  const [uploadErr, setUploadErr] = useState('');
   const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
   const tags = ["Sztuka", "Sport", "Filantropia", "Best of Poland", "Biznes", "Cigar Club"];
   const colors = ["gold", "red", "blue", "outline"];
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadErr('');
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/admin/upload-image', {
+      method: 'POST',
+      headers: { 'x-admin-email': adminEmail },
+      body: fd,
+    });
+    const json = await res.json();
+    if (json.url) {
+      setForm(f => ({ ...f, image_url: json.url }));
+    } else {
+      setUploadErr(json.error || 'Błąd uploadu');
+    }
+    setUploading(false);
+  };
 
   return (
     <div style={{ background: "#0d0d0d", border: `1px solid ${T.goldBorder}`, padding: 24, marginBottom: 24 }}>
@@ -55,7 +78,24 @@ function EventForm({ initial = emptyEvent, onSave, onCancel, saving }) {
         <Field label="Godzina" value={form.time} onChange={set("time")} placeholder="19:00" />
         <Field label="Miejsce" value={form.location} onChange={set("location")} placeholder="Pałac Zamoyskich, Warszawa" />
         <Field label="Dress code" value={form.dress_code} onChange={set("dress_code")} placeholder="Black tie" />
-        <Field label="URL zdjęcia" value={form.image_url} onChange={set("image_url")} placeholder="https://..." />
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ display: "block", fontFamily: T.sans, fontSize: 11, letterSpacing: "0.1em", color: T.muted, textTransform: "uppercase", marginBottom: 6 }}>Zdjęcie</label>
+          <label style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", background: "#111", border: `1px solid ${T.border}`, cursor: "pointer" }}>
+            <span style={{ fontFamily: T.sans, fontSize: 12, color: T.gold }}>{uploading ? "Wgrywam..." : "📁 Wybierz plik"}</span>
+            <span style={{ fontFamily: T.sans, fontSize: 11, color: T.dim }}>JPG, PNG, WebP</span>
+            <input type="file" accept="image/*" onChange={handleFileUpload} style={{ display: "none" }} disabled={uploading} />
+          </label>
+          {uploadErr && <div style={{ fontFamily: T.sans, fontSize: 11, color: "#e05555", marginTop: 4 }}>{uploadErr}</div>}
+          {form.image_url && (
+            <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8 }}>
+              <img src={form.image_url} alt="" style={{ width: 60, height: 40, objectFit: "cover", border: `1px solid ${T.border}` }} />
+              <span style={{ fontFamily: T.sans, fontSize: 11, color: T.dim, wordBreak: "break-all" }}>
+                {form.image_url.length > 40 ? form.image_url.slice(-40) : form.image_url}
+              </span>
+              <button onClick={() => setForm(f => ({ ...f, image_url: "" }))} style={{ background: "none", border: "none", color: "#e05555", cursor: "pointer", fontSize: 14, padding: 0 }}>✕</button>
+            </div>
+          )}
+        </div>
       </div>
       <Field label="Opis" value={form.description} onChange={set("description")} placeholder="Krótki opis..." textarea />
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
@@ -77,7 +117,7 @@ function EventForm({ initial = emptyEvent, onSave, onCancel, saving }) {
         <label htmlFor="pub" style={{ fontFamily: T.sans, fontSize: 13, color: T.muted, cursor: "pointer" }}>Opublikowane (widoczne dla członków)</label>
       </div>
       <div style={{ display: "flex", gap: 12 }}>
-        <Btn onClick={() => onSave(form)} disabled={saving}>{saving ? "Zapisuję..." : "Zapisz"}</Btn>
+        <Btn onClick={() => onSave(form)} disabled={saving || uploading}>{saving ? "Zapisuję..." : "Zapisz"}</Btn>
         <Btn onClick={onCancel} color="outline">Anuluj</Btn>
       </div>
     </div>
@@ -85,7 +125,7 @@ function EventForm({ initial = emptyEvent, onSave, onCancel, saving }) {
 }
 
 /* ─── EVENTS TAB ─── */
-function EventsTab() {
+function EventsTab({ adminEmail }) {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -127,8 +167,8 @@ function EventsTab() {
         <Btn onClick={() => { setShowForm(true); setEditing(null); }}>+ Dodaj wydarzenie</Btn>
       </div>
       {msg && <div style={{ background: "rgba(201,169,97,0.1)", border: `1px solid ${T.goldBorder}`, padding: "10px 16px", fontFamily: T.sans, fontSize: 13, color: T.gold, marginBottom: 16 }}>{msg}</div>}
-      {(showForm && !editing) && <EventForm onSave={save} onCancel={() => setShowForm(false)} saving={saving} />}
-      {editing && <EventForm initial={editing} onSave={save} onCancel={() => setEditing(null)} saving={saving} />}
+      {(showForm && !editing) && <EventForm onSave={save} onCancel={() => setShowForm(false)} saving={saving} adminEmail={adminEmail} />}
+      {editing && <EventForm initial={editing} onSave={save} onCancel={() => setEditing(null)} saving={saving} adminEmail={adminEmail} />}
       {loading ? <div style={{ color: T.dim, fontFamily: T.sans }}>Ładowanie...</div> : (
         <div style={{ border: `1px solid ${T.border}` }}>
           {events.length === 0 && <div style={{ padding: 24, fontFamily: T.sans, fontSize: 14, color: T.dim, textAlign: "center" }}>Brak wydarzeń. Dodaj pierwsze.</div>}
@@ -613,7 +653,7 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {tab === "events"   && <EventsTab />}
+        {tab === "events"   && <EventsTab adminEmail={user?.email} />}
         {tab === "articles" && <ArticlesTab adminEmail={user?.email} />}
         {tab === "members"  && <MembersTab adminEmail={user?.email} />}
         {tab === "rsvp"     && <RsvpTab />}
