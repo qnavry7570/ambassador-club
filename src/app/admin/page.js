@@ -594,12 +594,15 @@ export default function AdminPage() {
   const [denied, setDenied] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const handle = (session) => {
       if (!session) { window.location.href = '/login?redirect=/admin'; return; }
       if (!ADMIN_EMAILS.includes(session.user.email)) { setDenied(true); setLoading(false); return; }
       setUser(session.user);
       setLoading(false);
-    });
+    };
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => handle(session));
+    supabase.auth.getSession().then(({ data: { session } }) => handle(session));
+    return () => subscription.unsubscribe();
   }, []);
 
   if (loading) return (

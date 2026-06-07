@@ -614,6 +614,14 @@ export default function MembersArea() {
   const { isMobile } = useBreakpoint();
 
   useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        window.location.href = '/login?redirect=/members';
+      } else {
+        setUser(session.user);
+        setLoading(false);
+      }
+    });
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
         window.location.href = '/login?redirect=/members';
@@ -622,6 +630,7 @@ export default function MembersArea() {
         setLoading(false);
       }
     });
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleLogout = async () => {
