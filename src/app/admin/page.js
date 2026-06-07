@@ -405,7 +405,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) { window.location.href = '/login'; return; }
+      if (!session) { window.location.href = '/login?redirect=/admin'; return; }
       if (session.user.email !== ADMIN_EMAIL) { setDenied(true); setLoading(false); return; }
       setUser(session.user);
       setLoading(false);

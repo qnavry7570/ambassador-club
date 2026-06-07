@@ -45,7 +45,9 @@ export default function LoginPage() {
       setError('Nieprawidłowy email lub hasło.');
       setLoading(false);
     } else {
-      window.location.href = '/members';
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect') || '/members';
+      window.location.href = redirect;
     }
   };
 

@@ -535,7 +535,7 @@ export default function MembersArea() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
-        window.location.href = '/login';
+        window.location.href = '/login?redirect=/members';
       } else {
         setUser(session.user);
         setLoading(false);
