@@ -1,0 +1,294 @@
+'use client';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import { T } from '@/components/ui';
+
+const ADMIN_EMAIL = 'b.kawecki@ambassadorclub.pl';
+
+/* ─── HELPERS ─── */
+function Btn({ children, onClick, color = "gold", small, disabled }) {
+  const [h, setH] = useState(false);
+  const bg = color === "gold" ? T.gold : color === "red" ? "#7a1a1a" : "transparent";
+  const hoverBg = color === "gold" ? T.goldLight : color === "red" ? "#9a2020" : "rgba(201,169,97,0.08)";
+  return (
+    <button onClick={onClick} disabled={disabled} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      style={{ padding: small ? "7px 14px" : "10px 20px", background: h ? hoverBg : bg, color: color === "gold" ? T.bg : T.ivory, border: color === "outline" ? `1px solid ${T.border}` : "none", fontFamily: T.sans, fontSize: small ? 11 : 13, fontWeight: 600, letterSpacing: "0.08em", cursor: disabled ? "not-allowed" : "pointer", transition: "all 0.2s", opacity: disabled ? 0.5 : 1 }}>
+      {children}
+    </button>
+  );
+}
+
+function Field({ label, value, onChange, type = "text", placeholder, textarea, required }) {
+  const [f, setF] = useState(false);
+  return (
+    <div style={{ marginBottom: 16 }}>
+      <label style={{ display: "block", fontFamily: T.sans, fontSize: 11, letterSpacing: "0.1em", color: T.muted, textTransform: "uppercase", marginBottom: 6 }}>{label}{required && " *"}</label>
+      {textarea
+        ? <textarea value={value} onChange={onChange} placeholder={placeholder} rows={3} onFocus={() => setF(true)} onBlur={() => setF(false)}
+            style={{ width: "100%", padding: "10px 12px", background: "#111", border: `1px solid ${f ? T.gold : T.border}`, color: T.ivory, fontFamily: T.sans, fontSize: 13, outline: "none", resize: "vertical" }} />
+        : <input type={type} value={value} onChange={onChange} placeholder={placeholder} onFocus={() => setF(true)} onBlur={() => setF(false)}
+            style={{ width: "100%", padding: "10px 12px", background: "#111", border: `1px solid ${f ? T.gold : T.border}`, color: T.ivory, fontFamily: T.sans, fontSize: 13, outline: "none" }} />
+      }
+    </div>
+  );
+}
+
+/* ─── EVENT FORM ─── */
+const emptyEvent = { title: "", date: "", time: "", location: "", description: "", tag: "Sztuka", tag_color: "gold", dress_code: "", image_url: "", published: true };
+
+function EventForm({ initial = emptyEvent, onSave, onCancel, saving }) {
+  const [form, setForm] = useState(initial);
+  const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
+  const tags = ["Sztuka", "Sport", "Filantropia", "Best of Poland", "Biznes", "Cigar Club"];
+  const colors = ["gold", "red", "blue", "outline"];
+
+  return (
+    <div style={{ background: "#0d0d0d", border: `1px solid ${T.goldBorder}`, padding: 24, marginBottom: 24 }}>
+      <h3 style={{ fontFamily: T.serif, fontSize: 20, color: T.ivory, margin: "0 0 20px", fontWeight: 400 }}>
+        {initial.id ? "Edytuj wydarzenie" : "Nowe wydarzenie"}
+      </h3>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
+        <Field label="Tytuł" value={form.title} onChange={set("title")} placeholder="Nazwa wydarzenia" required />
+        <Field label="Data" value={form.date} onChange={set("date")} type="date" required />
+        <Field label="Godzina" value={form.time} onChange={set("time")} placeholder="19:00" />
+        <Field label="Miejsce" value={form.location} onChange={set("location")} placeholder="Pałac Zamoyskich, Warszawa" />
+        <Field label="Dress code" value={form.dress_code} onChange={set("dress_code")} placeholder="Black tie" />
+        <Field label="URL zdjęcia" value={form.image_url} onChange={set("image_url")} placeholder="https://..." />
+      </div>
+      <Field label="Opis" value={form.description} onChange={set("description")} placeholder="Krótki opis..." textarea />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ display: "block", fontFamily: T.sans, fontSize: 11, letterSpacing: "0.1em", color: T.muted, textTransform: "uppercase", marginBottom: 6 }}>Kategoria</label>
+          <select value={form.tag} onChange={set("tag")} style={{ width: "100%", padding: "10px 12px", background: "#111", border: `1px solid ${T.border}`, color: T.ivory, fontFamily: T.sans, fontSize: 13, outline: "none" }}>
+            {tags.map(t => <option key={t} value={t}>{t}</option>)}
+          </select>
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ display: "block", fontFamily: T.sans, fontSize: 11, letterSpacing: "0.1em", color: T.muted, textTransform: "uppercase", marginBottom: 6 }}>Kolor tagu</label>
+          <select value={form.tag_color} onChange={set("tag_color")} style={{ width: "100%", padding: "10px 12px", background: "#111", border: `1px solid ${T.border}`, color: T.ivory, fontFamily: T.sans, fontSize: 13, outline: "none" }}>
+            {colors.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+        <input type="checkbox" id="pub" checked={form.published} onChange={e => setForm(f => ({ ...f, published: e.target.checked }))} />
+        <label htmlFor="pub" style={{ fontFamily: T.sans, fontSize: 13, color: T.muted, cursor: "pointer" }}>Opublikowane (widoczne dla członków)</label>
+      </div>
+      <div style={{ display: "flex", gap: 12 }}>
+        <Btn onClick={() => onSave(form)} disabled={saving}>{saving ? "Zapisuję..." : "Zapisz"}</Btn>
+        <Btn onClick={onCancel} color="outline">Anuluj</Btn>
+      </div>
+    </div>
+  );
+}
+
+/* ─── EVENTS TAB ─── */
+function EventsTab() {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState('');
+
+  const load = async () => {
+    const { data } = await supabase.from('events').select('*').order('date', { ascending: true });
+    setEvents(data || []);
+    setLoading(false);
+  };
+  useEffect(() => { load(); }, []);
+
+  const save = async (form) => {
+    setSaving(true);
+    if (editing) {
+      const { error } = await supabase.from('events').update(form).eq('id', editing.id);
+      if (!error) { setMsg('Zaktualizowano.'); setEditing(null); }
+    } else {
+      const { error } = await supabase.from('events').insert(form);
+      if (!error) { setMsg('Dodano wydarzenie.'); setShowForm(false); }
+    }
+    setSaving(false);
+    load();
+    setTimeout(() => setMsg(''), 3000);
+  };
+
+  const del = async (id) => {
+    if (!confirm('Usunąć to wydarzenie?')) return;
+    await supabase.from('events').delete().eq('id', id);
+    load();
+  };
+
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+        <h2 style={{ fontFamily: T.serif, fontSize: 24, color: T.ivory, margin: 0, fontWeight: 400 }}>Wydarzenia ({events.length})</h2>
+        <Btn onClick={() => { setShowForm(true); setEditing(null); }}>+ Dodaj wydarzenie</Btn>
+      </div>
+      {msg && <div style={{ background: "rgba(201,169,97,0.1)", border: `1px solid ${T.goldBorder}`, padding: "10px 16px", fontFamily: T.sans, fontSize: 13, color: T.gold, marginBottom: 16 }}>{msg}</div>}
+      {(showForm && !editing) && <EventForm onSave={save} onCancel={() => setShowForm(false)} saving={saving} />}
+      {editing && <EventForm initial={editing} onSave={save} onCancel={() => setEditing(null)} saving={saving} />}
+      {loading ? <div style={{ color: T.dim, fontFamily: T.sans }}>Ładowanie...</div> : (
+        <div style={{ border: `1px solid ${T.border}` }}>
+          {events.length === 0 && <div style={{ padding: 24, fontFamily: T.sans, fontSize: 14, color: T.dim, textAlign: "center" }}>Brak wydarzeń. Dodaj pierwsze.</div>}
+          {events.map((ev, i) => (
+            <div key={ev.id} style={{ padding: "16px 20px", borderBottom: i < events.length - 1 ? `1px solid ${T.border}` : "none", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+                  <span style={{ fontFamily: T.serif, fontSize: 16, color: T.ivory }}>{ev.title}</span>
+                  {!ev.published && <span style={{ fontFamily: T.sans, fontSize: 10, color: T.dim, border: `1px solid ${T.border}`, padding: "2px 6px" }}>UKRYTE</span>}
+                </div>
+                <div style={{ fontFamily: T.sans, fontSize: 12, color: T.dim }}>{ev.date} · {ev.time} · {ev.location}</div>
+              </div>
+              <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                <Btn small color="outline" onClick={() => { setEditing(ev); setShowForm(false); }}>Edytuj</Btn>
+                <Btn small color="red" onClick={() => del(ev.id)}>Usuń</Btn>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── MEMBERS TAB ─── */
+function MembersTab() {
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.from('members').select('*').order('created_at', { ascending: false })
+      .then(({ data }) => { setMembers(data || []); setLoading(false); });
+  }, []);
+
+  return (
+    <div>
+      <h2 style={{ fontFamily: T.serif, fontSize: 24, color: T.ivory, margin: "0 0 24px", fontWeight: 400 }}>Członkowie ({members.length})</h2>
+      {loading ? <div style={{ color: T.dim, fontFamily: T.sans }}>Ładowanie...</div> : (
+        <div style={{ border: `1px solid ${T.border}` }}>
+          {members.length === 0 && (
+            <div style={{ padding: 24, fontFamily: T.sans, fontSize: 14, color: T.dim, textAlign: "center" }}>
+              Brak członków w tabeli. Dodaj przez SQL Editor w Supabase.
+            </div>
+          )}
+          {members.map((m, i) => (
+            <div key={m.id} style={{ padding: "14px 20px", borderBottom: i < members.length - 1 ? `1px solid ${T.border}` : "none", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <div style={{ fontFamily: T.serif, fontSize: 15, color: T.ivory }}>{m.full_name || '—'}</div>
+                <div style={{ fontFamily: T.sans, fontSize: 12, color: T.dim, marginTop: 2 }}>{m.email} · {m.role || '—'} · {m.sector || '—'}</div>
+              </div>
+              {m.is_admin && <span style={{ fontFamily: T.sans, fontSize: 10, color: T.gold, border: `1px solid ${T.goldBorder}`, padding: "3px 8px" }}>ADMIN</span>}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── STATS TAB ─── */
+function StatsTab() {
+  const [stats, setStats] = useState({ events: 0, members: 0, rsvp: 0 });
+
+  useEffect(() => {
+    Promise.all([
+      supabase.from('events').select('*', { count: 'exact', head: true }),
+      supabase.from('members').select('*', { count: 'exact', head: true }),
+      supabase.from('rsvp').select('*', { count: 'exact', head: true }),
+    ]).then(([e, m, r]) => setStats({ events: e.count || 0, members: m.count || 0, rsvp: r.count || 0 }));
+  }, []);
+
+  const cards = [
+    { label: "Wydarzeń", value: stats.events, icon: "◆" },
+    { label: "Członków", value: stats.members, icon: "◇" },
+    { label: "Zapisanych RSVP", value: stats.rsvp, icon: "✓" },
+  ];
+
+  return (
+    <div>
+      <h2 style={{ fontFamily: T.serif, fontSize: 24, color: T.ivory, margin: "0 0 24px", fontWeight: 400 }}>Statystyki</h2>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+        {cards.map((c, i) => (
+          <div key={i} style={{ background: "#0d0d0d", border: `1px solid ${T.border}`, padding: "28px 24px", textAlign: "center" }}>
+            <div style={{ fontSize: 24, color: T.gold, marginBottom: 12 }}>{c.icon}</div>
+            <div style={{ fontFamily: T.serif, fontSize: 40, fontWeight: 300, color: T.gold }}>{c.value}</div>
+            <div style={{ fontFamily: T.sans, fontSize: 11, color: T.dim, letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 8 }}>{c.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─── MAIN ─── */
+export default function AdminPage() {
+  const [tab, setTab] = useState("events");
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [denied, setDenied] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) { window.location.href = '/login'; return; }
+      if (session.user.email !== ADMIN_EMAIL) { setDenied(true); setLoading(false); return; }
+      setUser(session.user);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return (
+    <div style={{ background: T.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ fontFamily: T.serif, fontSize: 20, color: T.gold, fontStyle: "italic" }}>Ładowanie...</div>
+    </div>
+  );
+
+  if (denied) return (
+    <div style={{ background: T.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ textAlign: "center" }}>
+        <div style={{ fontFamily: T.serif, fontSize: 24, color: T.ivory, marginBottom: 12 }}>Brak dostępu</div>
+        <div style={{ fontFamily: T.sans, fontSize: 14, color: T.dim, marginBottom: 24 }}>Panel admina dostępny tylko dla właściciela klubu.</div>
+        <a href="/" style={{ color: T.gold, fontFamily: T.sans, fontSize: 13 }}>← Wróć na stronę główną</a>
+      </div>
+    </div>
+  );
+
+  const tabs = [
+    { id: "events", label: "Wydarzenia" },
+    { id: "members", label: "Członkowie" },
+    { id: "stats", label: "Statystyki" },
+  ];
+
+  return (
+    <div style={{ background: T.bg, minHeight: "100vh", color: T.ivory }}>
+      {/* Top bar */}
+      <header style={{ height: 60, background: "#080808", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 32px", position: "sticky", top: 0, zIndex: 50 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <span style={{ fontFamily: T.sans, fontSize: 11, fontWeight: 700, letterSpacing: "0.25em", color: T.gold }}>AMBASSADOR CLUB</span>
+          <span style={{ color: T.border }}>|</span>
+          <span style={{ fontFamily: T.sans, fontSize: 12, color: T.dim, letterSpacing: "0.1em" }}>PANEL ADMINA</span>
+        </div>
+        <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
+          <span style={{ fontFamily: T.sans, fontSize: 12, color: T.dim }}>{user?.email}</span>
+          <a href="/members" style={{ fontFamily: T.sans, fontSize: 12, color: T.muted, textDecoration: "none" }}>Members Area</a>
+          <a href="/" style={{ fontFamily: T.sans, fontSize: 12, color: T.muted, textDecoration: "none" }}>← Strona</a>
+        </div>
+      </header>
+
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 24px" }}>
+        {/* Tabs */}
+        <div style={{ display: "flex", gap: 0, borderBottom: `1px solid ${T.border}`, marginBottom: 32 }}>
+          {tabs.map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)}
+              style={{ padding: "12px 24px", background: "transparent", border: "none", borderBottom: `2px solid ${tab === t.id ? T.gold : "transparent"}`, color: tab === t.id ? T.gold : T.muted, fontFamily: T.sans, fontSize: 13, letterSpacing: "0.08em", cursor: "pointer", marginBottom: -1, transition: "all 0.2s" }}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {tab === "events"  && <EventsTab />}
+        {tab === "members" && <MembersTab />}
+        {tab === "stats"   && <StatsTab />}
+      </div>
+    </div>
+  );
+}
