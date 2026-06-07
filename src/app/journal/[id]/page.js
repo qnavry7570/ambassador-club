@@ -63,15 +63,25 @@ export default function ArticlePage() {
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    Promise.all([
-      supabase.from('articles').select('*').eq('id', id).eq('published', true).single(),
-      supabase.auth.getSession(),
-    ]).then(([{ data: art, error }, { data: { session } }]) => {
-      if (error || !art) { setNotFound(true); }
-      else { setArticle(art); }
+    // Pobierz artykuł
+    supabase.from('articles').select('*').eq('id', id).eq('published', true).single()
+      .then(({ data: art, error }) => {
+        if (error || !art) setNotFound(true);
+        else setArticle(art);
+        setLoading(false);
+      });
+
+    // Sprawdź sesję — onAuthStateChange jest pewniejszy niż getSession na starcie
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session);
-      setLoading(false);
     });
+
+    // Też wywołaj getSession na wypadek gdyby sesja już istniała
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+
+    return () => subscription.unsubscribe();
   }, [id]);
 
   if (loading) return (
