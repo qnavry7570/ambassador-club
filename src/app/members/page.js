@@ -107,28 +107,42 @@ function TopBar({ title, subtitle, onMenuClick, isMobile }) {
 }
 
 /* ─── RSVP BTN ─── */
-function RsvpBtn({ init = false }) {
+function RsvpBtn({ eventId, userId, init = false }) {
   const [confirmed, setConfirmed] = useState(init);
+  const [loading, setLoading] = useState(false);
+
+  const toggle = async () => {
+    if (!userId || !eventId || loading) return;
+    setLoading(true);
+    if (confirmed) {
+      await supabase.from('rsvp').delete().match({ event_id: eventId, user_id: userId });
+      setConfirmed(false);
+    } else {
+      await supabase.from('rsvp').insert({ event_id: eventId, user_id: userId });
+      setConfirmed(true);
+    }
+    setLoading(false);
+  };
+
   return (
-    <button onClick={() => setConfirmed(!confirmed)}
-      style={{ padding: "9px 16px", display: "flex", alignItems: "center", gap: 7, background: confirmed ? "rgba(201,169,97,0.1)" : "transparent", border: `1px solid ${confirmed ? T.gold : T.borderMed}`, color: confirmed ? T.gold : T.ivory, fontFamily: T.sans, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.3s", whiteSpace: "nowrap" }}>
+    <button onClick={toggle} disabled={loading}
+      style={{ padding: "9px 16px", display: "flex", alignItems: "center", gap: 7, background: confirmed ? "rgba(201,169,97,0.1)" : "transparent", border: `1px solid ${confirmed ? T.gold : T.borderMed}`, color: confirmed ? T.gold : T.ivory, fontFamily: T.sans, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", cursor: loading ? "wait" : "pointer", transition: "all 0.3s", whiteSpace: "nowrap", opacity: loading ? 0.6 : 1 }}>
       <div style={{ width: 14, height: 14, border: `1px solid ${confirmed ? T.gold : T.dim}`, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", background: confirmed ? T.gold : "transparent", transition: "all 0.3s", flexShrink: 0 }}>
         {confirmed && <span style={{ color: T.bg, fontSize: 8, fontWeight: 700 }}>✓</span>}
       </div>
-      {confirmed ? "Potwierdzono" : "RSVP"}
+      {loading ? "..." : confirmed ? "Potwierdzono" : "RSVP"}
     </button>
   );
 }
 
 /* ─── EVENT ROW ─── */
-function EventRow({ ev, isMobile }) {
+function EventRow({ ev, isMobile, userId }) {
   const [h, setH] = useState(false);
   return (
     <div onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
       style={{ padding: isMobile ? "12px 16px" : "16px 24px", borderBottom: `1px solid ${T.border}`, borderLeft: `3px solid ${h ? T.gold : "transparent"}`, transition: "all 0.2s" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: isMobile ? "wrap" : "nowrap" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 14, minWidth: 0 }}>
-          {/* Miniaturka */}
           {ev.img && !isMobile && (
             <div style={{ width: 52, height: 52, overflow: "hidden", flexShrink: 0, lineHeight: 0 }}>
               <img src={ev.img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} loading="lazy" />
@@ -145,7 +159,7 @@ function EventRow({ ev, isMobile }) {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
           <Badge v={ev.tagColor}>{ev.tag}</Badge>
-          <RsvpBtn init={ev.rsvp} />
+          <RsvpBtn eventId={ev.id} userId={userId} init={ev.rsvp} />
         </div>
       </div>
     </div>
@@ -218,30 +232,51 @@ function Toggle({ label, defaultOn }) {
 }
 
 /* ─── DASHBOARD ─── */
-function DashboardView({ isMobile, onMenuClick, firstName }) {
-  const events = [
-    { title: "Wieczór Kolekcjonerski", day: "15", month: "mar", loc: "Pałac Zamoyskich", tag: "Sztuka", tagColor: "gold", rsvp: true },
-    { title: "Wielka Gala Charytatywna", day: "28", month: "mar", loc: "Łazienki Królewskie", tag: "Filantropia", tagColor: "red", rsvp: false },
-    { title: "Dzień Polo & Champagne", day: "12", month: "kwi", loc: "Polo Club Wrocław", tag: "Sport", tagColor: "blue", rsvp: false },
+function DashboardView({ isMobile, onMenuClick, firstName, user }) {
+  const [events, setEvents] = useState([]);
+  const [myRsvp, setMyRsvp] = useState([]);
+  const [rsvpCount, setRsvpCount] = useState(0);
+
+  useEffect(() => {
+    if (!user) return;
+    Promise.all([
+      supabase.from('events').select('*').eq('published', true).order('date', { ascending: true }).limit(3),
+      supabase.from('rsvp').select('event_id').eq('user_id', user.id),
+    ]).then(([{ data: evData }, { data: rsvpData }]) => {
+      setEvents(evData || []);
+      const ids = (rsvpData || []).map(r => r.event_id);
+      setMyRsvp(ids);
+      setRsvpCount(ids.length);
+    });
+  }, [user]);
+
+  const mapped = events.map(ev => ({
+    id: ev.id, title: ev.title, day: formatDay(ev.date), month: formatMonth(ev.date),
+    loc: ev.location, tag: ev.tag, tagColor: ev.tag_color || 'gold',
+    rsvp: myRsvp.includes(ev.id), img: ev.image_url || null,
+  }));
+
+  const stats = [
+    { v: events.length.toString(), l: "Nadchodzące" },
+    { v: rsvpCount.toString(), l: "Moje RSVP" },
+    { v: "—", l: "Uczestniczono" },
+    { v: "—", l: "Zaproszenia" },
   ];
-  const stats = [{ v: "3", l: "Nadchodzące" }, { v: "18", l: "Uczestniczono" }, { v: "42", l: "Kontakty" }, { v: "2", l: "Zaproszenia" }];
+
   return (
     <>
       <TopBar title="Dashboard" isMobile={isMobile} onMenuClick={onMenuClick} />
-      {/* Baner — czyste zdjęcie Warszawy, bez tekstu */}
       <div style={{ height: isMobile ? 120 : 160, overflow: "hidden", lineHeight: 0, fontSize: 0 }}>
         <img src="/images/warsaw-aerial.webp" alt="Warszawa" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 55%", display: "block" }} />
       </div>
       <div style={{ padding: isMobile ? "16px" : "28px 32px 32px" }}>
-        {/* Powitanie */}
         <div style={{ marginBottom: 20, paddingBottom: 20, borderBottom: `1px solid ${T.border}` }}>
           <div style={{ fontFamily: T.sans, fontSize: 9, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 6 }}>Strefa Członkowska</div>
           <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 20 : 26, fontWeight: 300, color: T.ivory, margin: "0 0 6px" }}>Dzień dobry, {firstName}</h2>
           <p style={{ fontFamily: T.sans, fontSize: 13, color: T.muted, fontWeight: 300, margin: 0 }}>
-            Masz <span style={{ color: T.gold, fontWeight: 700 }}>3 nadchodzące wydarzenia</span> i <span style={{ color: T.gold, fontWeight: 700 }}>1 nowe powiadomienie</span>.
+            Masz <span style={{ color: T.gold, fontWeight: 700 }}>{events.length} nadchodzących wydarzeń</span> i <span style={{ color: T.gold, fontWeight: 700 }}>{rsvpCount} potwierdzeń RSVP</span>.
           </p>
         </div>
-        {/* Stats */}
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: isMobile ? 10 : 16, marginBottom: 24 }}>
           {stats.map((s, i) => (
             <div key={i} style={{ background: T.bgCard, border: `1px solid ${T.border}`, padding: isMobile ? "16px 12px" : "24px 20px", textAlign: "center" }}>
@@ -250,13 +285,15 @@ function DashboardView({ isMobile, onMenuClick, firstName }) {
             </div>
           ))}
         </div>
-        {/* Events + Activity */}
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "2fr 1fr", gap: 20 }}>
           <div style={{ background: T.bgCard, border: `1px solid ${T.border}` }}>
             <div style={{ padding: "16px 20px", borderBottom: `1px solid ${T.border}` }}>
               <span style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.12em", color: T.gold, textTransform: "uppercase" }}>Nadchodzące wydarzenia</span>
             </div>
-            {events.map((ev, i) => <EventRow key={i} ev={ev} isMobile={isMobile} />)}
+            {mapped.length === 0
+              ? <div style={{ padding: 24, fontFamily: T.sans, fontSize: 13, color: T.dim, textAlign: "center" }}>Brak nadchodzących wydarzeń.</div>
+              : mapped.map((ev) => <EventRow key={ev.id} ev={ev} isMobile={isMobile} userId={user?.id} />)
+            }
           </div>
           <div style={{ background: T.bgCard, border: `1px solid ${T.border}` }}>
             <div style={{ padding: "16px 20px", borderBottom: `1px solid ${T.border}` }}>
@@ -291,14 +328,22 @@ function formatMonth(dateStr) {
 }
 
 /* ─── EVENTS VIEW ─── */
-function EventsView({ isMobile, onMenuClick }) {
+function EventsView({ isMobile, onMenuClick, user }) {
   const [events, setEvents] = useState([]);
+  const [myRsvp, setMyRsvp] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.from('events').select('*').eq('published', true).order('date', { ascending: true })
-      .then(({ data }) => { setEvents(data || []); setLoading(false); });
-  }, []);
+    if (!user) return;
+    Promise.all([
+      supabase.from('events').select('*').eq('published', true).order('date', { ascending: true }),
+      supabase.from('rsvp').select('event_id').eq('user_id', user.id),
+    ]).then(([{ data: evData }, { data: rsvpData }]) => {
+      setEvents(evData || []);
+      setMyRsvp((rsvpData || []).map(r => r.event_id));
+      setLoading(false);
+    });
+  }, [user]);
 
   const mapped = events.map(ev => ({
     id: ev.id,
@@ -308,7 +353,7 @@ function EventsView({ isMobile, onMenuClick }) {
     loc: [ev.location, ev.time, ev.dress_code].filter(Boolean).join(' · '),
     tag: ev.tag,
     tagColor: ev.tag_color || 'gold',
-    rsvp: false,
+    rsvp: myRsvp.includes(ev.id),
     img: ev.image_url || null,
   }));
 
@@ -321,7 +366,7 @@ function EventsView({ isMobile, onMenuClick }) {
         ) : (
           <div style={{ background: T.bgCard, border: `1px solid ${T.border}` }}>
             {mapped.length === 0 && <div style={{ padding: 32, fontFamily: T.sans, fontSize: 14, color: T.dim, textAlign: "center" }}>Brak nadchodzących wydarzeń.</div>}
-            {mapped.map((ev, i) => <EventRow key={ev.id} ev={ev} isMobile={isMobile} />)}
+            {mapped.map((ev) => <EventRow key={ev.id} ev={ev} isMobile={isMobile} userId={user?.id} />)}
           </div>
         )}
       </div>
