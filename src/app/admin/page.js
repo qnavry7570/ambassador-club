@@ -262,10 +262,16 @@ function MembersTab({ adminEmail }) {
     setTimeout(() => setMsg(''), 3000);
   };
 
-  const del = async (id) => {
-    if (!confirm('Usunąć tego członka?')) return;
-    await supabase.from('members').delete().eq('id', id);
-    load();
+  const del = async (m) => {
+    if (!confirm(`Usunąć członka ${m.full_name || m.email}? (usunie też konto logowania jeśli istnieje)`)) return;
+    const res = await fetch('/api/admin/delete-member', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-email': adminEmail },
+      body: JSON.stringify({ id: m.id, email: m.email, deleteAuth: true }),
+    });
+    const data = await res.json();
+    if (data.error) { setMsg(`Błąd: ${data.error}`); setTimeout(() => setMsg(''), 4000); }
+    else { setMsg('Usunięto.'); setTimeout(() => setMsg(''), 2000); load(); }
   };
 
   const sendInvite = async (m) => {
@@ -327,7 +333,7 @@ function MembersTab({ adminEmail }) {
                 <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
                   <Btn small color="outline" onClick={() => { setShowLoginForm(showLoginForm === m.id ? null : m.id); setLoginPass(''); }}>🔑 Konto</Btn>
                   <Btn small color="outline" onClick={() => { setEditing(m); setShowForm(false); }}>Edytuj</Btn>
-                  <Btn small color="red" onClick={() => del(m.id)}>Usuń</Btn>
+                  <Btn small color="red" onClick={() => del(m)}>Usuń</Btn>
                 </div>
               </div>
               {showLoginForm === m.id && (
