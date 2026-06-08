@@ -251,12 +251,17 @@ function MembersTab({ adminEmail }) {
 
   const save = async (form) => {
     setSaving(true);
-    if (editing) {
-      await supabase.from('members').update(form).eq('id', editing.id);
-      setMsg('Zaktualizowano.'); setEditing(null);
+    const res = await fetch('/api/admin/save-member', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-email': adminEmail },
+      body: JSON.stringify({ id: editing?.id, data: form }),
+    });
+    const result = await res.json();
+    if (result.error) {
+      setMsg(`Błąd: ${result.error}`);
     } else {
-      await supabase.from('members').insert(form);
-      setMsg('Dodano członka.'); setShowForm(false);
+      if (editing) { setMsg('Zaktualizowano.'); setEditing(null); }
+      else { setMsg('Dodano członka.'); setShowForm(false); }
     }
     setSaving(false); load();
     setTimeout(() => setMsg(''), 3000);
