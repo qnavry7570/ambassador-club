@@ -283,6 +283,25 @@ function MembersTab({ adminEmail }) {
     setTimeout(() => setMsg(''), 5000);
   };
 
+  const setPasswordDirect = async (m) => {
+    if (!loginPass || loginPass.length < 6) { setMsg('Hasło min 6 znaków.'); setTimeout(() => setMsg(''), 3000); return; }
+    setCreatingLogin(true);
+    const res = await fetch('/api/admin/set-user-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-email': adminEmail },
+      body: JSON.stringify({ email: m.email, password: loginPass }),
+    });
+    const data = await res.json();
+    setCreatingLogin(false);
+    if (data.error) setMsg(`Błąd: ${data.error}`);
+    else {
+      setMsg(`Hasło ustawione dla ${m.email}. Login: ${m.email} / Hasło: ${loginPass}`);
+      setShowLoginForm(null);
+      setLoginPass('');
+    }
+    setTimeout(() => setMsg(''), 8000);
+  };
+
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
@@ -312,13 +331,20 @@ function MembersTab({ adminEmail }) {
                 </div>
               </div>
               {showLoginForm === m.id && (
-                <div style={{ padding: "16px 20px", background: "rgba(201,169,97,0.04)", borderBottom: i < members.length - 1 ? `1px solid ${T.border}` : "none", display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontFamily: T.sans, fontSize: 13, color: T.ivory, marginBottom: 4 }}>Wyślij zaproszenie do: <strong>{m.email}</strong></div>
-                    <div style={{ fontFamily: T.sans, fontSize: 12, color: T.dim }}>Członek otrzyma email z linkiem i sam ustawi hasło.</div>
+                <div style={{ padding: "16px 20px", background: "rgba(201,169,97,0.04)", borderBottom: i < members.length - 1 ? `1px solid ${T.border}` : "none" }}>
+                  <div style={{ fontFamily: T.sans, fontSize: 13, color: T.ivory, marginBottom: 4 }}>Zarządzanie kontem: <strong>{m.email}</strong></div>
+                  <div style={{ fontFamily: T.sans, fontSize: 12, color: T.dim, marginBottom: 14 }}>Wyślij zaproszenie (członek sam ustawi hasło) lub ustaw hasło ręcznie.</div>
+
+                  <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap", marginBottom: 12 }}>
+                    <Btn small onClick={() => sendInvite(m)} disabled={creatingLogin}>{creatingLogin ? "Wysyłam..." : "✉ Wyślij zaproszenie"}</Btn>
                   </div>
-                  <Btn small onClick={() => sendInvite(m)} disabled={creatingLogin}>{creatingLogin ? "Wysyłam..." : "✉ Wyślij zaproszenie"}</Btn>
-                  <Btn small color="outline" onClick={() => setShowLoginForm(null)}>Anuluj</Btn>
+
+                  <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                    <input type="text" value={loginPass} onChange={e => setLoginPass(e.target.value)} placeholder="Hasło ręczne (min 6 znaków)"
+                      style={{ padding: "8px 12px", background: "#111", border: `1px solid ${T.border}`, color: T.ivory, fontFamily: T.sans, fontSize: 13, outline: "none", minWidth: 240 }} />
+                    <Btn small color="outline" onClick={() => setPasswordDirect(m)} disabled={creatingLogin}>{creatingLogin ? "..." : "🔐 Ustaw hasło ręcznie"}</Btn>
+                    <Btn small color="outline" onClick={() => { setShowLoginForm(null); setLoginPass(''); }}>Anuluj</Btn>
+                  </div>
                 </div>
               )}
             </div>
