@@ -33,7 +33,7 @@ function Sidebar({ active, setActive, user, initials, onLogout }) {
             <span style={{ fontSize: 14, width: 20, textAlign: "center" }}>{n.icon}</span>{n.label}
           </button>
         ))}
-        {user?.email === 'b.kawecki@ambassadorclub.pl' && (
+        {['b.kawecki@ambassadorclub.pl', 'janusz.janke@svarion.com'].includes(user?.email) && (
           <a href="/admin" style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", marginTop: 8, borderTop: `1px solid ${T.border}`, color: T.gold, fontFamily: T.sans, fontSize: 13, fontWeight: 400, letterSpacing: "0.04em", textDecoration: "none", borderLeft: `2px solid ${T.gold}`, background: "rgba(201,169,97,0.05)" }}>
             <span style={{ fontSize: 14, width: 20, textAlign: "center" }}>⚙</span>Panel Admina
           </a>
@@ -80,7 +80,7 @@ function MobileDrawer({ active, setActive, open, onClose, user }) {
               <span style={{ fontSize: 16, width: 22, textAlign: "center" }}>{n.icon}</span>{n.label}
             </button>
           ))}
-          {user?.email === 'b.kawecki@ambassadorclub.pl' && (
+          {['b.kawecki@ambassadorclub.pl', 'janusz.janke@svarion.com'].includes(user?.email) && (
             <a href="/admin" style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 16px", marginTop: 8, borderTop: `1px solid ${T.border}`, color: T.gold, fontFamily: T.sans, fontSize: 14, textDecoration: "none", borderLeft: `2px solid ${T.gold}`, background: "rgba(201,169,97,0.05)" }}>
               <span style={{ fontSize: 16, width: 22, textAlign: "center" }}>⚙</span>Panel Admina
             </a>
