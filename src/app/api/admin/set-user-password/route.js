@@ -23,11 +23,20 @@ export async function POST(request) {
   if (listErr) return Response.json({ error: listErr.message }, { status: 500 });
 
   const user = users.find(u => u.email === email);
-  if (!user) return Response.json({ error: 'Użytkownik nie znaleziony' }, { status: 404 });
 
-  // Ustaw hasło
-  const { error } = await serviceSupabase.auth.admin.updateUserById(user.id, { password });
-  if (error) return Response.json({ error: error.message }, { status: 500 });
-
-  return Response.json({ success: true });
+  if (user) {
+    // Ustaw nowe hasło istniejącemu
+    const { error } = await serviceSupabase.auth.admin.updateUserById(user.id, { password });
+    if (error) return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ success: true, created: false });
+  } else {
+    // Utwórz nowego usera od razu z hasłem i potwierdzonym emailem
+    const { error } = await serviceSupabase.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+    });
+    if (error) return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ success: true, created: true });
+  }
 }
