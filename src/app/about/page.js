@@ -2,6 +2,7 @@
 import PageShell from '@/components/PageShell';
 import { T, Eyebrow, Heading, Body, Divider, GoldLine, GoldBtn, Section, Container, FadeIn } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
+import { FEATURES } from '@/lib/features';
 
 export default function AboutPage() {
   const { isMobile } = useBreakpoint();
@@ -92,7 +93,7 @@ export default function AboutPage() {
         <FadeIn>
           <div style={{ textAlign: "center" }}>
             <Body center italic sz={20}>Chcesz poznać nas bliżej?</Body>
-            <div style={{ marginTop: 32 }}><GoldBtn href="/membership" large>Aplikuj o członkostwo</GoldBtn></div>
+            {FEATURES.applications && <div style={{ marginTop: 32 }}><GoldBtn href="/membership" large>Aplikuj o członkostwo</GoldBtn></div>}
           </div>
         </FadeIn>
       </Section>

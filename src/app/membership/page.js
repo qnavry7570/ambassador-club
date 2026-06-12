@@ -1,8 +1,9 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PageShell from '@/components/PageShell';
 import { T, Eyebrow, Heading, Body, Divider, GoldBtn, FeatureBox, Section, Container, GoldLine, FadeIn } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
+import { FEATURES } from '@/lib/features';
 
 function Input({ label, placeholder, type = "text", value, onChange }) {
   const [f, setF] = useState(false);
@@ -47,6 +48,13 @@ export default function MembershipPage() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", company: "", recommendation: "", motivation: "" });
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
+
+  // Klub zamknięty — aplikowanie wyłączone. Przekierowanie na stronę główną.
+  // Cały formularz poniżej zostaje w kodzie; przywróć ustawiając FEATURES.applications = true.
+  useEffect(() => {
+    if (!FEATURES.applications) window.location.replace('/');
+  }, []);
+  if (!FEATURES.applications) return null;
 
   const set = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }));
 

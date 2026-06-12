@@ -3,6 +3,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { T, GoldBtn, GhostBtn, Divider, PillarCard, EventCard, FeatureBox, FadeIn } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
+import { FEATURES } from '@/lib/features';
 
 function Hero() {
   const { isMobile, isTablet } = useBreakpoint();
@@ -20,7 +21,7 @@ function Hero() {
           Ekskluzywny klub networkingowy łączący liderów biznesu, sportu, sztuki i filantropii w jedną społeczność najwybitniejszych.
         </p>
         <div style={{ display: "flex", gap: 16, marginTop: isMobile ? 32 : 48, flexWrap: "wrap" }}>
-          <GoldBtn large href="/membership">Aplikuj o członkostwo</GoldBtn>
+          {FEATURES.applications && <GoldBtn large href="/membership">Aplikuj o członkostwo</GoldBtn>}
           <GhostBtn large href="/about">Odkryj więcej</GhostBtn>
         </div>
       </div>
@@ -148,17 +149,17 @@ export default function HomePage() {
               <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 42, fontWeight: 300, color: T.ivory, lineHeight: 1.15 }}>Zaproszenie do wyjątkowego grona</h2>
               <div style={{ margin: "24px 0", width: 60, height: 1, background: T.gold }} />
               <p style={{ fontFamily: T.sans, fontSize: 16, fontWeight: 300, color: T.muted, lineHeight: 1.8, marginBottom: 36 }}>
-                Członkostwo dostępne wyłącznie na zaproszenie lub po rozpatrzeniu aplikacji przez Radę Klubu.
+                Członkostwo dostępne wyłącznie na osobiste zaproszenie Rady Klubu.
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                {["Dostęp do wszystkich wydarzeń", "Prywatna strefa członkowska", "Concierge premium — VIP", "Networking z 150+ liderami", "Eleganckie zaproszenia i RSVP", "Galeria prywatna z wydarzeń"].map((b, i) => (
+                {["Dostęp do wszystkich wydarzeń", "Prywatna strefa członkowska", "Concierge premium — VIP", "Networking z 150+ liderami", "Eleganckie zaproszenia i RSVP"].map((b, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "center", gap: 16 }}>
                     <div style={{ width: 6, height: 6, background: T.gold, transform: "rotate(45deg)", flexShrink: 0 }} />
                     <span style={{ fontFamily: T.sans, fontSize: 14, fontWeight: 300, color: T.ivoryDim }}>{b}</span>
                   </div>
                 ))}
               </div>
-              <div style={{ marginTop: 48 }}><GoldBtn large href="/membership">Złóż aplikację</GoldBtn></div>
+              {FEATURES.applications && <div style={{ marginTop: 48 }}><GoldBtn large href="/membership">Złóż aplikację</GoldBtn></div>}
             </div>
           </FadeIn>
           {isMobile && (
@@ -284,7 +285,7 @@ export default function HomePage() {
           <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 32 : 52, fontWeight: 300, color: T.ivory, marginTop: 48 }}>Dołącz do grona najwybitniejszych</h2>
           <div style={{ fontFamily: T.serif, fontSize: 18, fontStyle: "italic", color: T.muted, marginTop: 16 }}>Membership by invitation only</div>
           <div style={{ display: "flex", gap: 20, justifyContent: "center", marginTop: 48, flexWrap: "wrap" }}>
-            <GoldBtn large href="/membership">Aplikuj o członkostwo</GoldBtn>
+            {FEATURES.applications && <GoldBtn large href="/membership">Aplikuj o członkostwo</GoldBtn>}
             <GhostBtn large href="/contact">Zapytaj prywatnie</GhostBtn>
           </div>
         </FadeIn>

@@ -2,6 +2,7 @@
 import PageShell from '@/components/PageShell';
 import { T, Eyebrow, Heading, Body, Divider, GhostBtn, Section, Container, FadeIn } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
+import { FEATURES } from '@/lib/features';
 
 const privileges = [
   { icon: "◈", t: "Degustacje hawańskich cygar", d: "Kurator dobiera roczniki i regiony dla każdego spotkania" },
@@ -161,9 +162,11 @@ export default function CigarClubPage() {
                 Członkostwo w Ambassador Cigar Club dostępne wyłącznie dla członków Ambassador Club. Grono jest kameralne — dołączenie wymaga rekomendacji i akceptacji bractwa.
               </Body>
               <div style={{ marginTop: 36, display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-                <a href="/membership" style={{ background: T.gold, color: T.bg, border: "none", padding: "16px 40px", fontFamily: T.sans, fontSize: 13, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", textDecoration: "none", display: "inline-block" }}>
-                  Złóż aplikację
-                </a>
+                {FEATURES.applications && (
+                  <a href="/membership" style={{ background: T.gold, color: T.bg, border: "none", padding: "16px 40px", fontFamily: T.sans, fontSize: 13, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", textDecoration: "none", display: "inline-block" }}>
+                    Złóż aplikację
+                  </a>
+                )}
                 <a href="/contact" style={{ background: "transparent", color: T.gold, border: `1px solid ${T.gold}`, padding: "16px 40px", fontFamily: T.sans, fontSize: 13, fontWeight: 400, letterSpacing: "0.12em", textTransform: "uppercase", textDecoration: "none", display: "inline-block" }}>
                   Kontakt
                 </a>

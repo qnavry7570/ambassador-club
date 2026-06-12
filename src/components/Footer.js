@@ -1,6 +1,7 @@
 'use client';
 import { T } from './ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
+import { FEATURES } from '@/lib/features';
 
 export default function Footer() {
   const { isMobile, isTablet } = useBreakpoint();
@@ -44,7 +45,11 @@ export default function Footer() {
         </div>
         <div>
           <div style={{ fontFamily: T.sans, fontSize: 11, fontWeight: 700, letterSpacing: "0.15em", color: T.ivory, textTransform: "uppercase", marginBottom: 24 }}>Członkostwo</div>
-          {[{ l: "Korzyści", h: "/membership" }, { l: "Proces aplikacyjny", h: "/membership" }, { l: "Wydarzenia", h: "/events" }, { l: "Members Area", h: "/login" }].map((x, i) => (
+          {[
+            ...(FEATURES.applications ? [{ l: "Korzyści", h: "/membership" }, { l: "Proces aplikacyjny", h: "/membership" }] : []),
+            { l: "Wydarzenia", h: "/events" },
+            { l: "Members Area", h: "/login" },
+          ].map((x, i) => (
             <a key={i} href={x.h} style={{ display: "block", fontFamily: T.sans, fontSize: 13, color: T.muted, textDecoration: "none", marginBottom: 12, fontWeight: 300 }}>{x.l}</a>
           ))}
         </div>

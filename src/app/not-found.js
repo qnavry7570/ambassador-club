@@ -12,7 +12,7 @@ export default function NotFound() {
   const links = [
     { label: 'Strona główna', href: '/' },
     { label: 'O klubie', href: '/about' },
-    { label: 'Członkostwo', href: '/membership' },
+    { label: 'Wydarzenia', href: '/events' },
     { label: 'Kontakt', href: '/contact' },
   ];
 

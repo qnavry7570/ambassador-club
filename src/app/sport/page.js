@@ -2,6 +2,7 @@
 import PageShell from '@/components/PageShell';
 import { T, Eyebrow, Heading, Body, Divider, GoldBtn, Section, Container, GoldLine, FadeIn } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
+import { FEATURES } from '@/lib/features';
 
 export default function SportPage() {
   const { isMobile } = useBreakpoint();
@@ -75,7 +76,7 @@ export default function SportPage() {
               <Heading center={false} size="md">Pola golfowe wśród dworków</Heading>
               <div style={{ margin: "20px 0" }}><GoldLine /></div>
               <Body>Nasze turnieje odbywają się na polach golfowych otoczonych historyczną architekturą — gdzie sport staje się doświadczeniem estetycznym. Każda runda to połączenie rywalizacji, rozmowy i polskiego krajobrazu.</Body>
-              <div style={{ marginTop: 32 }}><GoldBtn href="/membership">Dołącz do turnieju</GoldBtn></div>
+              {FEATURES.applications && <div style={{ marginTop: 32 }}><GoldBtn href="/membership">Dołącz do turnieju</GoldBtn></div>}
             </div></FadeIn>
             <FadeIn dir="right"><div>
               <img src="/images/golf-manor.webp" alt="Golf przy dworku" style={{ width: "100%", height: isMobile ? 260 : 420, objectFit: "cover" }} loading="lazy" />
@@ -99,19 +100,21 @@ export default function SportPage() {
               <div style={{ marginTop: 16 }}>
                 <Body italic sz={17}>Polska dominuje światowy żużel od dekad — jesteśmy tego częścią.</Body>
               </div>
-              <div style={{ marginTop: 32 }}><GoldBtn href="/membership">Zarezerwuj lożę VIP</GoldBtn></div>
+              {FEATURES.applications && <div style={{ marginTop: 32 }}><GoldBtn href="/membership">Zarezerwuj lożę VIP</GoldBtn></div>}
             </div>
           </div>
         </Container>
       </Section>
 
       {/* CTA */}
+      {FEATURES.applications && (
       <Section padding="80px 48px">
         <div style={{ textAlign: "center" }}>
           <Body center italic sz={20}>Chcesz dołączyć do naszych wydarzeń sportowych?</Body>
           <div style={{ marginTop: 32 }}><GoldBtn href="/membership" large>Aplikuj o członkostwo</GoldBtn></div>
         </div>
       </Section>
+      )}
     </PageShell>
   );
 }

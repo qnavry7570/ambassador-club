@@ -12,7 +12,6 @@ const pillars = [
 const links = [
   { href: "/about", l: "O Klubie" },
   { href: "/events", l: "Wydarzenia" },
-  { href: "/membership", l: "Członkostwo" },
   { href: "/journal", l: "Journal" },
   { href: "/contact", l: "Kontakt" },
 ];
@@ -89,7 +88,6 @@ export default function Navbar() {
               )}
             </div>
             <NavLink href="/events">Wydarzenia</NavLink>
-            <NavLink href="/membership">Członkostwo</NavLink>
             <NavLink href="/journal">Journal</NavLink>
             <NavLink href="/contact">Kontakt</NavLink>
             <a href="/login" style={{ background: "transparent", border: `1px solid ${T.gold}`, color: T.gold, padding: "8px 20px", fontSize: 11, fontFamily: T.sans, letterSpacing: "0.15em", textTransform: "uppercase", textDecoration: "none" }}>Members Area</a>

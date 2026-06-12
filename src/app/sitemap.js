@@ -3,7 +3,6 @@ export default function sitemap() {
   const routes = [
     { url: base, priority: 1.0, changeFrequency: 'weekly' },
     { url: `${base}/about`, priority: 0.9, changeFrequency: 'monthly' },
-    { url: `${base}/membership`, priority: 0.9, changeFrequency: 'monthly' },
     { url: `${base}/events`, priority: 0.8, changeFrequency: 'weekly' },
     { url: `${base}/sport`, priority: 0.7, changeFrequency: 'monthly' },
     { url: `${base}/culture`, priority: 0.7, changeFrequency: 'monthly' },

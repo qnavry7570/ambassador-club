@@ -2,6 +2,7 @@
 import PageShell from '@/components/PageShell';
 import { T, Eyebrow, Heading, Body, Divider, GoldBtn, Section, Container, GoldLine } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
+import { FEATURES } from '@/lib/features';
 
 export default function BestOfPolandPage() {
   const { isMobile } = useBreakpoint();
@@ -89,7 +90,7 @@ export default function BestOfPolandPage() {
       <Section padding="80px 48px">
         <div style={{ textAlign: "center" }}>
           <Body center italic sz={20}>Chcesz dołączyć do świata Best of Poland?</Body>
-          <div style={{ marginTop: 32 }}><GoldBtn href="/membership" large>Aplikuj o członkostwo</GoldBtn></div>
+          {FEATURES.applications && <div style={{ marginTop: 32 }}><GoldBtn href="/membership" large>Aplikuj o członkostwo</GoldBtn></div>}
         </div>
       </Section>
     </PageShell>

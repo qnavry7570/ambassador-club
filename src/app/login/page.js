@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { T, Body, Eyebrow, Heading, Divider } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
 import { supabase } from '@/lib/supabase';
+import { FEATURES } from '@/lib/features';
 
 function AuthInput({ label, placeholder, type = "text", icon, value, onChange }) {
   const [f, setF] = useState(false);
@@ -111,12 +112,14 @@ export default function LoginPage() {
             <div style={{ flex: 1, height: 1, background: T.border }} />
           </div>
           <LoginBtn variant="ghost" onClick={handleMagicLink}>✨ Magic Link</LoginBtn>
+          {FEATURES.applications && (
           <div style={{ textAlign: "center", marginTop: 28 }}>
             <Body sz={12} muted>Nie masz jeszcze konta?</Body>
             <div style={{ marginTop: 8 }}>
               <a href="/membership" style={{ fontFamily: T.sans, fontSize: 13, color: T.gold, textDecoration: "none" }}>Aplikuj o członkostwo →</a>
             </div>
           </div>
+          )}
           <div style={{ marginTop: 32, paddingTop: 24, borderTop: `1px solid ${T.border}`, textAlign: "center" }}>
             <span style={{ fontFamily: T.serif, fontSize: 13, fontStyle: "italic", color: T.dim }}>Dostęp wyłącznie dla członków Ambassador Club</span>
           </div>
@@ -184,12 +187,14 @@ export default function LoginPage() {
               <div style={{ flex: 1, height: 1, background: T.border }} />
             </div>
             <LoginBtn variant="ghost" onClick={handleMagicLink}>✨ Zaloguj przez Magic Link</LoginBtn>
+            {FEATURES.applications && (
             <div style={{ textAlign: "center", marginTop: 32 }}>
               <Body sz={12} muted>Nie masz jeszcze konta?</Body>
               <div style={{ marginTop: 8 }}>
                 <a href="/membership" style={{ fontFamily: T.sans, fontSize: 12, color: T.gold, textDecoration: "none", letterSpacing: "0.04em" }}>Aplikuj o członkostwo →</a>
               </div>
             </div>
+            )}
             <div style={{ marginTop: 40, paddingTop: 28, borderTop: `1px solid ${T.border}`, textAlign: "center" }}>
               <span style={{ fontFamily: T.serif, fontSize: 13, fontStyle: "italic", color: T.dim }}>Dostęp wyłącznie dla członków Ambassador Club</span>
             </div>

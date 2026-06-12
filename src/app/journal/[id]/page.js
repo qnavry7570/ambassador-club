@@ -5,6 +5,7 @@ import PageShell from '@/components/PageShell';
 import { T, GoldBtn, GhostBtn, Badge, Eyebrow } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
 import { supabase } from '@/lib/supabase';
+import { FEATURES } from '@/lib/features';
 
 function formatDate(str) {
   if (!str) return '';
@@ -44,11 +45,11 @@ function MemberGate({ article }) {
       <h3 style={{ fontFamily: T.serif, fontSize: 22, fontWeight: 300, color: T.ivory, margin: "0 0 12px" }}>Ten artykuł jest dostępny wyłącznie dla członków</h3>
       <div style={{ width: 40, height: 1, background: T.gold, margin: "0 auto 20px" }} />
       <p style={{ fontFamily: T.sans, fontSize: 14, fontWeight: 300, color: T.muted, lineHeight: 1.7, maxWidth: 400, margin: "0 auto 32px" }}>
-        Zaloguj się lub złóż aplikację o członkostwo, aby czytać pełne artykuły Ambassador Club Journal.
+        Zaloguj się, aby czytać pełne artykuły Ambassador Club Journal.
       </p>
       <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
         <GoldBtn href={`/login?redirect=/journal/${article.id}`}>Zaloguj się</GoldBtn>
-        <GhostBtn href="/membership">Aplikuj o członkostwo</GhostBtn>
+        {FEATURES.applications && <GhostBtn href="/membership">Aplikuj o członkostwo</GhostBtn>}
       </div>
     </div>
   );

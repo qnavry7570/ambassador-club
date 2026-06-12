@@ -2,6 +2,7 @@
 import PageShell from '@/components/PageShell';
 import { T, Eyebrow, Heading, Body, Divider, GoldBtn, Section, Container, GoldLine, FadeIn } from '@/components/ui';
 import { useBreakpoint } from '@/lib/useBreakpoint';
+import { FEATURES } from '@/lib/features';
 
 export default function CulturePage() {
   const { isMobile } = useBreakpoint();
@@ -95,7 +96,7 @@ export default function CulturePage() {
       <Section bg={T.bgAlt} padding="80px 48px">
         <div style={{ textAlign: "center" }}>
           <Body center italic sz={20}>Chcesz dołączyć do świata sztuki i kultury?</Body>
-          <div style={{ marginTop: 32 }}><GoldBtn href="/membership" large>Aplikuj o członkostwo</GoldBtn></div>
+          {FEATURES.applications && <div style={{ marginTop: 32 }}><GoldBtn href="/membership" large>Aplikuj o członkostwo</GoldBtn></div>}
         </div>
       </Section>
     </PageShell>
