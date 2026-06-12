@@ -3,13 +3,14 @@ import { useState, useEffect } from 'react';
 import { T, Badge, GoldBtn, GhostBtn, FeatureBox, Body } from '@/components/ui';
 import { supabase } from '@/lib/supabase';
 import { useBreakpoint } from '@/lib/useBreakpoint';
+import { FEATURES } from '@/lib/features';
 
 /* ─── NAV ITEMS ─── */
 const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard",   icon: "◈" },
   { id: "events",    label: "Wydarzenia",  icon: "◆" },
   { id: "members",   label: "Członkowie",  icon: "◇" },
-  { id: "gallery",   label: "Galeria",     icon: "▣" },
+  ...(FEATURES.gallery ? [{ id: "gallery", label: "Galeria", icon: "▣" }] : []),
   { id: "concierge", label: "Concierge",   icon: "✧" },
   { id: "profile",   label: "Mój profil",  icon: "●" },
 ];
@@ -647,7 +648,8 @@ export default function MembersArea() {
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Członku';
   const initials = user?.user_metadata?.full_name ? user.user_metadata.full_name.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase() : user?.email?.slice(0,2).toUpperCase();
 
-  const views = { dashboard: DashboardView, events: EventsView, members: MembersView, gallery: GalleryView, concierge: ConciergeView, profile: (p) => <ProfileView {...p} user={user} /> };
+  const views = { dashboard: DashboardView, events: EventsView, members: MembersView, concierge: ConciergeView, profile: (p) => <ProfileView {...p} user={user} /> };
+  if (FEATURES.gallery) views.gallery = GalleryView;
   const View = views[page] || DashboardView;
 
   return (

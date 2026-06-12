@@ -623,6 +623,151 @@ function RsvpTab() {
   );
 }
 
+/* ─── PARTNERS TAB ─── */
+const emptyPartner = { name: "", sector: "", website: "", description: "", logo_url: "", sort_order: 0, published: true };
+
+function PartnerForm({ initial = emptyPartner, onSave, onCancel, saving, adminEmail }) {
+  const [form, setForm] = useState(initial);
+  const [uploading, setUploading] = useState(false);
+  const [uploadErr, setUploadErr] = useState('');
+  const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadErr('');
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/admin/upload-image', {
+      method: 'POST',
+      headers: { 'x-admin-email': adminEmail },
+      body: fd,
+    });
+    const json = await res.json();
+    if (json.url) setForm(f => ({ ...f, logo_url: json.url }));
+    else setUploadErr(json.error || 'Błąd uploadu');
+    setUploading(false);
+  };
+
+  return (
+    <div style={{ background: "#0d0d0d", border: `1px solid ${T.goldBorder}`, padding: 24, marginBottom: 24 }}>
+      <h3 style={{ fontFamily: T.serif, fontSize: 20, color: T.ivory, margin: "0 0 20px", fontWeight: 400 }}>
+        {initial.id ? "Edytuj partnera" : "Nowy partner"}
+      </h3>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
+        <Field label="Nazwa firmy" value={form.name} onChange={set("name")} placeholder="Nazwa partnera" required />
+        <Field label="Branża / sektor" value={form.sector} onChange={set("sector")} placeholder="np. Bankowość, Motoryzacja" />
+        <Field label="Strona WWW" value={form.website} onChange={set("website")} placeholder="https://..." />
+        <Field label="Kolejność (mniejsza = wyżej)" value={form.sort_order} onChange={set("sort_order")} type="number" />
+      </div>
+      <Field label="Opis" value={form.description} onChange={set("description")} placeholder="Krótki opis firmy..." textarea />
+      <div style={{ marginBottom: 16 }}>
+        <label style={{ display: "block", fontFamily: T.sans, fontSize: 11, letterSpacing: "0.1em", color: T.muted, textTransform: "uppercase", marginBottom: 6 }}>Logo</label>
+        <label style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "10px 12px", background: "#111", border: `1px solid ${T.border}`, cursor: "pointer" }}>
+          <span style={{ fontFamily: T.sans, fontSize: 12, color: T.gold }}>{uploading ? "Wgrywam..." : "📁 Wybierz plik"}</span>
+          <span style={{ fontFamily: T.sans, fontSize: 11, color: T.dim }}>PNG/SVG na przezroczystym tle najlepiej</span>
+          <input type="file" accept="image/*" onChange={handleFileUpload} style={{ display: "none" }} disabled={uploading} />
+        </label>
+        {uploadErr && <div style={{ fontFamily: T.sans, fontSize: 11, color: "#e05555", marginTop: 4 }}>{uploadErr}</div>}
+        {form.logo_url && (
+          <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8 }}>
+            <img src={form.logo_url} alt="" style={{ width: 80, height: 50, objectFit: "contain", border: `1px solid ${T.border}`, background: "#1a1a1a", padding: 4 }} />
+            <button onClick={() => setForm(f => ({ ...f, logo_url: "" }))} style={{ background: "none", border: "none", color: "#e05555", cursor: "pointer", fontSize: 14, padding: 0 }}>✕</button>
+          </div>
+        )}
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+        <input type="checkbox" id="partner_pub" checked={form.published} onChange={e => setForm(f => ({ ...f, published: e.target.checked }))} />
+        <label htmlFor="partner_pub" style={{ fontFamily: T.sans, fontSize: 13, color: T.muted, cursor: "pointer" }}>Widoczny na stronie /partners</label>
+      </div>
+      <div style={{ display: "flex", gap: 12 }}>
+        <Btn onClick={() => onSave({ ...form, sort_order: Number(form.sort_order) || 0 })} disabled={saving || uploading}>{saving ? "Zapisuję..." : "Zapisz"}</Btn>
+        <Btn onClick={onCancel} color="outline">Anuluj</Btn>
+      </div>
+    </div>
+  );
+}
+
+function PartnersTab({ adminEmail }) {
+  const [partners, setPartners] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState('');
+
+  const load = async () => {
+    const { data } = await supabase.from('partners').select('*').order('sort_order', { ascending: true });
+    setPartners(data || []);
+    setLoading(false);
+  };
+  useEffect(() => { load(); }, []);
+
+  const save = async (form) => {
+    setSaving(true);
+    const res = await fetch('/api/admin/save-partner', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-email': adminEmail },
+      body: JSON.stringify({ id: editing?.id, data: form }),
+    });
+    const result = await res.json();
+    if (result.error) setMsg(`Błąd: ${result.error}`);
+    else { if (editing) { setMsg('Zaktualizowano.'); setEditing(null); } else { setMsg('Dodano partnera.'); setShowForm(false); } }
+    setSaving(false); load();
+    setTimeout(() => setMsg(''), 3000);
+  };
+
+  const del = async (p) => {
+    if (!confirm(`Usunąć partnera ${p.name}?`)) return;
+    const res = await fetch('/api/admin/delete-partner', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-email': adminEmail },
+      body: JSON.stringify({ id: p.id }),
+    });
+    const data = await res.json();
+    if (data.error) { setMsg(`Błąd: ${data.error}`); setTimeout(() => setMsg(''), 4000); }
+    else load();
+  };
+
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+        <h2 style={{ fontFamily: T.serif, fontSize: 24, color: T.ivory, margin: 0, fontWeight: 400 }}>Partnerzy ({partners.length})</h2>
+        <Btn onClick={() => { setShowForm(true); setEditing(null); }}>+ Dodaj partnera</Btn>
+      </div>
+      {msg && <div style={{ background: "rgba(201,169,97,0.1)", border: `1px solid ${T.goldBorder}`, padding: "10px 16px", fontFamily: T.sans, fontSize: 13, color: T.gold, marginBottom: 16 }}>{msg}</div>}
+      {(showForm && !editing) && <PartnerForm onSave={save} onCancel={() => setShowForm(false)} saving={saving} adminEmail={adminEmail} />}
+      {editing && <PartnerForm initial={editing} onSave={save} onCancel={() => setEditing(null)} saving={saving} adminEmail={adminEmail} />}
+      {loading ? <div style={{ color: T.dim, fontFamily: T.sans }}>Ładowanie...</div> : (
+        <div style={{ border: `1px solid ${T.border}` }}>
+          {partners.length === 0 && <div style={{ padding: 24, fontFamily: T.sans, fontSize: 14, color: T.dim, textAlign: "center" }}>Brak partnerów. Dodaj pierwszego.</div>}
+          {partners.map((p, i) => (
+            <div key={p.id} style={{ padding: "14px 20px", borderBottom: i < partners.length - 1 ? `1px solid ${T.border}` : "none", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 14, flex: 1 }}>
+                {p.logo_url
+                  ? <img src={p.logo_url} alt={p.name} style={{ width: 64, height: 40, objectFit: "contain", background: "#1a1a1a", border: `1px solid ${T.border}`, padding: 3, flexShrink: 0 }} />
+                  : <div style={{ width: 64, height: 40, background: "#1a1a1a", border: `1px solid ${T.border}`, flexShrink: 0 }} />}
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontFamily: T.serif, fontSize: 16, color: T.ivory }}>{p.name}</span>
+                    {!p.published && <span style={{ fontFamily: T.sans, fontSize: 10, color: T.dim, border: `1px solid ${T.border}`, padding: "2px 6px" }}>UKRYTY</span>}
+                  </div>
+                  <div style={{ fontFamily: T.sans, fontSize: 12, color: T.dim }}>{p.sector || '—'} · kolejność: {p.sort_order ?? 0}</div>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                <Btn small color="outline" onClick={() => { setEditing(p); setShowForm(false); }}>Edytuj</Btn>
+                <Btn small color="red" onClick={() => del(p)}>Usuń</Btn>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─── MAIN ─── */
 export default function AdminPage() {
   const [tab, setTab] = useState("events");
@@ -661,6 +806,7 @@ export default function AdminPage() {
   const tabs = [
     { id: "events",   label: "Wydarzenia" },
     { id: "articles", label: "Artykuły" },
+    { id: "partners", label: "Partnerzy" },
     { id: "members",  label: "Członkowie" },
     { id: "rsvp",     label: "RSVP" },
     { id: "stats",    label: "Statystyki" },
@@ -695,6 +841,7 @@ export default function AdminPage() {
 
         {tab === "events"   && <EventsTab adminEmail={user?.email} />}
         {tab === "articles" && <ArticlesTab adminEmail={user?.email} />}
+        {tab === "partners" && <PartnersTab adminEmail={user?.email} />}
         {tab === "members"  && <MembersTab adminEmail={user?.email} />}
         {tab === "rsvp"     && <RsvpTab />}
         {tab === "stats"    && <StatsTab />}

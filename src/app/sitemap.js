@@ -9,6 +9,7 @@ export default function sitemap() {
     { url: `${base}/philanthropy`, priority: 0.7, changeFrequency: 'monthly' },
     { url: `${base}/bestofpoland`, priority: 0.7, changeFrequency: 'monthly' },
     { url: `${base}/journal`, priority: 0.7, changeFrequency: 'weekly' },
+    { url: `${base}/partners`, priority: 0.6, changeFrequency: 'monthly' },
     { url: `${base}/contact`, priority: 0.6, changeFrequency: 'yearly' },
     { url: `${base}/privacy`, priority: 0.3, changeFrequency: 'yearly' },
   ];

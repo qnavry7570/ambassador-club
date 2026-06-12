@@ -263,13 +263,15 @@ export default function HomePage() {
             <div style={{ fontFamily: T.sans, fontSize: 11, letterSpacing: "0.3em", color: T.gold, textTransform: "uppercase", marginBottom: 16 }}>STREFA PRYWATNA</div>
             <h2 style={{ fontFamily: T.serif, fontSize: isMobile ? 28 : 42, fontWeight: 300, color: T.ivory }}>Twój świat za zamkniętymi drzwiami</h2>
             <p style={{ fontFamily: T.sans, fontSize: 16, fontWeight: 300, color: T.muted, marginTop: 16, maxWidth: 600, margin: "16px auto 0" }}>
-              Dashboard, kalendarz, galeria, katalog członków, concierge — w jednym panelu.
+              {FEATURES.gallery
+                ? "Dashboard, kalendarz, galeria, katalog członków, concierge — w jednym panelu."
+                : "Dashboard, kalendarz, katalog członków, concierge — w jednym panelu."}
             </p>
           </FadeIn>
-          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: isMobile ? 12 : 24, marginTop: isMobile ? 40 : 64 }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : (FEATURES.gallery ? "repeat(4,1fr)" : "repeat(3,1fr)"), gap: isMobile ? 12 : 24, marginTop: isMobile ? 40 : 64 }}>
             <FadeIn delay={0}><FeatureBox icon="◈" title="Dashboard osobisty" desc="Powitanie, skróty, powiadomienia" /></FadeIn>
             <FadeIn delay={80}><FeatureBox icon="◆" title="Kalendarz & RSVP" desc="Pełne szczegóły, potwierdzenia" /></FadeIn>
-            <FadeIn delay={160}><FeatureBox icon="◇" title="Galeria prywatna" desc="Zdjęcia i wideo z wydarzeń" /></FadeIn>
+            {FEATURES.gallery && <FadeIn delay={160}><FeatureBox icon="◇" title="Galeria prywatna" desc="Zdjęcia i wideo z wydarzeń" /></FadeIn>}
             <FadeIn delay={240}><FeatureBox icon="✧" title="Concierge VIP" desc="Rezerwacje i dostępy premium" /></FadeIn>
           </div>
           <FadeIn delay={100} style={{ marginTop: 48 }}><GhostBtn large href="/login">Zaloguj się</GhostBtn></FadeIn>

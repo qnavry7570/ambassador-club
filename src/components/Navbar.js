@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { T } from './ui';
+import { FEATURES } from '@/lib/features';
 
 const pillars = [
   { href: "/sport", l: "Sport" },
@@ -13,6 +14,7 @@ const links = [
   { href: "/about", l: "O Klubie" },
   { href: "/events", l: "Wydarzenia" },
   { href: "/journal", l: "Journal" },
+  ...(FEATURES.partners ? [{ href: "/partners", l: "Partnerzy" }] : []),
   { href: "/contact", l: "Kontakt" },
 ];
 
@@ -89,6 +91,7 @@ export default function Navbar() {
             </div>
             <NavLink href="/events">Wydarzenia</NavLink>
             <NavLink href="/journal">Journal</NavLink>
+            {FEATURES.partners && <NavLink href="/partners">Partnerzy</NavLink>}
             <NavLink href="/contact">Kontakt</NavLink>
             <a href="/login" style={{ background: "transparent", border: `1px solid ${T.gold}`, color: T.gold, padding: "8px 20px", fontSize: 11, fontFamily: T.sans, letterSpacing: "0.15em", textTransform: "uppercase", textDecoration: "none" }}>Members Area</a>
           </div>
